@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>日韓藥妝智慧推薦系統｜專題企劃書</title>
+<style>
+:root{
+  --ink:#1a1a2e;--pink:#e91e8c;--pink-soft:#fdf0f8;--pink-mid:#fbcfe8;
+  --purple:#7c3aed;--teal:#0d9488;--amber:#d97706;--amber-soft:#fffbeb;
+  --red:#dc2626;--green:#16a34a;--gray:#64748b;--light:#f8fafc;
+  --border:#e2e8f0;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--light);color:var(--ink);font-size:14px;line-height:1.75;}
+
+/* ── COVER ── */
+.cover{
+  min-height:100vh;
+  background:linear-gradient(145deg,#1a1a2e,#16213e,#0f3460);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:64px 32px;position:relative;overflow:hidden;
+}
+.cover::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 40%,rgba(233,30,140,.18) 0%,transparent 55%),
+             radial-gradient(ellipse at 75% 70%,rgba(124,58,237,.14) 0%,transparent 50%);}
+.cover-tag{display:inline-block;border:1px solid rgba(233,30,140,.5);color:#f472b6;
+  padding:5px 20px;border-radius:20px;font-size:.75rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:28px;position:relative;}
+.cover h1{font-size:2.9rem;font-weight:900;line-height:1.15;color:white;
+  margin-bottom:14px;position:relative;}
+.cover h1 em{font-style:normal;
+  background:linear-gradient(135deg,#f472b6,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.cover-sub{color:rgba(255,255,255,.5);font-size:.95rem;max-width:520px;
+  margin:0 auto 52px;position:relative;line-height:1.8;}
+.cover-meta{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;position:relative;}
+.cover-meta-item .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(255,255,255,.38);font-weight:600;margin-bottom:4px;}
+.cover-meta-item .val{color:white;font-weight:700;font-size:.9rem;}
+
+/* ── TOC ── */
+.toc{background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px 32px;margin:48px auto 0;max-width:900px;width:calc(100% - 48px);}
+.toc h3{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--gray);margin-bottom:16px;}
+.toc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.toc-item{text-align:center;padding:16px 8px;border-radius:10px;cursor:pointer;
+  transition:background .15s;border:1.5px solid transparent;}
+.toc-item:hover{background:var(--pink-soft);border-color:var(--pink-mid);}
+.toc-num{font-size:1.4rem;font-weight:900;color:var(--pink);line-height:1;}
+.toc-name{font-size:.8rem;font-weight:700;color:var(--ink);margin-top:4px;line-height:1.3;}
+
+/* ── PAGE ── */
+.page{max-width:900px;margin:0 auto;padding:64px 24px;}
+
+/* ── PRIMARY SECTION ── */
+.primary-section{margin-bottom:72px;}
+.section-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;border-radius:14px;
+  font-size:1.4rem;font-weight:900;color:white;
+  margin-bottom:16px;flex-shrink:0;
+}
+.n1{background:linear-gradient(135deg,#e91e8c,#fb7185);}
+.n2{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
+.n3{background:linear-gradient(135deg,#0d9488,#34d399);}
+.n4{background:linear-gradient(135deg,#d97706,#fbbf24);}
+.n5{background:linear-gradient(135deg,#1d4ed8,#60a5fa);}
+
+.primary-section h2{font-size:1.9rem;font-weight:900;margin-bottom:6px;}
+.primary-section > .lead{color:var(--gray);font-size:1rem;margin-bottom:32px;max-width:640px;}
+
+/* ── SECONDARY ── */
+.sub-label{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--pink);display:flex;align-items:center;gap:8px;margin-bottom:10px;margin-top:32px;}
+.sub-label::after{content:'';flex:1;height:1px;background:var(--border);}
+h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
+
+/* ── CALLOUT ── */
+.callout{border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:.85rem;line-height:1.65;}
+.callout.tip{background:var(--pink-soft);border-left:3px solid var(--pink);color:#9d174d;}
+.callout.ok{background:#f0fdf4;border-left:3px solid var(--green);color:#166534;}
+.callout.warn{background:var(--amber-soft);border-left:3px solid var(--amber);color:#92400e;}
+.callout.info{background:#eff6ff;border-left:3px solid #3b82f6;color:#1e40af;}
+
+/* ── PAIN POINT CARDS ── */
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;}
+.pain-card{background:white;border:1px solid var(--border);border-radius:10px;padding:18px;}
+.pain-icon{font-size:1.6rem;margin-bottom:8px;}
+.pain-card h4{font-size:.88rem;font-weight:800;margin-bottom:6px;}
+.pain-card p{font-size:.81rem;color:#374151;line-height:1.55;}
+
+/* ── PURPOSE LIST ── */
+.purpose-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+.purpose-item{background:white;border:1px solid var(--border);border-radius:10px;
+  padding:16px 18px;display:flex;gap:12px;align-items:flex-start;}
+.purpose-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;font-weight:900;color:white;}
+.purpose-item h4{font-size:.88rem;font-weight:800;margin-bottom:4px;}
+.purpose-item p{font-size:.8rem;color:#374151;line-height:1.5;}
+
+/* ── DATA SOURCE TABLE ── */
+.src-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+.src-card{background:white;border:2px solid var(--border);border-radius:var(--radius);
+  padding:20px;position:relative;overflow:hidden;}
+.src-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.src-jp::before{background:linear-gradient(90deg,#dc2626,#f97316);}
+.src-kr::before{background:linear-gradient(90deg,#2563eb,#7c3aed);}
+.src-rev::before{background:linear-gradient(90deg,#0d9488,#16a34a);}
+.src-card .flag{font-size:1.6rem;margin-bottom:8px;}
+.src-card h4{font-size:.92rem;font-weight:800;margin-bottom:6px;}
+.src-card .api-badge{display:inline-block;background:#dcfce7;color:#166534;
+  padding:2px 10px;border-radius:10px;font-size:.7rem;font-weight:700;margin-bottom:10px;}
+.src-card ul{list-style:none;font-size:.81rem;color:#374151;}
+.src-card ul li{padding:2px 0;display:flex;gap:6px;}
+.src-card ul li::before{content:'→';color:var(--gray);font-size:.72rem;flex-shrink:0;margin-top:2px;}
+
+/* ── REQUIREMENT TABLE ── */
+.req-table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+.req-table thead tr{background:var(--ink);color:white;}
+.req-table th{padding:11px 16px;font-size:.79rem;font-weight:700;text-align:left;letter-spacing:.04em;}
+.req-table td{padding:10px 16px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:top;}
+.req-table tr:last-child td{border-bottom:none;}
+.req-table tr:hover td{background:#f8fafc;}
+.req-table td:first-child{font-weight:700;}
+
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;
+  font-size:.7rem;font-weight:700;margin:1px;}
+.b-p1{background:#fef3c7;color:#92400e;}
+.b-p2{background:#e0f2fe;color:#0369a1;}
+.b-p3{background:#f1f5f9;color:#475569;}
+.b-free{background:#dcfce7;color:#16a34a;}
+.b-api{background:#ede9fe;color:#5b21b6;}
+
+/* ── ARCH ── */
+.arch{background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;margin-bottom:24px;overflow-x:auto;}
+.arch-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-width:640px;align-items:start;}
+.arch-col-title{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  text-align:center;padding:5px;border-radius:6px;margin-bottom:6px;}
+.arch-node{padding:8px 10px;border-radius:8px;font-size:.76rem;font-weight:600;
+  text-align:center;border:1.5px solid;line-height:1.3;margin-bottom:5px;}
+.c1 .arch-col-title{background:#fce7f3;color:#9d174d;}
+.c1 .arch-node{border-color:#fbcfe8;background:#fdf2f8;color:#9d174d;}
+.c2 .arch-col-title{background:#dbeafe;color:#1e40af;}
+.c2 .arch-node{border-color:#bfdbfe;background:#eff6ff;color:#1e40af;}
+.c3 .arch-col-title{background:#f0fdf4;color:#166534;}
+.c3 .arch-node{border-color:#bbf7d0;background:#f0fdf4;color:#166534;}
+.c4 .arch-col-title{background:#fef3c7;color:#92400e;}
+.c4 .arch-node{border-color:#fde68a;background:#fffbeb;color:#92400e;}
+
+/* ── STEP TIMELINE ── */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.step{background:white;border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.step-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.step-week{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+  background:var(--ink);color:white;padding:2px 10px;border-radius:8px;}
+.step h4{font-size:.9rem;font-weight:800;}
+.step ul{list-style:none;font-size:.81rem;color:#374151;}
+.step ul li{padding:3px 0;display:flex;gap:7px;align-items:flex-start;}
+.step ul li::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--pink);flex-shrink:0;margin-top:6px;}
+
+/* ── GOAL CARDS ── */
+.goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;}
+.goal-card{background:white;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;}
+.goal-val{font-size:1.6rem;font-weight:900;line-height:1;}
+.goal-unit{font-size:.78rem;color:var(--gray);margin-top:2px;margin-bottom:6px;}
+.goal-desc{font-size:.79rem;color:#374151;line-height:1.5;}
+
+/* ── Q&A ── */
+.qa-item{background:white;border:1px solid var(--border);border-radius:10px;
+  margin-bottom:10px;overflow:hidden;}
+.qa-q{padding:13px 18px;font-weight:700;font-size:.88rem;
+  display:flex;justify-content:space-between;align-items:center;}
+.qa-tag{background:#fee2e2;color:#b91c1c;font-size:.7rem;padding:2px 10px;
+  border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:12px;}
+.qa-a{padding:0 18px 14px;font-size:.83rem;color:#374151;line-height:1.7;
+  border-top:1px solid var(--border);}
+.qa-a .key{color:var(--pink);font-weight:700;}
+
+/* ── COST ── */
+.cost-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.cost-table th{background:var(--ink);color:white;padding:9px 16px;font-size:.78rem;text-align:left;}
+.cost-table td{padding:9px 16px;border-bottom:1px solid var(--border);font-size:.83rem;}
+.cost-table tr:last-child td{border-bottom:none;font-weight:800;background:#f8fafc;}
+.free-tag{display:inline-block;background:#dcfce7;color:#166534;
+  padding:2px 10px;border-radius:10px;font-size:.7rem;font-weight:700;}
+
+.divider{height:1px;background:var(--border);margin:60px 0;}
+
+@media(max-width:680px){
+  .cover h1{font-size:1.9rem;}
+  .toc-grid,.pain-grid,.purpose-list,.src-grid,.steps,.goal-grid{grid-template-columns:1fr;}
+  .arch-flow{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ COVER ═══════ -->
+<section class="cover">
+  <div class="cover-tag">個人專題企劃書・2026</div>
+  <h1>日韓藥妝<em>智慧推薦系統</em></h1>
+  <p class="cover-sub">
+    整合官方商品 API 與多平台社群評論，<br>
+    透過情緒分析與 RAG 向量搜尋，<br>
+    依照膚質、預算、需求精準推薦日韓藥妝
+  </p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="label">類型</div><div class="val">個人・資料工程 + AI 推薦</div></div>
+    <div class="cover-meta-item"><div class="label">商品資料</div><div class="val">Rakuten API + Naver API</div></div>
+    <div class="cover-meta-item"><div class="label">評論資料</div><div class="val">PTT + Dcard + YouTube</div></div>
+    <div class="cover-meta-item"><div class="label">月費</div><div class="val">NT$0（全免費方案）</div></div>
+  </div>
+
+  <div class="toc">
+    <h3>目錄</h3>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-num">01</div><div class="toc-name">專題動機</div></div>
+      <div class="toc-item"><div class="toc-num">02</div><div class="toc-name">目的</div></div>
+      <div class="toc-item"><div class="toc-num">03</div><div class="toc-name">系統需求</div></div>
+      <div class="toc-item"><div class="toc-num">04</div><div class="toc-name">進行方式</div></div>
+      <div class="toc-item"><div class="toc-num">05</div><div class="toc-name">預期達成目標</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="page">
+
+<!-- ═══════ 01 專題動機 ═══════ -->
+<div class="primary-section" id="s1">
+  <div class="section-num n1">01</div>
+  <h2 class="sec">專題動機</h2>
+  <p class="lead">日韓藥妝市場龐大，消費者卻面臨資訊分散、難以個人化篩選的困境。</p>
+
+  <div class="sub-label">痛點分析</div>
+  <div class="pain-grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="pain-card">
+      <div class="pain-icon">🌐</div>
+      <h4>資訊太分散</h4>
+      <p>評測散落在多個不同平台，使用者需花大量時間自行比對，沒有統一的查詢入口。</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">🤔</div>
+      <h4>難以個人化篩選</h4>
+      <p>搜尋結果無法依照「乾性肌、預算 500 元」同時篩選，使用者只能靠運氣找到適合自己的產品。</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">📦</div>
+      <h4>商品資訊不完整</h4>
+      <p>日韓原文商品名稱、成分表、適用膚質標示不統一，台灣消費者需要自行翻譯與比對，門檻高。</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <strong>核心痛點一句話：</strong>
+    消費者在購買日韓藥妝時，必須自己整合來自多個平台的資訊、再手動篩選符合自身條件的商品——
+    這個過程耗時且容易做出不符合自身需求的購買決策。
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ 02 目的 ═══════ -->
+<div class="primary-section" id="s2">
+  <div class="section-num n2">02</div>
+  <h2 class="sec">目的</h2>
+  <p class="lead">建立一個以資料驅動的日韓藥妝推薦平台，讓使用者不需要自己爬文比較，系統替他做完這件事。</p>
+
+  <div class="purpose-list">
+    <div class="purpose-item">
+      <div class="purpose-num" style="background:var(--pink);">1</div>
+      <div>
+        <h4>聚合多平台評論，計算客觀好評率</h4>
+        <p>將 PTT、Dcard、YouTube 的評論透過 AI 情緒分析模型自動判定每則評論的正負傾向，聚合多平台結果為每個商品計算出「社群好評率」，取代人工逐篇閱覽比對。</p>
+      </div>
+    </div>
+    <div class="purpose-item">
+      <div class="purpose-num" style="background:var(--purple);">2</div>
+      <div>
+        <h4>建立結構化商品資料庫（官方 API）</h4>
+        <p>使用日本樂天 API 與韓國 Naver API 取得官方商品資料，確保商品名稱、圖片、成分、售價的準確性與合法性。</p>
+      </div>
+    </div>
+    <div class="purpose-item">
+      <div class="purpose-num" style="background:var(--teal);">3</div>
+      <div>
+        <h4>RAG 語意搜尋推薦</h4>
+        <p>使用者輸入「乾性肌保濕，預算500」，系統透過 RAG 向量搜尋找到語意最相關的商品，不依賴關鍵字完全比對。</p>
+      </div>
+    </div>
+    <div class="purpose-item">
+      <div class="purpose-num" style="background:#1d4ed8;">4</div>
+      <div>
+        <h4>解決評論真偽問題</h4>
+        <p>選擇 PTT（社群審查機制）與 Dcard（實名認證）作為主要評論來源，結構性地降低業配文影響，提高推薦可信度。</p>
+      </div>
+    </div>
+    <div class="purpose-item">
+      <div class="purpose-num" style="background:#0d9488;">5</div>
+      <div>
+        <h4>個人化篩選，降低購買錯誤率</h4>
+        <p>依照膚質、品類、來源國、預算等條件多維度篩選，讓使用者找到真正適合自己的商品，減少衝動購買與退款。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ 03 系統需求 ═══════ -->
+<div class="primary-section" id="s3">
+  <div class="section-num n3">03</div>
+  <h2 class="sec">系統需求</h2>
+  <p class="lead">定義兩大資料管道、AI 技術需求、儲存架構與前後端規格。</p>
+
+  <!-- 3-1 資料來源 -->
+  <div class="sub-label">3-1 資料來源需求</div>
+
+  <div class="src-grid">
+    <div class="src-card src-jp">
+      <div class="flag">🇯🇵</div>
+      <h4>日本商品資料</h4>
+      <div class="api-badge">官方 API・合法・免費</div>
+      <ul>
+        <li><strong>Rakuten 樂天 API</strong>（主要來源）</li>
+        <li>搜尋「スキンケア」「日焼け止め」等分類</li>
+        <li>回傳：商品名稱(日)、品牌、圖片、JPY 售價</li>
+        <li>每日 3 萬次查詢免費</li>
+        <li>資料即日本消費者所見的上架資料</li>
+      </ul>
+    </div>
+    <div class="src-card src-kr">
+      <div class="flag">🇰🇷</div>
+      <h4>韓國商品資料</h4>
+      <div class="api-badge">官方 API・合法・免費</div>
+      <ul>
+        <li><strong>Naver Shopping API</strong>（主要來源）</li>
+        <li>搜尋「스킨케어」「선크림」等分類</li>
+        <li>回傳：商品名稱(韓/英)、品牌、圖片、KRW 售價</li>
+        <li>每日 2.5 萬次查詢免費</li>
+        <li>覆蓋 Olive Young、Coupang 上架商品</li>
+      </ul>
+    </div>
+    <div class="src-card src-rev" style="grid-column:1/-1;">
+      <div class="flag">💬</div>
+      <h4>評論語料（可信度優先選平台）</h4>
+      <div class="api-badge">可信度有學術論據</div>
+      <ul style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;">
+        <li><strong>PTT 美妝板</strong>：推文機制讓社群自行審查，業配文易被肉搜，歷史可信度高</li>
+        <li><strong>Dcard 美妝版</strong>：大學生實名認證，每日一篇限制，刷評成本高</li>
+        <li><strong>YouTube（觀看數門檻）</strong>：只取觀看數 &gt; 1 萬影片字幕，低觀看業配較難過濾</li>
+      </ul>
+      <div style="margin-top:10px;font-size:.8rem;color:#166534;font-weight:700;">
+        刻意不用 Instagram：反爬強 + 業配辨識困難，不納入主要語料，可對老師說明理由
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-2 功能需求 -->
+  <div class="sub-label">3-2 功能需求清單</div>
+  <table class="req-table">
+    <thead><tr><th>功能模組</th><th>需求說明</th><th>技術方案</th><th>優先度</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>商品資料擷取</td>
+        <td>從 Rakuten / Naver 官方 API 取得商品名稱、圖片、售價、品牌</td>
+        <td><span class="badge b-api">官方 API</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>評論語料爬取</td>
+        <td>PTT 美妝板、Dcard 美妝版抓取評測文章，YouTube 下載自動字幕</td>
+        <td><span class="badge b-free">requests/BS4/yt-dlp</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>評論情緒分析</td>
+        <td>每則評論標記 正面/負面/中立，計算商品好評率</td>
+        <td><span class="badge b-free">HuggingFace 中文模型</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>評論與商品配對</td>
+        <td>將評論自動關聯到對應商品（跨語言商品名稱對齊）</td>
+        <td><span class="badge b-free">rapidfuzz + RAG</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>RAG 語意推薦</td>
+        <td>使用者描述需求 → 向量搜尋找最相關商品</td>
+        <td><span class="badge b-free">sentence-transformers + ChromaDB</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>結構化篩選 API</td>
+        <td>依膚質/品類/來源國/預算多條件過濾 + 綜合評分排序</td>
+        <td><span class="badge b-free">FastAPI + MongoDB</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>前端展示介面</td>
+        <td>篩選面板、商品卡片（含圖片）、分數透明化展示</td>
+        <td><span class="badge b-free">HTML / CSS / JS</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>商品摘要生成</td>
+        <td>用 LLM 將 Top 5 評論壓縮成 2–3 句推薦摘要</td>
+        <td><span class="badge b-api">GPT-4o / Groq API</span></td>
+        <td><span class="badge b-p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>YouTube Whisper 轉文字</td>
+        <td>無自動字幕的影片，用 Faster-Whisper 轉錄（Colab GPU）</td>
+        <td><span class="badge b-free">Faster-Whisper</span></td>
+        <td><span class="badge b-p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>趨勢排行榜</td>
+        <td>本週提及次數成長最快的商品，反映最新市場熱度</td>
+        <td><span class="badge b-free">MongoDB 增量查詢</span></td>
+        <td><span class="badge b-p3">P3</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 3-3 系統架構 -->
+  <div class="sub-label">3-3 系統架構</div>
+  <div class="arch">
+    <div style="text-align:center;font-size:.76rem;color:var(--gray);margin-bottom:14px;font-weight:600;">
+      官方 API + 評論爬蟲 → 處理與分析 → 向量化(RAG) → 推薦展示
+    </div>
+    <div class="arch-flow">
+      <div class="c1">
+        <div class="arch-col-title">資料輸入</div>
+        <div class="arch-node">Rakuten API<br><small>日本商品 + 圖片</small></div>
+        <div class="arch-node">Naver API<br><small>韓國商品 + 圖片</small></div>
+        <div class="arch-node">PTT 美妝板<br><small>requests + BS4</small></div>
+        <div class="arch-node">Dcard 非官方 API<br><small>JSON 直取</small></div>
+        <div class="arch-node">YouTube 字幕<br><small>yt-dlp</small></div>
+      </div>
+      <div class="c2">
+        <div class="arch-col-title">處理層</div>
+        <div class="arch-node">情緒分析<br><small>HuggingFace CPU</small></div>
+        <div class="arch-node">商品名稱對齊<br><small>rapidfuzz</small></div>
+        <div class="arch-node">評分計算<br><small>好評率 × 聲量</small></div>
+        <div class="arch-node">GPT-4o 摘要<br><small>P2・加分</small></div>
+      </div>
+      <div class="c3">
+        <div class="arch-col-title">儲存 + RAG</div>
+        <div class="arch-node">MongoDB Atlas<br><small>商品 + 評論（512MB 免費）</small></div>
+        <div class="arch-node">ChromaDB<br><small>本機向量索引</small></div>
+        <div class="arch-node">sentence-transformers<br><small>多語言嵌入模型</small></div>
+        <div class="arch-node">Upstash Redis<br><small>推薦結果快取</small></div>
+      </div>
+      <div class="c4">
+        <div class="arch-col-title">展示層</div>
+        <div class="arch-node">FastAPI<br><small>/recommend API</small></div>
+        <div class="arch-node">Render.com<br><small>後端部署（免費）</small></div>
+        <div class="arch-node">靜態 HTML/JS<br><small>前端篩選介面</small></div>
+        <div class="arch-node">GitHub Pages<br><small>前端部署（免費）</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-4 費用 -->
+  <div class="sub-label">3-4 費用需求（全免費方案）</div>
+  <table class="cost-table">
+    <thead><tr><th>項目</th><th>工具</th><th>免費額度</th><th>月費</th></tr></thead>
+    <tbody>
+      <tr><td>日本商品資料</td><td>Rakuten Ichiba API</td><td>3 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>韓國商品資料</td><td>Naver Shopping API</td><td>2.5 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>主資料庫</td><td>MongoDB Atlas M0</td><td>512MB</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>向量資料庫</td><td>ChromaDB（本機）</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>後端部署</td><td>Render.com</td><td>750 小時/月</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>前端部署</td><td>GitHub Pages</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>語音轉文字 GPU</td><td>Google Colab + Kaggle</td><td>30h+/週</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>GPT-4o 摘要（P2）</td><td>OpenAI API</td><td>按用量，一次性</td><td>約 NT$30–60</td></tr>
+      <tr><td><strong>合計</strong></td><td colspan="2"></td><td><strong style="color:var(--green)">NT$0 / 月</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ 04 進行方式 ═══════ -->
+<div class="primary-section" id="s4">
+  <div class="section-num n4">04</div>
+  <h2 class="sec">進行方式</h2>
+  <p class="lead">個人開發・CPU 筆電為主・8 週完成 MVP，採分階段驗證策略，先跑通再擴量。</p>
+
+  <div class="sub-label">4-1 開發時程（8 週）</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 1 週</div>
+        <h4>申請 API + 環境建置</h4>
+      </div>
+      <ul>
+        <li>申請 Rakuten Ichiba API Key（日本）</li>
+        <li>申請 Naver Developers API Key（韓國）</li>
+        <li>建立 MongoDB Atlas 免費叢集</li>
+        <li>設計 products / reviews NoSQL Schema</li>
+        <li>跑通 API 測試：各抓 10 個商品確認格式</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 2 週</div>
+        <h4>商品資料批次擷取</h4>
+      </div>
+      <ul>
+        <li>Rakuten API：日系保養/防曬/底妝分類，目標 300 SKU</li>
+        <li>Naver API：韓系保養/防曬，目標 200 SKU</li>
+        <li>建立品牌別名表（品牌中/日/韓/英對照）</li>
+        <li>rapidfuzz 做跨語言商品名稱去重</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 3 週</div>
+        <h4>評論語料爬取</h4>
+      </div>
+      <ul>
+        <li>PTT MAKEUP 板：抓近 1 年，目標 3,000 篇</li>
+        <li>Dcard 美妝版：非官方 API 取 JSON，目標 2,000 篇</li>
+        <li>YouTube：yt-dlp 下載自動字幕（500 支）</li>
+        <li>rapidfuzz 評論關聯到對應商品 product_id</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 4 週</div>
+        <h4>情緒分析 + 評分計算</h4>
+      </div>
+      <ul>
+        <li>HuggingFace 中文情緒模型跑全部評論</li>
+        <li>計算每個商品：好評率 × log(提及數) 綜合分數</li>
+        <li>更新 products.score / sentiment_pos_rate</li>
+        <li>人工抽查 Top 20 商品分數合理性</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 5 週</div>
+        <h4>RAG 向量化</h4>
+      </div>
+      <ul>
+        <li>sentence-transformers 建立商品向量索引（ChromaDB）</li>
+        <li>批次跑評論 ↔ 商品配對（語意相似度）</li>
+        <li>測試使用者查詢效果（3 個情境）</li>
+        <li>調整相似度門檻，確保配對準確率</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 6 週</div>
+        <h4>FastAPI 推薦系統</h4>
+      </div>
+      <ul>
+        <li>實作 /products/recommend（篩選 + RAG 排序）</li>
+        <li>Upstash Redis 快取熱門查詢結果</li>
+        <li>目標 API 回應 &lt; 500ms</li>
+        <li>本機壓力測試</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 7 週</div>
+        <h4>前端整合 + 雲端部署</h4>
+      </div>
+      <ul>
+        <li>前端 HTML 接真實 API，商品圖片用官方 API 圖片 URL</li>
+        <li>MongoDB Atlas 資料遷移（只存摘要欄位）</li>
+        <li>FastAPI 部署 Render.com</li>
+        <li>GitHub Pages 部署前端</li>
+      </ul>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-week">第 8 週</div>
+        <h4>P2 加分 + 簡報準備</h4>
+      </div>
+      <ul>
+        <li>GPT-4o 生成商品摘要（P2）</li>
+        <li>Whisper 補跑 300 支無字幕影片（Colab）</li>
+        <li>整理 Demo 影片，準備老師攻擊問題標準回答</li>
+        <li>最終壓力測試與效能調整</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4-2 老師攻擊預演 -->
+  <div class="sub-label">4-2 評審問題預演</div>
+
+  <div class="qa-item">
+    <div class="qa-q">商品資料完整嗎？你爬得到所有日韓商品嗎？<span class="qa-tag">最常問</span></div>
+    <div class="qa-a">
+      <span class="key">答：</span>
+      我們不是靠爬蟲，而是使用<strong>官方 API</strong>。
+      日本商品使用 Rakuten Ichiba API（日本最大電商，每日 3 萬次查詢免費），
+      韓國商品使用 Naver Shopping API（韓國最大搜尋引擎，每日 2.5 萬次查詢）。
+      這兩個 API 的資料與消費者在這兩個平台上購物時所見完全一致，覆蓋市面上主流日韓藥妝品牌。
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q">你的評論是真實用戶還是業配？怎麼保證？<span class="qa-tag">核心問題</span></div>
+    <div class="qa-a">
+      <span class="key">答：</span>
+      我們在設計上就選擇「結構性可信」的平台，而非試圖辨識業配文：<br>
+      ① <strong>PTT 美妝板</strong>：社群推文機制讓使用者自行審查，歷史上多次有業配文被肉搜公開，具公信力<br>
+      ② <strong>Dcard</strong>：大學生實名認證，每個帳號每天只能發一篇，刷評論成本極高<br>
+      ③ <strong>YouTube</strong>：設觀看數門檻（&gt;1 萬），低觀看數業配較難滿足此條件<br>
+      我們刻意不使用 Instagram，因其反爬措施強且業配辨識困難，這是有根據的設計決策。
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q">RAG 是必要的嗎？直接用關鍵字搜尋不行嗎？<span class="qa-tag">技術深度</span></div>
+    <div class="qa-a">
+      <span class="key">答：</span>
+      有兩個具體原因：<br>
+      ① <strong>評論配對</strong>：PTT 文章說「這款凝凍超補水」，關鍵字搜尋找不到「肌ラボ極潤」，
+      向量搜尋可以跨語言、跨表達方式做語意配對，準確率高出 30%+<br>
+      ② <strong>使用者查詢</strong>：使用者說「不黏膩的保濕」，關鍵字搜尋只能找含這個詞的結果，
+      RAG 可以找到描述為「水感質地」「清爽不油」的商品，語意更豐富
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q">一個人做得完嗎？8 週夠嗎？<span class="qa-tag">可行性</span></div>
+    <div class="qa-a">
+      <span class="key">答：</span>
+      已在筆電本機完成 Demo 驗證（20 個商品 + 50 篇評論跑通完整流程）。
+      API 申請、爬蟲、情緒分析、RAG 向量化、FastAPI、部署都已有對應的程式碼框架。
+      8 週時程含 Buffer，P1 核心功能在第 7 週完成，第 8 週為加分項目。
+      複雜度最高的 Whisper 轉文字已規劃用 Google Colab 免費 GPU 分批處理，不依賴本機算力。
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ 05 預期達成目標 ═══════ -->
+<div class="primary-section" id="s5">
+  <div class="section-num n5">05</div>
+  <h2 class="sec">預期達成目標</h2>
+  <p class="lead">明確定義系統核心功能的達成目標，作為期末展示的驗收基準。</p>
+
+  <!-- 核心目標 -->
+  <div class="sub-label">5-1 核心功能目標</div>
+  <div class="goal-grid" style="grid-template-columns:repeat(2,1fr);">
+    <div class="goal-card" style="text-align:left;padding:20px 22px;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">🛍</div>
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">完整商品資料庫</div>
+      <div class="goal-desc">透過 Rakuten API（日本）與 Naver API（韓國）取得商品資料，每筆商品均包含：<strong>商品圖片、成分表、建議售價</strong>，資料來源為官方平台，具備可信度與完整性。</div>
+    </div>
+    <div class="goal-card" style="text-align:left;padding:20px 22px;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">😊</div>
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">全評論情緒分析</div>
+      <div class="goal-desc">從 PTT、Dcard、YouTube 爬取的<strong>所有評論</strong>均經過 AI 情緒分析模型標記正負傾向，不做抽樣，計算出每個商品的社群好評率。</div>
+    </div>
+    <div class="goal-card" style="text-align:left;padding:20px 22px;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">🔍</div>
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">RAG 語意推薦查詢</div>
+      <div class="goal-desc">使用者以自然描述表達需求（如「不黏膩的保濕」），系統透過向量搜尋找出語意最相關的商品，而非依賴關鍵字完全比對。可現場操作展示。</div>
+    </div>
+    <div class="goal-card" style="text-align:left;padding:20px 22px;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">🎛</div>
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">三維度結構化篩選</div>
+      <div class="goal-desc">至少支援 <strong>膚質 × 品類 × 預算</strong> 三個條件同時篩選，使用者可在篩選面板直接勾選，篩選結果即時更新，不需要重新搜尋。</div>
+    </div>
+  </div>
+
+  <!-- 期末交付物 -->
+  <div class="sub-label">5-2 期末交付物</div>
+  <div class="callout ok">
+    <strong>可線上存取的完整系統（非 Demo 截圖）</strong><br>
+    前端網址（GitHub Pages）+ 後端 API（Render.com）全部上線，評審可現場操作。
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>交付項目</th><th>說明</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>前端展示介面</td>
+        <td>篩選面板 + 商品卡片（含圖片 + 分數）+ 評論來源標示</td>
+        <td><span class="badge b-p1">P1 確定交付</span></td>
+      </tr>
+      <tr>
+        <td>商品資料庫</td>
+        <td>500+ SKU，來自 Rakuten + Naver 官方 API，含圖片與成分</td>
+        <td><span class="badge b-p1">P1 確定交付</span></td>
+      </tr>
+      <tr>
+        <td>評論情緒分析</td>
+        <td>5,000+ 篇評論做過情緒標記，好評率可視化</td>
+        <td><span class="badge b-p1">P1 確定交付</span></td>
+      </tr>
+      <tr>
+        <td>RAG 語意搜尋</td>
+        <td>使用者描述需求，系統找出最相關商品，可現場 Demo</td>
+        <td><span class="badge b-p1">P1 確定交付</span></td>
+      </tr>
+      <tr>
+        <td>AI 圖片方案驗證報告</td>
+        <td>GPT-4o 直接回傳圖片 URL 幻覺率測試（已跑，結果 0/5），說明為何改用官方 API</td>
+        <td><span class="badge b-p1">已完成</span></td>
+      </tr>
+      <tr>
+        <td>商品 LLM 摘要</td>
+        <td>500 個商品各自有 2–3 句 GPT-4o 生成的推薦摘要</td>
+        <td><span class="badge b-p2">P2 時間許可</span></td>
+      </tr>
+      <tr>
+        <td>Whisper 影片轉文字</td>
+        <td>300 支無自動字幕的 YouTube 影片，Colab GPU 轉錄</td>
+        <td><span class="badge b-p2">P2 時間許可</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 質化目標 -->
+  <div class="sub-label">5-3 質化成果目標</div>
+  <div class="callout info">
+    <strong>這個系統解決了什麼問題？</strong><br>
+    使用者在購買日韓藥妝時，不再需要自己整合 5 個平台的資訊、自己判斷評論真假。
+    輸入膚質和預算，系統在 1 秒內回傳有社群好評率支撐的推薦，
+    且每個推薦都標示「資料來自幾個平台、幾則評論計算」，透明可驗證。
+  </div>
+
+  <div class="callout tip" style="margin-top:16px;">
+    <strong>對老師的最後一句話：</strong>
+    本專題的每個技術決策都有數據支撐——
+    包含 GPT-4o 圖片幻覺率（0/5 驗證完成）、選擇 PTT 而非 IG 的可信度論據、
+    使用官方 API 而非爬蟲的完整性論證。
+    這不是純規劃，而是有驗證過的實作。
+  </div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>
