@@ -211,7 +211,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   </p>
   <div class="cover-meta">
     <div class="cover-meta-item"><div class="label">類型</div><div class="val">個人・資料工程 + AI 推薦</div></div>
-    <div class="cover-meta-item"><div class="label">商品資料</div><div class="val">Rakuten API + Naver API</div></div>
+    <div class="cover-meta-item"><div class="label">商品資料</div><div class="val">Rakuten API + Kakao API</div></div>
     <div class="cover-meta-item"><div class="label">評論資料</div><div class="val">PTT · Dcard · @cosme</div></div>
     <div class="cover-meta-item"><div class="label">月費</div><div class="val">NT$0（全免費方案）</div></div>
   </div>
@@ -286,7 +286,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <div class="purpose-num" style="background:var(--purple);">2</div>
       <div>
         <h4>建立完整商品資料庫（官方 API）</h4>
-        <p>使用日本 Rakuten API 與韓國 Naver API 取得官方完整商品資料（名稱、圖片、成分、售價），確保資料準確性；搭配 @cosme 排名爬蟲補充日本口碑評分資料。</p>
+        <p>使用日本 Rakuten API 與韓國 Kakao API 取得官方完整商品資料（名稱、圖片、成分、售價），確保資料準確性；搭配 @cosme 排名爬蟲補充日本口碑評分資料。</p>
       </div>
     </div>
     <div class="purpose-item">
@@ -344,11 +344,12 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <h4>韓國商品資料</h4>
       <div class="api-badge">官方 API・合法・免費</div>
       <ul>
-        <li><strong>Naver Shopping API</strong>（主要來源）</li>
+        <li><strong>Kakao Shopping API</strong>（主要來源）</li>
+        <li>申請只需 email，無需韓國手機號碼</li>
         <li>搜尋「스킨케어」「선크림」等分類</li>
-        <li>回傳：商品名稱(韓/英)、品牌、圖片、KRW 售價</li>
-        <li>每日 2.5 萬次查詢免費</li>
-        <li>覆蓋 Olive Young、Coupang 上架商品</li>
+        <li>回傳：商品名稱(韓)、品牌、圖片、KRW 售價、판매처</li>
+        <li>每日 30 萬次查詢免費</li>
+        <li>覆蓋 Kakao 旗下購物平台商品</li>
       </ul>
     </div>
 
@@ -396,7 +397,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   </div>
   <div class="callout tip" style="margin-top:8px;">
     <strong>資料架構說明：</strong>
-    <strong>商品完整資料</strong>（名稱、圖片、成分、售價）來自 Rakuten API（日本）與 Naver API（韓國）；
+    <strong>商品完整資料</strong>（名稱、圖片、成分、售價）來自 Rakuten API（日本）與 Kakao API（韓國）；
     <strong>口碑評論與評分</strong>來自 PTT、Dcard 爬蟲與 @cosme 排名爬蟲（附 @cosme 評分與口コミ數）。
     兩條資料管道各司其職，缺一不可。
   </div>
@@ -408,7 +409,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <tbody>
       <tr>
         <td>商品資料擷取</td>
-        <td>Rakuten Ichiba API（日本）+ Naver Shopping API（韓國），取得商品名稱、圖片、售價、品牌、成分。官方合法，每日各 3 萬 / 2.5 萬次免費。</td>
+        <td>Rakuten Ichiba API（日本）+ Kakao Shopping API（韓國），取得商品名稱、圖片、售價、品牌、成分。官方合法，每日各 3 萬 / 2.5 萬次免費。</td>
         <td><span class="badge b-api">官方 API</span></td>
         <td><span class="badge b-p1">P1</span></td>
       </tr>
@@ -483,7 +484,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <div class="c1">
         <div class="arch-col-title">資料輸入</div>
         <div class="arch-node">Rakuten API<br><small>日本商品 + 圖片</small></div>
-        <div class="arch-node">Naver API<br><small>韓國商品 + 圖片</small></div>
+        <div class="arch-node">Kakao API<br><small>韓國商品 + 圖片</small></div>
         <div class="arch-node">PTT MakeUp 板<br><small>requests + BS4 · Cookie</small></div>
         <div class="arch-node">Dcard 美妝版<br><small>Playwright · API 攔截</small></div>
         <div class="arch-node">@cosme 排名爬蟲<br><small>BS4 + deep-translator</small></div>
@@ -518,7 +519,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <thead><tr><th>項目</th><th>工具</th><th>免費額度</th><th>月費</th></tr></thead>
     <tbody>
       <tr><td>日本商品資料</td><td>Rakuten Ichiba API</td><td>3 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>韓國商品資料</td><td>Naver Shopping API</td><td>2.5 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>韓國商品資料</td><td>Kakao Shopping API</td><td>30 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>@cosme 口碑排名</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>主資料庫</td><td>MongoDB Atlas M0</td><td>512MB</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>向量資料庫</td><td>ChromaDB（本機）</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
@@ -548,7 +549,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </div>
       <ul>
         <li>申請 Rakuten Ichiba API Key（日本）</li>
-        <li>申請 Naver Developers API Key（韓國）</li>
+        <li>申請 Kakao Developers API Key（韓國）</li>
         <li>建立 MongoDB Atlas 免費叢集</li>
         <li>設計 products / reviews NoSQL Schema</li>
         <li>跑通 API 測試：各抓 10 個商品確認格式</li>
@@ -561,7 +562,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </div>
       <ul>
         <li>Rakuten API：日系保養/防曬/底妝分類，目標 300 SKU</li>
-        <li>Naver API：韓系保養/防曬，目標 200 SKU</li>
+        <li>Kakao API：韓系保養/防曬，目標 200 SKU</li>
         <li>建立品牌別名表（品牌中/日/韓/英對照）</li>
         <li>rapidfuzz 做跨語言商品名稱去重</li>
       </ul>
@@ -649,7 +650,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <span class="key">答：</span>
       商品完整資料（名稱、圖片、成分、售價）使用<strong>官方 API</strong>取得：
       日本商品用 Rakuten Ichiba API（日本最大電商，每日 3 萬次免費）、
-      韓國商品用 Naver Shopping API（韓國最大搜尋引擎，每日 2.5 萬次免費）。
+      韓國商品用 Kakao Shopping API（韓國最大搜尋引擎，每日 2.5 萬次免費）。
       兩個 API 資料與當地消費者在平台購物時所見完全一致，覆蓋主流日韓藥妝品牌。
       另外搭配 <strong>@cosme 排名爬蟲</strong>（日本最大美妝評比網）補充口碑評分與口コミ數，
       @cosme 網站以 SSR 渲染，用 requests + BeautifulSoup 解析 HTML 即可取得，不需要瀏覽器自動化。
@@ -707,7 +708,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">🛍</div>
       <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">完整商品資料庫</div>
-      <div class="goal-desc">透過 <strong>Rakuten API（日本）</strong>與 <strong>Naver API（韓國）</strong>取得完整商品資料，每筆均包含商品圖片、成分表、建議售價，資料來源為官方平台具備可信度；搭配 @cosme 爬蟲補充日本口碑評分（24 分類 480 筆）。</div>
+      <div class="goal-desc">透過 <strong>Rakuten API（日本）</strong>與 <strong>Kakao API（韓國）</strong>取得完整商品資料，每筆均包含商品圖片、成分表、建議售價，資料來源為官方平台具備可信度；搭配 @cosme 爬蟲補充日本口碑評分（24 分類 480 筆）。</div>
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">😊</div>
@@ -743,7 +744,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </tr>
       <tr>
         <td>商品資料庫</td>
-        <td>500+ SKU，來自 Rakuten + Naver 官方 API，含圖片與成分</td>
+        <td>500+ SKU，來自 Rakuten + Kakao 官方 API，含圖片與成分</td>
         <td><span class="badge b-p1">P1 確定交付</span></td>
       </tr>
       <tr>
