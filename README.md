@@ -24,4 +24,4 @@
 
 ## 企劃書
 
-- [drugstore_plan.html](./drugstore_plan.html)
+- [線上瀏覽](https://jayee123.github.io/PRJ_HTML_PLAN/drugstore_plan.html)
