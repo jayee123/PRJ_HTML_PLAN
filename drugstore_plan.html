@@ -212,7 +212,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   <div class="cover-meta">
     <div class="cover-meta-item"><div class="label">類型</div><div class="val">個人・資料工程 + AI 推薦</div></div>
     <div class="cover-meta-item"><div class="label">商品資料</div><div class="val">Rakuten API + Naver API</div></div>
-    <div class="cover-meta-item"><div class="label">評論資料</div><div class="val">PTT + Dcard + YouTube</div></div>
+    <div class="cover-meta-item"><div class="label">評論資料</div><div class="val">PTT · Dcard · @cosme</div></div>
     <div class="cover-meta-item"><div class="label">月費</div><div class="val">NT$0（全免費方案）</div></div>
   </div>
 
@@ -234,31 +234,35 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 <div class="primary-section" id="s1">
   <div class="section-num n1">01</div>
   <h2 class="sec">專題動機</h2>
-  <p class="lead">日韓藥妝市場龐大，消費者卻面臨資訊分散、難以個人化篩選的困境。</p>
+  <p class="lead">日韓已成國人最熱門旅遊目的地，藥妝為必買清單首位，但消費者面臨資訊分散、難以個人化篩選的困境。</p>
+
+  <div class="callout info" style="margin-bottom:20px;">
+    <strong>數據依據：</strong>根據交通部觀光署觀光統計資料庫 2026 年 1 月至 4 月統計，出境旅遊目的地中，日本位居第一，韓國位居第三，日韓合計占比近五成，顯示日韓旅遊已成為國人最熱門的旅遊選擇。
+  </div>
 
   <div class="sub-label">痛點分析</div>
   <div class="pain-grid" style="grid-template-columns:repeat(3,1fr);">
     <div class="pain-card">
+      <div class="pain-icon">🛒</div>
+      <h4>藥妝是旅遊必買品項</h4>
+      <p>藥妝商品因價格優惠、種類豐富及品質良好，成為許多赴日韓旅客購物清單中的重要項目。</p>
+    </div>
+    <div class="pain-card">
       <div class="pain-icon">🌐</div>
-      <h4>資訊太分散</h4>
-      <p>評測散落在多個不同平台，使用者需花大量時間自行比對，沒有統一的查詢入口。</p>
+      <h4>資訊分散於多平台</h4>
+      <p>消費者需耗費大量時間於不同網站、社群平台、部落格及影音平台分別搜尋，沒有統一查詢入口。</p>
     </div>
     <div class="pain-card">
       <div class="pain-icon">🤔</div>
       <h4>難以個人化篩選</h4>
-      <p>搜尋結果無法依照「乾性肌、預算 500 元」同時篩選，使用者只能靠運氣找到適合自己的產品。</p>
-    </div>
-    <div class="pain-card">
-      <div class="pain-icon">📦</div>
-      <h4>商品資訊不完整</h4>
-      <p>日韓原文商品名稱、成分表、適用膚質標示不統一，台灣消費者需要自行翻譯與比對，門檻高。</p>
+      <p>面對琳瑯滿目的藥妝產品與各式推薦，消費者難以同時依功能、評價、價格及適用對象快速決策。</p>
     </div>
   </div>
 
   <div class="callout tip">
-    <strong>核心痛點一句話：</strong>
-    消費者在購買日韓藥妝時，必須自己整合來自多個平台的資訊、再手動篩選符合自身條件的商品——
-    這個過程耗時且容易做出不符合自身需求的購買決策。
+    <strong>核心痛點：</strong>
+    消費者購買日韓藥妝時，必須自行整合散落於多個平台的資訊，再手動篩選符合自身條件的商品，
+    這個過程耗時且容易做出不符合需求的購買決策。
   </div>
 </div>
 
@@ -268,42 +272,42 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 <div class="primary-section" id="s2">
   <div class="section-num n2">02</div>
   <h2 class="sec">目的</h2>
-  <p class="lead">建立一個以資料驅動的日韓藥妝推薦平台，讓使用者不需要自己爬文比較，系統替他做完這件事。</p>
+  <p class="lead">開發「<strong>Buy託了AI</strong>」——結合 AI 推薦技術與藥妝資訊整合，協助消費者快速找到符合需求的日韓藥妝，打造一站式智慧購物輔助工具。</p>
 
   <div class="purpose-list">
     <div class="purpose-item">
       <div class="purpose-num" style="background:var(--pink);">1</div>
       <div>
-        <h4>聚合多平台評論，計算客觀好評率</h4>
-        <p>將 PTT、Dcard、YouTube 的評論透過 AI 情緒分析模型自動判定每則評論的正負傾向，聚合多平台結果為每個商品計算出「社群好評率」，取代人工逐篇閱覽比對。</p>
+        <h4>整合多平台評論，AI 彙整分析</h4>
+        <p>透過整合 PTT、Dcard、部落格等藥妝產品評價與使用心得，利用 AI 技術進行資料彙整與分析，整理各產品之優缺點與使用者回饋。</p>
       </div>
     </div>
     <div class="purpose-item">
       <div class="purpose-num" style="background:var(--purple);">2</div>
       <div>
-        <h4>建立結構化商品資料庫（官方 API）</h4>
-        <p>使用日本樂天 API 與韓國 Naver API 取得官方商品資料，確保商品名稱、圖片、成分、售價的準確性與合法性。</p>
+        <h4>建立完整商品資料庫（官方 API）</h4>
+        <p>使用日本 Rakuten API 與韓國 Naver API 取得官方完整商品資料（名稱、圖片、成分、售價），確保資料準確性；搭配 @cosme 排名爬蟲補充日本口碑評分資料。</p>
       </div>
     </div>
     <div class="purpose-item">
       <div class="purpose-num" style="background:var(--teal);">3</div>
       <div>
-        <h4>RAG 語意搜尋推薦</h4>
-        <p>使用者輸入「乾性肌保濕，預算500」，系統透過 RAG 向量搜尋找到語意最相關的商品，不依賴關鍵字完全比對。</p>
+        <h4>個人化推薦條件篩選</h4>
+        <p>依據使用者輸入之旅遊國家、預算及個人需求條件，提供個人化之藥妝推薦結果，降低消費者自行搜尋比較所需的時間成本。</p>
       </div>
     </div>
     <div class="purpose-item">
       <div class="purpose-num" style="background:#1d4ed8;">4</div>
       <div>
-        <h4>解決評論真偽問題</h4>
-        <p>選擇 PTT（社群審查機制）與 Dcard（實名認證）作為主要評論來源，結構性地降低業配文影響，提高推薦可信度。</p>
+        <h4>可信評論來源設計</h4>
+        <p>選擇 PTT（推文社群審查）與 Dcard（實名認證每日一篇）作為主要評論來源，搭配 @cosme 日本口碑評分，結構性地降低業配文影響，提高推薦可信度。</p>
       </div>
     </div>
     <div class="purpose-item">
       <div class="purpose-num" style="background:#0d9488;">5</div>
       <div>
-        <h4>個人化篩選，降低購買錯誤率</h4>
-        <p>依照膚質、品類、來源國、預算等條件多維度篩選，讓使用者找到真正適合自己的商品，減少衝動購買與退款。</p>
+        <h4>一站式智慧旅遊購物工具</h4>
+        <p>打造涵蓋日韓兩國藥妝的一站式推薦平台，提升選購效率與決策品質，作為出國前準備購物清單的智慧旅遊輔助工具。</p>
       </div>
     </div>
   </div>
@@ -321,18 +325,20 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   <div class="sub-label">3-1 資料來源需求</div>
 
   <div class="src-grid">
+
     <div class="src-card src-jp">
       <div class="flag">🇯🇵</div>
       <h4>日本商品資料</h4>
       <div class="api-badge">官方 API・合法・免費</div>
       <ul>
-        <li><strong>Rakuten 樂天 API</strong>（主要來源）</li>
+        <li><strong>Rakuten Ichiba API</strong>（主要來源）</li>
         <li>搜尋「スキンケア」「日焼け止め」等分類</li>
-        <li>回傳：商品名稱(日)、品牌、圖片、JPY 售價</li>
+        <li>回傳：商品名稱(日)、品牌、圖片、JPY 售價、成分</li>
         <li>每日 3 萬次查詢免費</li>
-        <li>資料即日本消費者所見的上架資料</li>
+        <li>資料與日本消費者在樂天購物時所見完全一致</li>
       </ul>
     </div>
+
     <div class="src-card src-kr">
       <div class="flag">🇰🇷</div>
       <h4>韓國商品資料</h4>
@@ -345,19 +351,54 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <li>覆蓋 Olive Young、Coupang 上架商品</li>
       </ul>
     </div>
+
     <div class="src-card src-rev" style="grid-column:1/-1;">
       <div class="flag">💬</div>
-      <h4>評論語料（可信度優先選平台）</h4>
-      <div class="api-badge">可信度有學術論據</div>
-      <ul style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;">
-        <li><strong>PTT 美妝板</strong>：推文機制讓社群自行審查，業配文易被肉搜，歷史可信度高</li>
-        <li><strong>Dcard 美妝版</strong>：大學生實名認證，每日一篇限制，刷評成本高</li>
-        <li><strong>YouTube（觀看數門檻）</strong>：只取觀看數 &gt; 1 萬影片字幕，低觀看業配較難過濾</li>
-      </ul>
+      <h4>評論語料（三個平台的爬取方式）</h4>
+      <div class="api-badge">爬蟲・已完成</div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">① PTT MakeUp 板</div>
+          <ul style="list-style:none;font-size:.82rem;color:#374151;">
+            <li style="padding:2px 0;">→ requests + BeautifulSoup 純 HTML，無 JS 渲染</li>
+            <li style="padding:2px 0;">→ <code>over18=1</code> Cookie 繞過成年確認（唯一反爬）</li>
+            <li style="padding:2px 0;">→ 建立 70+ 日韓品牌關鍵字清單（visee、CEZANNE、3CE、rom&nd 等）過濾相關文章</li>
+          </ul>
+        </div>
+
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">② Dcard 美妝版</div>
+          <ul style="list-style:none;font-size:.82rem;color:#374151;">
+            <li style="padding:2px 0;">→ 全站 Cloudflare Turnstile 人機驗證，純 requests 會 403</li>
+            <li style="padding:2px 0;">→ Playwright 啟動真實 Chromium（headless=False）以有視窗模式通過驗證</li>
+            <li style="padding:2px 0;">→ 攔截 <code>service/api/v2/posts</code> XHR，直接取 JSON，不解析 HTML</li>
+          </ul>
+        </div>
+
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">③ @cosme 排名爬蟲（日本口碑評分）</div>
+          <ul style="list-style:none;font-size:.82rem;color:#374151;">
+            <li style="padding:2px 0;">→ requests + BeautifulSoup 解析 SSR HTML（<code>dl.clearfix</code> 結構），不需要 Playwright</li>
+            <li style="padding:2px 0;">→ 嘗試多個 API endpoint 全數 404，最終改爬 HTML 成功</li>
+            <li style="padding:2px 0;">→ deep-translator 自動翻日文→繁中；24 分類共 480 筆商品排名 + 評分 + 口コミ數</li>
+          </ul>
+        </div>
+
+      </div>
+
       <div style="margin-top:10px;font-size:.8rem;color:#166534;font-weight:700;">
-        刻意不用 Instagram：反爬強 + 業配辨識困難，不納入主要語料，可對老師說明理由
+        刻意不用 Instagram：反爬強 + 業配辨識困難；YouTube 字幕列為後續擴充項目
       </div>
     </div>
+
+  </div>
+  <div class="callout tip" style="margin-top:8px;">
+    <strong>資料架構說明：</strong>
+    <strong>商品完整資料</strong>（名稱、圖片、成分、售價）來自 Rakuten API（日本）與 Naver API（韓國）；
+    <strong>口碑評論與評分</strong>來自 PTT、Dcard 爬蟲與 @cosme 排名爬蟲（附 @cosme 評分與口コミ數）。
+    兩條資料管道各司其職，缺一不可。
   </div>
 
   <!-- 3-2 功能需求 -->
@@ -367,15 +408,19 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <tbody>
       <tr>
         <td>商品資料擷取</td>
-        <td>從 Rakuten / Naver 官方 API 取得商品名稱、圖片、售價、品牌</td>
+        <td>Rakuten Ichiba API（日本）+ Naver Shopping API（韓國），取得商品名稱、圖片、售價、品牌、成分。官方合法，每日各 3 萬 / 2.5 萬次免費。</td>
         <td><span class="badge b-api">官方 API</span></td>
         <td><span class="badge b-p1">P1</span></td>
       </tr>
       <tr>
         <td>評論語料爬取</td>
-        <td>PTT 美妝板、Dcard 美妝版抓取評測文章，YouTube 下載自動字幕</td>
-        <td><span class="badge b-free">requests/BS4/yt-dlp</span></td>
-        <td><span class="badge b-p1">P1</span></td>
+        <td>
+          ① PTT MakeUp 板：requests + over18 Cookie；70+ 日韓品牌關鍵字篩選 ✓<br>
+          ② Dcard 美妝版：Playwright 繞 Cloudflare Turnstile + API JSON 攔截 ✓<br>
+          ③ @cosme 排名：解析 SSR HTML（dl.clearfix），日文 deep-translator 翻中，24 分類 480 筆 ✓
+        </td>
+        <td><span class="badge b-free">requests/BS4</span><span class="badge b-api">Playwright</span></td>
+        <td><span class="badge b-p1">P1 ✓ 已完成</span></td>
       </tr>
       <tr>
         <td>評論情緒分析</td>
@@ -439,9 +484,9 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <div class="arch-col-title">資料輸入</div>
         <div class="arch-node">Rakuten API<br><small>日本商品 + 圖片</small></div>
         <div class="arch-node">Naver API<br><small>韓國商品 + 圖片</small></div>
-        <div class="arch-node">PTT 美妝板<br><small>requests + BS4</small></div>
-        <div class="arch-node">Dcard 非官方 API<br><small>JSON 直取</small></div>
-        <div class="arch-node">YouTube 字幕<br><small>yt-dlp</small></div>
+        <div class="arch-node">PTT MakeUp 板<br><small>requests + BS4 · Cookie</small></div>
+        <div class="arch-node">Dcard 美妝版<br><small>Playwright · API 攔截</small></div>
+        <div class="arch-node">@cosme 排名爬蟲<br><small>BS4 + deep-translator</small></div>
       </div>
       <div class="c2">
         <div class="arch-col-title">處理層</div>
@@ -474,6 +519,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <tbody>
       <tr><td>日本商品資料</td><td>Rakuten Ichiba API</td><td>3 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>韓國商品資料</td><td>Naver Shopping API</td><td>2.5 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>@cosme 口碑排名</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>主資料庫</td><td>MongoDB Atlas M0</td><td>512MB</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>向量資料庫</td><td>ChromaDB（本機）</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>後端部署</td><td>Render.com</td><td>750 小時/月</td><td><span class="free-tag">NT$0</span></td></tr>
@@ -522,13 +568,13 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     </div>
     <div class="step">
       <div class="step-header">
-        <div class="step-week">第 3 週</div>
-        <h4>評論語料爬取</h4>
+        <div class="step-week">第 3 週 ✓</div>
+        <h4>評論語料爬取（三平台）</h4>
       </div>
       <ul>
-        <li>PTT MAKEUP 板：抓近 1 年，目標 3,000 篇</li>
-        <li>Dcard 美妝版：非官方 API 取 JSON，目標 2,000 篇</li>
-        <li>YouTube：yt-dlp 下載自動字幕（500 支）</li>
+        <li><strong>PTT：</strong>over18 Cookie 繞過，70+ 日韓品牌關鍵字篩選，已完成</li>
+        <li><strong>Dcard：</strong>Playwright 繞 Cloudflare，攔截 API XHR 取 JSON，已完成</li>
+        <li><strong>@cosme：</strong>解析 SSR HTML（dl.clearfix），deep-translator 翻中，24 分類 480 筆，已完成</li>
         <li>rapidfuzz 評論關聯到對應商品 product_id</li>
       </ul>
     </div>
@@ -598,13 +644,15 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   <div class="sub-label">4-2 評審問題預演</div>
 
   <div class="qa-item">
-    <div class="qa-q">商品資料完整嗎？你爬得到所有日韓商品嗎？<span class="qa-tag">最常問</span></div>
+    <div class="qa-q">商品資料完整嗎？你怎麼取得日韓商品資料？<span class="qa-tag">最常問</span></div>
     <div class="qa-a">
       <span class="key">答：</span>
-      我們不是靠爬蟲，而是使用<strong>官方 API</strong>。
-      日本商品使用 Rakuten Ichiba API（日本最大電商，每日 3 萬次查詢免費），
-      韓國商品使用 Naver Shopping API（韓國最大搜尋引擎，每日 2.5 萬次查詢）。
-      這兩個 API 的資料與消費者在這兩個平台上購物時所見完全一致，覆蓋市面上主流日韓藥妝品牌。
+      商品完整資料（名稱、圖片、成分、售價）使用<strong>官方 API</strong>取得：
+      日本商品用 Rakuten Ichiba API（日本最大電商，每日 3 萬次免費）、
+      韓國商品用 Naver Shopping API（韓國最大搜尋引擎，每日 2.5 萬次免費）。
+      兩個 API 資料與當地消費者在平台購物時所見完全一致，覆蓋主流日韓藥妝品牌。
+      另外搭配 <strong>@cosme 排名爬蟲</strong>（日本最大美妝評比網）補充口碑評分與口コミ數，
+      @cosme 網站以 SSR 渲染，用 requests + BeautifulSoup 解析 HTML 即可取得，不需要瀏覽器自動化。
     </div>
   </div>
 
@@ -613,10 +661,11 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="qa-a">
       <span class="key">答：</span>
       我們在設計上就選擇「結構性可信」的平台，而非試圖辨識業配文：<br>
-      ① <strong>PTT 美妝板</strong>：社群推文機制讓使用者自行審查，歷史上多次有業配文被肉搜公開，具公信力<br>
-      ② <strong>Dcard</strong>：大學生實名認證，每個帳號每天只能發一篇，刷評論成本極高<br>
-      ③ <strong>YouTube</strong>：設觀看數門檻（&gt;1 萬），低觀看數業配較難滿足此條件<br>
-      我們刻意不使用 Instagram，因其反爬措施強且業配辨識困難，這是有根據的設計決策。
+      ① <strong>PTT 美妝板</strong>：社群推文機制讓使用者自行審查，歷史上多次有業配文被肉搜公開，具公信力。
+      爬蟲用 requests + BeautifulSoup，唯一阻擋是成年確認 Cookie，一行繞過。<br>
+      ② <strong>Dcard</strong>：大學生實名認證，每個帳號每天只能發一篇，刷評論成本極高。
+      因全站有 Cloudflare Turnstile 人機驗證，採用 Playwright 有視窗模式通過驗證，再攔截 API XHR 直接取 JSON。<br>
+      YouTube 列為後續擴充（yt-dlp 自動字幕）；Instagram 刻意不用，反爬強且業配辨識困難。
     </div>
   </div>
 
@@ -658,7 +707,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">🛍</div>
       <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">完整商品資料庫</div>
-      <div class="goal-desc">透過 Rakuten API（日本）與 Naver API（韓國）取得商品資料，每筆商品均包含：<strong>商品圖片、成分表、建議售價</strong>，資料來源為官方平台，具備可信度與完整性。</div>
+      <div class="goal-desc">透過 <strong>Rakuten API（日本）</strong>與 <strong>Naver API（韓國）</strong>取得完整商品資料，每筆均包含商品圖片、成分表、建議售價，資料來源為官方平台具備可信度；搭配 @cosme 爬蟲補充日本口碑評分（24 分類 480 筆）。</div>
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">😊</div>
