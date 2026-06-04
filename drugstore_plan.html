@@ -211,8 +211,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   </p>
   <div class="cover-meta">
     <div class="cover-meta-item"><div class="label">類型</div><div class="val">個人・資料工程 + AI 推薦</div></div>
-    <div class="cover-meta-item"><div class="label">商品資料</div><div class="val">Rakuten API + Kakao API</div></div>
-    <div class="cover-meta-item"><div class="label">評論資料</div><div class="val">PTT · Dcard · @cosme</div></div>
+    <div class="cover-meta-item"><div class="label">商品資料</div><div class="val">Rakuten API + Olive Young</div></div>
+    <div class="cover-meta-item"><div class="label">評論資料</div><div class="val">PTT · Dcard · @cosme · 화해</div></div>
     <div class="cover-meta-item"><div class="label">月費</div><div class="val">NT$0（全免費方案）</div></div>
   </div>
 
@@ -286,7 +286,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <div class="purpose-num" style="background:var(--purple);">2</div>
       <div>
         <h4>建立完整商品資料庫（官方 API）</h4>
-        <p>使用日本 Rakuten API 與韓國 Kakao API 取得官方完整商品資料（名稱、圖片、成分、售價），確保資料準確性；搭配 @cosme 排名爬蟲補充日本口碑評分資料。</p>
+        <p>使用日本 Rakuten API 取得官方完整商品資料；韓國商品改爬 <strong>Olive Young</strong>（韓國最大藥妝連鎖），商品頁含名稱、品牌、圖片、KRW 售價、成分表，資料比 API 更完整；搭配 <strong>@cosme</strong> 排名爬蟲補充日本口碑評分、<strong>화해</strong> 排名爬蟲補充韓國口碑評分與成分安全評級。</p>
       </div>
     </div>
     <div class="purpose-item">
@@ -342,14 +342,14 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="src-card src-kr">
       <div class="flag">🇰🇷</div>
       <h4>韓國商品資料</h4>
-      <div class="api-badge">官方 API・合法・免費</div>
+      <div class="api-badge">爬蟲・Olive Young・免費</div>
       <ul>
-        <li><strong>Kakao Shopping API</strong>（主要來源）</li>
-        <li>申請只需 email，無需韓國手機號碼</li>
-        <li>搜尋「스킨케어」「선크림」等分類</li>
-        <li>回傳：商品名稱(韓)、品牌、圖片、KRW 售價、판매처</li>
-        <li>每日 30 萬次查詢免費</li>
-        <li>覆蓋 Kakao 旗下購物平台商品</li>
+        <li><strong>Olive Young</strong>（韓國最大藥妝連鎖，線上 + 實體）</li>
+        <li>涵蓋護膚、彩妝、防曬、保健食品、藥品全系列</li>
+        <li>商品頁含：名稱、品牌、KRW 售價、圖片、成分表、評分</li>
+        <li>分類排行榜可直接爬取，補充韓系熱銷商品資訊</li>
+        <li>requests + BeautifulSoup；JS 頁面改用 Playwright</li>
+        <li>無 API 請求次數限制，需設定禮貌延遲</li>
       </ul>
     </div>
 
@@ -387,19 +387,30 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
           </ul>
         </div>
 
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">④ 화해（Hwahae）排名爬蟲（韓國口碑評分）</div>
+          <ul style="list-style:none;font-size:.82rem;color:#374151;">
+            <li style="padding:2px 0;">→ 韓國最大美妝成分分析與評論平台（月活躍用戶 1,000 萬以上），定位與 @cosme 對稱</li>
+            <li style="padding:2px 0;">→ 提供分類商品排名、用戶評分、成分安全評級，補充韓國社群口碑資料</li>
+            <li style="padding:2px 0;">→ requests + BeautifulSoup 或 Playwright 解析商品排名頁，deep-translator 翻韓文→繁中</li>
+            <li style="padding:2px 0;">→ 覆蓋保養、彩妝、防曬等分類，輸出與 @cosme 爬蟲同格式 CSV，方便統一處理</li>
+          </ul>
+        </div>
+
       </div>
 
       <div style="margin-top:10px;font-size:.8rem;color:#166534;font-weight:700;">
-        刻意不用 Instagram：反爬強 + 業配辨識困難；YouTube 字幕列為後續擴充項目
+        刻意不用 Instagram：反爬強 + 業配辨識困難；YouTube 字幕列為後續擴充項目。<br>
+        架構對稱設計：日本 → @cosme 提供排名 + 評分；韓國 → 화해 提供排名 + 評分 + 成分安全評級。
       </div>
     </div>
 
   </div>
   <div class="callout tip" style="margin-top:8px;">
     <strong>資料架構說明：</strong>
-    <strong>商品完整資料</strong>（名稱、圖片、成分、售價）來自 Rakuten API（日本）與 Kakao API（韓國）；
-    <strong>口碑評論與評分</strong>來自 PTT、Dcard 爬蟲與 @cosme 排名爬蟲（附 @cosme 評分與口コミ數）。
-    兩條資料管道各司其職，缺一不可。
+    <strong>商品完整資料</strong>（名稱、圖片、成分、售價）來自 Rakuten API（日本）與 Olive Young 爬蟲（韓國）；
+    <strong>口碑評論與評分</strong>來自 PTT、Dcard 爬蟲、@cosme 排名爬蟲（日本口コミ數 + 評分）與 화해 排名爬蟲（韓國評分 + 成分安全評級）。
+    兩條資料管道各司其職，缺一不可；評論爬蟲則以「日本 @cosme ↔ 韓國 화해」對稱補齊兩國口碑資料。
   </div>
 
   <!-- 3-2 功能需求 -->
@@ -409,7 +420,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <tbody>
       <tr>
         <td>商品資料擷取</td>
-        <td>Rakuten Ichiba API（日本）+ Kakao Shopping API（韓國），取得商品名稱、圖片、售價、品牌、成分。官方合法，每日各 3 萬 / 2.5 萬次免費。</td>
+        <td>Rakuten Ichiba API（日本）+ Olive Young 爬蟲（韓國），取得商品名稱、圖片、售價、品牌、成分。Rakuten 官方 API 每日 3 萬次免費；Olive Young 爬蟲無請求限制，需禮貌延遲。</td>
         <td><span class="badge b-api">官方 API</span></td>
         <td><span class="badge b-p1">P1</span></td>
       </tr>
@@ -418,7 +429,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <td>
           ① PTT MakeUp 板：requests + over18 Cookie；70+ 日韓品牌關鍵字篩選 ✓<br>
           ② Dcard 美妝版：Playwright 繞 Cloudflare Turnstile + API JSON 攔截 ✓<br>
-          ③ @cosme 排名：解析 SSR HTML（dl.clearfix），日文 deep-translator 翻中，24 分類 480 筆 ✓
+          ③ @cosme 排名：解析 SSR HTML（dl.clearfix），日文 deep-translator 翻中，24 分類 480 筆 ✓<br>
+          ④ 화해 排名：韓國最大美妝評論平台，補充韓系商品口碑評分 + 成分安全評級，與 @cosme 架構對稱
         </td>
         <td><span class="badge b-free">requests/BS4</span><span class="badge b-api">Playwright</span></td>
         <td><span class="badge b-p1">P1 ✓ 已完成</span></td>
@@ -484,10 +496,11 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <div class="c1">
         <div class="arch-col-title">資料輸入</div>
         <div class="arch-node">Rakuten API<br><small>日本商品 + 圖片</small></div>
-        <div class="arch-node">Kakao API<br><small>韓國商品 + 圖片</small></div>
+        <div class="arch-node">Olive Young 爬蟲<br><small>韓國商品 + 圖片</small></div>
         <div class="arch-node">PTT MakeUp 板<br><small>requests + BS4 · Cookie</small></div>
         <div class="arch-node">Dcard 美妝版<br><small>Playwright · API 攔截</small></div>
-        <div class="arch-node">@cosme 排名爬蟲<br><small>BS4 + deep-translator</small></div>
+        <div class="arch-node">@cosme 排名爬蟲<br><small>BS4 + deep-translator（日）</small></div>
+        <div class="arch-node">화해 排名爬蟲<br><small>BS4 + deep-translator（韓）</small></div>
       </div>
       <div class="c2">
         <div class="arch-col-title">處理層</div>
@@ -519,8 +532,9 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <thead><tr><th>項目</th><th>工具</th><th>免費額度</th><th>月費</th></tr></thead>
     <tbody>
       <tr><td>日本商品資料</td><td>Rakuten Ichiba API</td><td>3 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>韓國商品資料</td><td>Kakao Shopping API</td><td>30 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>@cosme 口碑排名</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>韓國商品資料</td><td>Olive Young 爬蟲</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>@cosme 口碑排名（日本）</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>화해 口碑排名（韓國）</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>主資料庫</td><td>MongoDB Atlas M0</td><td>512MB</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>向量資料庫</td><td>ChromaDB（本機）</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
       <tr><td>後端部署</td><td>Render.com</td><td>750 小時/月</td><td><span class="free-tag">NT$0</span></td></tr>
@@ -549,7 +563,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </div>
       <ul>
         <li>申請 Rakuten Ichiba API Key（日本）</li>
-        <li>申請 Kakao Developers API Key（韓國）</li>
+        <li>建立 Olive Young 爬蟲（韓國商品資料）</li>
         <li>建立 MongoDB Atlas 免費叢集</li>
         <li>設計 products / reviews NoSQL Schema</li>
         <li>跑通 API 測試：各抓 10 個商品確認格式</li>
@@ -562,7 +576,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </div>
       <ul>
         <li>Rakuten API：日系保養/防曬/底妝分類，目標 300 SKU</li>
-        <li>Kakao API：韓系保養/防曬，目標 200 SKU</li>
+        <li>Olive Young：韓系保養/防曬分類頁，目標 200 SKU</li>
         <li>建立品牌別名表（品牌中/日/韓/英對照）</li>
         <li>rapidfuzz 做跨語言商品名稱去重</li>
       </ul>
@@ -576,6 +590,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <li><strong>PTT：</strong>over18 Cookie 繞過，70+ 日韓品牌關鍵字篩選，已完成</li>
         <li><strong>Dcard：</strong>Playwright 繞 Cloudflare，攔截 API XHR 取 JSON，已完成</li>
         <li><strong>@cosme：</strong>解析 SSR HTML（dl.clearfix），deep-translator 翻中，24 分類 480 筆，已完成</li>
+        <li><strong>화해：</strong>韓國最大美妝評論平台，爬取分類排名 + 評分 + 成分安全評級，deep-translator 翻韓中，補齊韓系口碑資料</li>
         <li>rapidfuzz 評論關聯到對應商品 product_id</li>
       </ul>
     </div>
@@ -650,10 +665,11 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <span class="key">答：</span>
       商品完整資料（名稱、圖片、成分、售價）使用<strong>官方 API</strong>取得：
       日本商品用 Rakuten Ichiba API（日本最大電商，每日 3 萬次免費）、
-      韓國商品用 Kakao Shopping API（韓國最大搜尋引擎，每日 2.5 萬次免費）。
+      韓國商品用 <strong>Olive Young 爬蟲</strong>（韓國最大藥妝連鎖，商品頁含名稱、品牌、售價、圖片、成分表，分類排行榜可直接爬取）。
       兩個 API 資料與當地消費者在平台購物時所見完全一致，覆蓋主流日韓藥妝品牌。
-      另外搭配 <strong>@cosme 排名爬蟲</strong>（日本最大美妝評比網）補充口碑評分與口コミ數，
-      @cosme 網站以 SSR 渲染，用 requests + BeautifulSoup 解析 HTML 即可取得，不需要瀏覽器自動化。
+      另外搭配 <strong>@cosme 排名爬蟲</strong>（日本最大美妝評比網）補充日本口碑評分與口コミ數，
+      以及 <strong>화해 排名爬蟲</strong>（韓國最大美妝評論 + 成分分析平台，月活 1,000 萬以上）補充韓系商品口碑評分，
+      兩者皆以 requests + BeautifulSoup 解析 HTML 取得，架構上形成「日本 @cosme ↔ 韓國 화해」對稱設計。
     </div>
   </div>
 
@@ -708,7 +724,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">🛍</div>
       <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">完整商品資料庫</div>
-      <div class="goal-desc">透過 <strong>Rakuten API（日本）</strong>與 <strong>Kakao API（韓國）</strong>取得完整商品資料，每筆均包含商品圖片、成分表、建議售價，資料來源為官方平台具備可信度；搭配 @cosme 爬蟲補充日本口碑評分（24 分類 480 筆）。</div>
+      <div class="goal-desc">透過 <strong>Rakuten API（日本）</strong>與 <strong>Olive Young 爬蟲（韓國）</strong>取得完整商品資料，每筆均包含商品圖片、成分表、建議售價；搭配 @cosme 爬蟲補充日本口碑評分（24 分類 480 筆）、화해 爬蟲補充韓國口碑評分。</div>
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">😊</div>
@@ -744,7 +760,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </tr>
       <tr>
         <td>商品資料庫</td>
-        <td>500+ SKU，來自 Rakuten + Kakao 官方 API，含圖片與成分</td>
+        <td>500+ SKU，來自 Rakuten API（日本）+ Olive Young 爬蟲（韓國），含圖片與成分</td>
         <td><span class="badge b-p1">P1 確定交付</span></td>
       </tr>
       <tr>
