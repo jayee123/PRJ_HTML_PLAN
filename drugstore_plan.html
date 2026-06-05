@@ -44,7 +44,7 @@ body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--light);col
   padding:28px 32px;margin:48px auto 0;max-width:900px;width:calc(100% - 48px);}
 .toc h3{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
   color:var(--gray);margin-bottom:16px;}
-.toc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.toc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
 .toc-item{text-align:center;padding:16px 8px;border-radius:10px;cursor:pointer;
   transition:background .15s;border:1.5px solid transparent;}
 .toc-item:hover{background:var(--pink-soft);border-color:var(--pink-mid);}
@@ -67,6 +67,7 @@ body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--light);col
 .n3{background:linear-gradient(135deg,#0d9488,#34d399);}
 .n4{background:linear-gradient(135deg,#d97706,#fbbf24);}
 .n5{background:linear-gradient(135deg,#1d4ed8,#60a5fa);}
+.n6{background:linear-gradient(135deg,#0891b2,#22d3ee);}
 
 .primary-section h2{font-size:1.9rem;font-weight:900;margin-bottom:6px;}
 .primary-section > .lead{color:var(--gray);font-size:1rem;margin-bottom:32px;max-width:640px;}
@@ -221,9 +222,10 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="toc-grid">
       <div class="toc-item"><div class="toc-num">01</div><div class="toc-name">專題動機</div></div>
       <div class="toc-item"><div class="toc-num">02</div><div class="toc-name">目的</div></div>
-      <div class="toc-item"><div class="toc-num">03</div><div class="toc-name">系統需求</div></div>
-      <div class="toc-item"><div class="toc-num">04</div><div class="toc-name">進行方式</div></div>
-      <div class="toc-item"><div class="toc-num">05</div><div class="toc-name">預期達成目標</div></div>
+      <div class="toc-item"><div class="toc-num">03</div><div class="toc-name">方法</div></div>
+      <div class="toc-item"><div class="toc-num">04</div><div class="toc-name">系統需求</div></div>
+      <div class="toc-item"><div class="toc-num">05</div><div class="toc-name">進行方式</div></div>
+      <div class="toc-item"><div class="toc-num">06</div><div class="toc-name">預期達成目標</div></div>
     </div>
   </div>
 </section>
@@ -315,14 +317,133 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 
 <div class="divider"></div>
 
-<!-- ═══════ 03 系統需求 ═══════ -->
+<!-- ═══════ 03 方法 ═══════ -->
 <div class="primary-section" id="s3">
   <div class="section-num n3">03</div>
+  <h2 class="sec">方法</h2>
+  <p class="lead">說明各資料來源的實際爬取技術、認證方式與反爬處理，以及目前已驗證的資料筆數和欄位完整度。</p>
+
+  <div class="sub-label">3-1 各資料來源爬取方式</div>
+  <table class="req-table">
+    <thead><tr><th>資料來源</th><th>爬取工具</th><th>關鍵技術挑戰</th><th>已驗證筆數</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Rakuten Ichiba API</strong><br><small>日本商品</small></td>
+        <td>官方 REST API v2026-04-01<br>requests 直接呼叫</td>
+        <td>新版需同時傳 <code>applicationId</code>（UUID格式）與 <code>accessKey</code>（pk_ 開頭）；後台需設 IP 白名單，動態 IP（手機熱點）須設全開</td>
+        <td><span class="badge b-p1">✅ 1,116 筆</span></td>
+      </tr>
+      <tr>
+        <td><strong>Olive Young 爬蟲</strong><br><small>韓國商品</small></td>
+        <td>requests + BeautifulSoup<br>JS 頁面改 Playwright</td>
+        <td>靜態分類頁以 BS4 解析；需設 User-Agent 避免 403；成分表在商品詳細頁，需另外爬取</td>
+        <td><span class="badge b-p1">✅ 216 筆</span></td>
+      </tr>
+      <tr>
+        <td><strong>@cosme 排名爬蟲</strong><br><small>日本口碑評分</small></td>
+        <td>requests + BeautifulSoup<br>SSR HTML 解析</td>
+        <td>嘗試多個 API endpoint 全數 404；最終改爬 <code>dl.clearfix</code> SSR HTML 成功；deep-translator 日文→繁中</td>
+        <td><span class="badge b-p1">✅ 480 筆（24 分類）</span></td>
+      </tr>
+      <tr>
+        <td><strong>화해 排名爬蟲</strong><br><small>韓國口碑評分</small></td>
+        <td>requests + JSON API<br>Gateway API 解析</td>
+        <td>探測多組 API endpoint 後找到正確 Gateway API；deep-translator 韓文→繁中</td>
+        <td><span class="badge b-p1">✅ 860 筆</span></td>
+      </tr>
+      <tr>
+        <td><strong>PTT MakeUp 板</strong><br><small>台灣評論</small></td>
+        <td>requests + BeautifulSoup</td>
+        <td>成年確認以 <code>over18=1</code> Cookie 繞過（唯一阻擋）；70+ 日韓品牌關鍵字清單篩選相關文章</td>
+        <td><span class="badge b-p2">⚠️ 11 筆<br><small>（列表 metadata，文章內文待爬）</small></span></td>
+      </tr>
+      <tr>
+        <td><strong>Dcard 美妝版</strong><br><small>台灣評論</small></td>
+        <td>Playwright（Chromium 有視窗模式）</td>
+        <td>Cloudflare Turnstile 人機驗證需真實瀏覽器；攔截 <code>service/api/v2/posts</code> XHR 直接取 JSON，不解析 HTML</td>
+        <td><span class="badge b-p3">規劃中（第 3 週）</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sub-label">3-2 資料欄位完整度</div>
+  <table class="req-table">
+    <thead><tr><th>來源</th><th>已有欄位</th><th>缺少 / 待補</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Rakuten API</td>
+        <td>商品名(日)、品牌(店名)、JPY售價、圖片URL、商品說明、評分、評論數</td>
+        <td>成分表（含在商品說明文字中，需正規表達式解析）</td>
+      </tr>
+      <tr>
+        <td>Olive Young</td>
+        <td>商品名(韓/中)、品牌(韓/中)、KRW售價、圖片URL、商品連結</td>
+        <td>成分表、評分（需爬商品詳細頁）</td>
+      </tr>
+      <tr>
+        <td>@cosme</td>
+        <td>大分類(日/中)、品牌(日/中)、商品名(日/中)、評分、口コミ數、價格、圖片</td>
+        <td>— 完整</td>
+      </tr>
+      <tr>
+        <td>화해</td>
+        <td>商品名(韓/中)、品牌(韓/中)、平均評分、評論數、KRW售價、容量、圖片URL</td>
+        <td>— 完整</td>
+      </tr>
+      <tr>
+        <td>PTT</td>
+        <td>標題、作者、日期、推文數、連結</td>
+        <td>文章內文（情緒分析的核心，需補爬）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>主要缺口：</strong>
+    ① <strong>成分表</strong>：日韓兩邊都需額外爬商品詳細頁才能取得結構化成分資料<br>
+    ② <strong>PTT 文章內文</strong>：目前只有列表 metadata，尚未爬取文章本文，是情緒分析的前提<br>
+    ③ <strong>Dcard</strong>：尚未實作，預計第 3 週開發
+  </div>
+  <div class="callout ok" style="margin-top:8px;">
+    <strong>已驗證可正常運作的資料管道：</strong>
+    Rakuten API（1,116 筆）、Olive Young（216 筆）、@cosme（480 筆）、화해（860 筆）均已驗證格式正確，可進入整合處理階段。
+  </div>
+
+  <div class="sub-label">3-3 跨來源資料整合方式</div>
+  <div class="src-grid">
+    <div class="src-card src-jp">
+      <div class="flag">🔗</div>
+      <h4>商品配對（跨語言名稱對齊）</h4>
+      <ul>
+        <li>rapidfuzz 模糊比對商品名稱（中/日/韓）</li>
+        <li>建立品牌別名對照表（中/日/韓/英）</li>
+        <li>Olive Young ↔ 화해 以商品 ID 直接對齊</li>
+        <li>Rakuten ↔ @cosme 以品牌名 + 商品名模糊比對</li>
+      </ul>
+    </div>
+    <div class="src-card src-kr">
+      <div class="flag">🌐</div>
+      <h4>多語言處理</h4>
+      <ul>
+        <li>@cosme：日文 → deep-translator → 繁中（已完成）</li>
+        <li>화해：韓文 → deep-translator → 繁中（已完成）</li>
+        <li>PTT / Dcard：繁體中文，直接使用</li>
+        <li>情緒模型：選用支援繁中的 HuggingFace 模型</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ 04 系統需求 ═══════ -->
+<div class="primary-section" id="s4">
+  <div class="section-num n4">04</div>
   <h2 class="sec">系統需求</h2>
   <p class="lead">定義兩大資料管道、AI 技術需求、儲存架構與前後端規格。</p>
 
-  <!-- 3-1 資料來源 -->
-  <div class="sub-label">3-1 資料來源需求</div>
+  <!-- 4-1 資料來源 -->
+  <div class="sub-label">4-1 資料來源需求</div>
 
   <div class="src-grid">
 
@@ -331,11 +452,11 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <h4>日本商品資料</h4>
       <div class="api-badge">官方 API・合法・免費</div>
       <ul>
-        <li><strong>Rakuten Ichiba API</strong>（主要來源）</li>
-        <li>搜尋「スキンケア」「日焼け止め」等分類</li>
-        <li>回傳：商品名稱(日)、品牌、圖片、JPY 售價、成分</li>
-        <li>每日 3 萬次查詢免費</li>
-        <li>資料與日本消費者在樂天購物時所見完全一致</li>
+        <li><strong>Rakuten Ichiba API</strong>（主要來源）・v2026-04-01</li>
+        <li>搜尋「スキンケア」「日焼け止め」等 13 個分類</li>
+        <li>回傳：商品名稱(日)、品牌、圖片、JPY 售價、評分、評論數</li>
+        <li>成分含在商品說明文字中（非獨立結構化欄位）</li>
+        <li>每日 3 萬次查詢免費；已驗證：<strong>1,116 筆</strong></li>
       </ul>
     </div>
 
@@ -413,8 +534,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     兩條資料管道各司其職，缺一不可；評論爬蟲則以「日本 @cosme ↔ 韓國 화해」對稱補齊兩國口碑資料。
   </div>
 
-  <!-- 3-2 功能需求 -->
-  <div class="sub-label">3-2 功能需求清單</div>
+  <!-- 4-2 功能需求 -->
+  <div class="sub-label">4-2 功能需求清單</div>
   <table class="req-table">
     <thead><tr><th>功能模組</th><th>需求說明</th><th>技術方案</th><th>優先度</th></tr></thead>
     <tbody>
@@ -486,8 +607,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     </tbody>
   </table>
 
-  <!-- 3-3 系統架構 -->
-  <div class="sub-label">3-3 系統架構</div>
+  <!-- 4-3 系統架構 -->
+  <div class="sub-label">4-3 系統架構</div>
   <div class="arch">
     <div style="text-align:center;font-size:.76rem;color:var(--gray);margin-bottom:14px;font-weight:600;">
       官方 API + 評論爬蟲 → 處理與分析 → 向量化(RAG) → 推薦展示
@@ -526,8 +647,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     </div>
   </div>
 
-  <!-- 3-4 費用 -->
-  <div class="sub-label">3-4 費用需求（全免費方案）</div>
+  <!-- 4-4 費用 -->
+  <div class="sub-label">4-4 費用需求（全免費方案）</div>
   <table class="cost-table">
     <thead><tr><th>項目</th><th>工具</th><th>免費額度</th><th>月費</th></tr></thead>
     <tbody>
@@ -548,13 +669,13 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 
 <div class="divider"></div>
 
-<!-- ═══════ 04 進行方式 ═══════ -->
-<div class="primary-section" id="s4">
-  <div class="section-num n4">04</div>
+<!-- ═══════ 05 進行方式 ═══════ -->
+<div class="primary-section" id="s5">
+  <div class="section-num n5">05</div>
   <h2 class="sec">進行方式</h2>
   <p class="lead">個人開發・CPU 筆電為主・8 週完成 MVP，採分階段驗證策略，先跑通再擴量。</p>
 
-  <div class="sub-label">4-1 開發時程（8 週）</div>
+  <div class="sub-label">5-1 開發時程（8 週）</div>
   <div class="steps">
     <div class="step">
       <div class="step-header">
@@ -656,8 +777,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     </div>
   </div>
 
-  <!-- 4-2 老師攻擊預演 -->
-  <div class="sub-label">4-2 評審問題預演</div>
+  <!-- 5-2 老師攻擊預演 -->
+  <div class="sub-label">5-2 評審問題預演</div>
 
   <div class="qa-item">
     <div class="qa-q">商品資料完整嗎？你怎麼取得日韓商品資料？<span class="qa-tag">最常問</span></div>
@@ -712,14 +833,14 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 
 <div class="divider"></div>
 
-<!-- ═══════ 05 預期達成目標 ═══════ -->
-<div class="primary-section" id="s5">
-  <div class="section-num n5">05</div>
+<!-- ═══════ 06 預期達成目標 ═══════ -->
+<div class="primary-section" id="s6">
+  <div class="section-num n6">06</div>
   <h2 class="sec">預期達成目標</h2>
   <p class="lead">明確定義系統核心功能的達成目標，作為期末展示的驗收基準。</p>
 
   <!-- 核心目標 -->
-  <div class="sub-label">5-1 核心功能目標</div>
+  <div class="sub-label">6-1 核心功能目標</div>
   <div class="goal-grid" style="grid-template-columns:repeat(2,1fr);">
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">🛍</div>
@@ -744,7 +865,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   </div>
 
   <!-- 期末交付物 -->
-  <div class="sub-label">5-2 期末交付物</div>
+  <div class="sub-label">6-2 期末交付物</div>
   <div class="callout ok">
     <strong>可線上存取的完整系統（非 Demo 截圖）</strong><br>
     前端網址（GitHub Pages）+ 後端 API（Render.com）全部上線，評審可現場操作。
@@ -792,7 +913,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   </table>
 
   <!-- 質化目標 -->
-  <div class="sub-label">5-3 質化成果目標</div>
+  <div class="sub-label">6-3 質化成果目標</div>
   <div class="callout info">
     <strong>這個系統解決了什麼問題？</strong><br>
     使用者在購買日韓藥妝時，不再需要自己整合 5 個平台的資訊、自己判斷評論真假。
