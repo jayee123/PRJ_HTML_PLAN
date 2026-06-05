@@ -431,40 +431,19 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <li>화해：韓文 → deep-translator → 繁中（已完成）</li>
         <li>PTT / Dcard：繁體中文，直接使用</li>
         <li>立場分析：uer/roberta-jd-binary（二元 positive/negative，繁中適用）</li>
-        <li>情緒分類：Johnson8187/Chinese-Emotion（8 類情緒，展示用）</li>
       </ul>
     </div>
   </div>
 
-  <div class="sub-label">3-4 情緒與立場分析方法</div>
+  <div class="sub-label">3-4 立場分析方法</div>
 
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
-
-    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
-      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">① 立場分析（好評率核心）</div>
-      <ul style="list-style:none;font-size:.82rem;color:#374151;">
-        <li style="padding:2px 0;">→ 模型：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>（約 400MB，CPU 可跑）</li>
-        <li style="padding:2px 0;">→ 輸出：positive / negative，直接對應好評 / 負評</li>
-        <li style="padding:2px 0;">→ 用途：計算每個商品的 <strong>好評率（sentiment_pos_rate）</strong>，作為推薦排序的核心分數依據</li>
-        <li style="padding:2px 0;">→ 訓練資料為中文電商商品評論（京東），對藥妝評語準確率最高；使用 HuggingFace pipeline，device=-1 跑 CPU</li>
-      </ul>
-    </div>
-
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;">
-      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">② 情緒分類（商品頁展示）</div>
-      <ul style="list-style:none;font-size:.82rem;color:#374151;">
-        <li style="padding:2px 0;">→ 模型：<code>Johnson8187/Chinese-Emotion</code>（AutoModelForSequenceClassification + Softmax）</li>
-        <li style="padding:2px 0;">→ 輸出：8 類情緒 ── 開心 / 厭惡 / 憤怒 / 悲傷 / 疑問 / 驚奇 / 關切 / 平淡</li>
-        <li style="padding:2px 0;">→ 信心分數 = 最高機率 × 100（0–100 分）</li>
-        <li style="padding:2px 0;">→ 用途：儲存至 <code>emotion_distribution</code> 欄位，前端展示「這個商品評論以開心為主」的情緒圓餅圖</li>
-      </ul>
-    </div>
-
-  </div>
-
-  <div class="callout warn">
-    <strong>為何不用 8-emotion 推算好評率？</strong><br>
-    「驚奇語調」可能是正向驚喜（「效果好到嚇到」）或負向驚訝（「沒想到這麼爛」），語意方向不確定，無法可靠地映射到好/負評。立場分析模型直接為 positive/negative 訓練，精確度更高，兩者分工明確。
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px;">
+    <ul style="list-style:none;font-size:.82rem;color:#374151;">
+      <li style="padding:2px 0;">→ 模型：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>（約 400MB，CPU 可跑）</li>
+      <li style="padding:2px 0;">→ 輸出：positive / negative，直接對應好評 / 負評</li>
+      <li style="padding:2px 0;">→ 用途：計算每個商品的 <strong>好評率（sentiment_pos_rate）</strong>，作為推薦排序的核心分數依據</li>
+      <li style="padding:2px 0;">→ 訓練資料為中文電商商品評論（京東），對藥妝評語準確率最高；HuggingFace pipeline，device=-1 跑 CPU</li>
+    </ul>
   </div>
 
   <div class="sub-label">3-5 RAG 向量搜尋方法</div>
@@ -539,7 +518,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </tr>
       <tr>
         <td>文字長度截斷</td>
-        <td>情緒模型輸入：<code>text[:512]</code>（模型 token 上限）<br>評論配對輸入：<code>text[:300]</code><br>Rakuten 商品說明：<code>itemCaption[:200]</code></td>
+        <td>立場分析模型輸入：<code>text[:512]</code>（模型 token 上限）<br>評論配對輸入：<code>text[:300]</code><br>Rakuten 商品說明：<code>itemCaption[:200]</code></td>
         <td>評論 NLP、RAG、Rakuten</td>
         <td><span class="badge b-p1">✅ 已實作</span></td>
       </tr>
@@ -686,7 +665,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div style="display:flex;flex-direction:column;gap:10px;font-size:.85rem;">
       <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">1</span><div><strong>商品資料擷取</strong><br>日本：Rakuten Ichiba API（官方，每日 3 萬次免費）；韓國：Olive Young 爬蟲</div></div>
       <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">2</span><div><strong>評論語料爬取</strong><br>PTT MakeUp 板、Dcard 美妝版、@cosme 排名（日本）、화해 排名（韓國）</div></div>
-      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">3</span><div><strong>評論分析</strong><br>立場分析（好評率計算）+ 情緒分類（8 類情緒展示），兩條管道各自獨立</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">3</span><div><strong>評論立場分析</strong><br>每則評論標記 positive / negative，計算各商品好評率，作為推薦排序依據</div></div>
       <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">4</span><div><strong>評論與商品配對</strong><br>向量語意相似度自動配對，相似度門檻 0.65</div></div>
       <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">5</span><div><strong>RAG 語意推薦</strong><br>使用者以自然語言描述需求 → 向量搜尋 → 取 Top-K 最相關商品</div></div>
       <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">6</span><div><strong>結構化篩選 API</strong><br>依膚質 × 品類 × 預算多條件過濾，結合好評率綜合排序</div></div>
@@ -721,7 +700,6 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <div class="c2">
         <div class="arch-col-title">處理層</div>
         <div class="arch-node">立場分析<br><small>uer/roberta → 好評率</small></div>
-        <div class="arch-node">情緒分類<br><small>Johnson8187 → 8 類展示</small></div>
         <div class="arch-node">商品名稱對齊<br><small>rapidfuzz</small></div>
         <div class="arch-node">評分計算<br><small>好評率 × 聲量</small></div>
         <div class="arch-node">GPT-4o 摘要<br><small>P2・加分</small></div>
@@ -803,13 +781,12 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     <div class="step">
       <div class="step-header">
         <div class="step-week">第 4 週</div>
-        <h4>情緒分析 + 評分計算</h4>
+        <h4>立場分析 + 評分計算</h4>
       </div>
       <ul>
-        <li><strong>立場分析</strong>：uer/roberta-jd-binary 跑全部評論 → positive/negative</li>
-        <li><strong>情緒分類</strong>：Johnson8187/Chinese-Emotion 跑全部評論 → 8 類情緒</li>
-        <li>計算每個商品：好評率 × log(提及數) 綜合分數（以立場分析結果為準）</li>
-        <li>更新 products.score / sentiment_pos_rate / emotion_distribution</li>
+        <li>uer/roberta-jd-binary 跑全部評論 → positive / negative</li>
+        <li>計算每個商品：好評率 × log(提及數) 綜合分數</li>
+        <li>更新 products.score / sentiment_pos_rate</li>
         <li>人工抽查 Top 20 商品分數合理性</li>
       </ul>
     </div>
@@ -935,8 +912,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">😊</div>
-      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">全評論雙模型分析</div>
-      <div class="goal-desc">所有評論均不做抽樣，以 <strong>立場分析</strong>（uer/roberta）標記好評/負評計算社群好評率，同步以 <strong>情緒分類</strong>（Johnson8187）輸出 8 類情緒分布，兩條管道各自獨立運算。</div>
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">全評論立場分析</div>
+      <div class="goal-desc">所有評論均不做抽樣，以 <strong>立場分析</strong>（uer/roberta）標記好評／負評，計算每個商品的社群好評率。</div>
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">🔍</div>
@@ -971,8 +948,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <td><span class="badge b-p1">P1 確定交付</span></td>
       </tr>
       <tr>
-        <td>評論分析（立場 + 情緒）</td>
-        <td>5,000+ 篇評論完成立場分析（好評率可視化）+ 情緒分類（8 類情緒分布），兩個模型各自獨立輸出</td>
+        <td>評論立場分析</td>
+        <td>5,000+ 篇評論完成立場分析，輸出好評率並可視化</td>
         <td><span class="badge b-p1">P1 確定交付</span></td>
       </tr>
       <tr>
@@ -1046,12 +1023,11 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <td><span class="badge b-p1">P1 ✓ 已完成</span></td>
       </tr>
       <tr>
-        <td>評論情緒分析</td>
+        <td>評論立場分析</td>
         <td>
-          <strong>① 立場分析</strong>：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>，positive / negative，計算好評率（約 400MB，CPU）<br>
-          <strong>② 情緒分類</strong>：<code>Johnson8187/Chinese-Emotion</code>，8 類情緒展示（開心／厭惡／憤怒等）
+          <code>uer/roberta-base-finetuned-jd-binary-chinese</code>，positive / negative，計算每個商品好評率（約 400MB，CPU 可執行）
         </td>
-        <td><span class="badge b-free">uer/roberta（立場）</span><br><span class="badge b-api">Johnson8187（情緒）</span></td>
+        <td><span class="badge b-free">uer/roberta</span></td>
         <td><span class="badge b-p1">P1</span></td>
       </tr>
       <tr>
