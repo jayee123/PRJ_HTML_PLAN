@@ -558,8 +558,15 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </tr>
       <tr>
         <td>評論情緒分析</td>
-        <td>每則評論標記 正面/負面/中立，計算商品好評率</td>
-        <td><span class="badge b-free">HuggingFace 中文模型</span></td>
+        <td>
+          <strong>① 立場分析（好評率核心）</strong>：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>，直接輸出 positive / negative，用於計算好評率。訓練資料為中文商品評論，對藥妝評語準確率最高。約 400MB，CPU 可跑。<br><br>
+          <strong>② 情緒分類（展示加分）</strong>：<code>Johnson8187/Chinese-Emotion</code>，輸出 8 類情緒（開心、厭惡、憤怒、悲傷、疑問、驚奇、關切、平淡），用於商品頁情緒分布視覺化。<br><br>
+          <em>兩者分開使用：① 決定好評/負評，② 只做展示。不以 8-emotion 推算立場（「驚奇語調」正負不確定，映射會出錯）。</em>
+        </td>
+        <td>
+          <span class="badge b-free">uer/roberta（立場）</span><br>
+          <span class="badge b-api">Johnson8187（情緒）</span>
+        </td>
         <td><span class="badge b-p1">P1</span></td>
       </tr>
       <tr>
@@ -721,9 +728,10 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <h4>情緒分析 + 評分計算</h4>
       </div>
       <ul>
-        <li>HuggingFace 中文情緒模型跑全部評論</li>
-        <li>計算每個商品：好評率 × log(提及數) 綜合分數</li>
-        <li>更新 products.score / sentiment_pos_rate</li>
+        <li><strong>立場分析</strong>：uer/roberta-jd-binary 跑全部評論 → positive/negative</li>
+        <li><strong>情緒分類</strong>：Johnson8187/Chinese-Emotion 跑全部評論 → 8 類情緒</li>
+        <li>計算每個商品：好評率 × log(提及數) 綜合分數（以立場分析結果為準）</li>
+        <li>更新 products.score / sentiment_pos_rate / emotion_distribution</li>
         <li>人工抽查 Top 20 商品分數合理性</li>
       </ul>
     </div>
