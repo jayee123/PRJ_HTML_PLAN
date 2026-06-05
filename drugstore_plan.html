@@ -44,7 +44,7 @@ body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--light);col
   padding:28px 32px;margin:48px auto 0;max-width:900px;width:calc(100% - 48px);}
 .toc h3{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
   color:var(--gray);margin-bottom:16px;}
-.toc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+.toc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;}
 .toc-item{text-align:center;padding:16px 8px;border-radius:10px;cursor:pointer;
   transition:background .15s;border:1.5px solid transparent;}
 .toc-item:hover{background:var(--pink-soft);border-color:var(--pink-mid);}
@@ -68,6 +68,7 @@ body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--light);col
 .n4{background:linear-gradient(135deg,#d97706,#fbbf24);}
 .n5{background:linear-gradient(135deg,#1d4ed8,#60a5fa);}
 .n6{background:linear-gradient(135deg,#0891b2,#22d3ee);}
+.n7{background:linear-gradient(135deg,#059669,#34d399);}
 
 .primary-section h2{font-size:1.9rem;font-weight:900;margin-bottom:6px;}
 .primary-section > .lead{color:var(--gray);font-size:1rem;margin-bottom:32px;max-width:640px;}
@@ -226,6 +227,7 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       <div class="toc-item"><div class="toc-num">04</div><div class="toc-name">系統需求</div></div>
       <div class="toc-item"><div class="toc-num">05</div><div class="toc-name">進行方式</div></div>
       <div class="toc-item"><div class="toc-num">06</div><div class="toc-name">預期達成目標</div></div>
+      <div class="toc-item"><div class="toc-num">07</div><div class="toc-name">補充資料</div></div>
     </div>
   </div>
 </section>
@@ -678,83 +680,27 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 
   <!-- 4-2 功能需求 -->
   <div class="sub-label">4-2 功能需求清單</div>
-  <table class="req-table">
-    <thead><tr><th>功能模組</th><th>需求說明</th><th>技術方案</th><th>優先度</th></tr></thead>
-    <tbody>
-      <tr>
-        <td>商品資料擷取</td>
-        <td>Rakuten Ichiba API（日本）+ Olive Young 爬蟲（韓國），取得商品名稱、圖片、售價、品牌、成分。Rakuten 官方 API 每日 3 萬次免費；Olive Young 爬蟲無請求限制，需禮貌延遲。</td>
-        <td><span class="badge b-api">官方 API</span></td>
-        <td><span class="badge b-p1">P1</span></td>
-      </tr>
-      <tr>
-        <td>評論語料爬取</td>
-        <td>
-          ① PTT MakeUp 板：requests + over18 Cookie；70+ 日韓品牌關鍵字篩選 ✓<br>
-          ② Dcard 美妝版：Playwright 繞 Cloudflare Turnstile + API JSON 攔截 ✓<br>
-          ③ @cosme 排名：解析 SSR HTML（dl.clearfix），日文 deep-translator 翻中，24 分類 480 筆 ✓<br>
-          ④ 화해 排名：韓國最大美妝評論平台，補充韓系商品口碑評分 + 成分安全評級，與 @cosme 架構對稱
-        </td>
-        <td><span class="badge b-free">requests/BS4</span><span class="badge b-api">Playwright</span></td>
-        <td><span class="badge b-p1">P1 ✓ 已完成</span></td>
-      </tr>
-      <tr>
-        <td>評論情緒分析</td>
-        <td>
-          <strong>① 立場分析（好評率核心）</strong>：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>，直接輸出 positive / negative，用於計算好評率。訓練資料為中文商品評論，對藥妝評語準確率最高。約 400MB，CPU 可跑。<br><br>
-          <strong>② 情緒分類（展示加分）</strong>：<code>Johnson8187/Chinese-Emotion</code>，輸出 8 類情緒（開心、厭惡、憤怒、悲傷、疑問、驚奇、關切、平淡），用於商品頁情緒分布視覺化。<br><br>
-          <em>兩者分開使用：① 決定好評/負評，② 只做展示。不以 8-emotion 推算立場（「驚奇語調」正負不確定，映射會出錯）。</em>
-        </td>
-        <td>
-          <span class="badge b-free">uer/roberta（立場）</span><br>
-          <span class="badge b-api">Johnson8187（情緒）</span>
-        </td>
-        <td><span class="badge b-p1">P1</span></td>
-      </tr>
-      <tr>
-        <td>評論與商品配對</td>
-        <td>將評論自動關聯到對應商品（跨語言商品名稱對齊）</td>
-        <td><span class="badge b-free">rapidfuzz + RAG</span></td>
-        <td><span class="badge b-p1">P1</span></td>
-      </tr>
-      <tr>
-        <td>RAG 語意推薦</td>
-        <td>使用者描述需求 → 向量搜尋找最相關商品</td>
-        <td><span class="badge b-free">sentence-transformers + ChromaDB</span></td>
-        <td><span class="badge b-p1">P1</span></td>
-      </tr>
-      <tr>
-        <td>結構化篩選 API</td>
-        <td>依膚質/品類/來源國/預算多條件過濾 + 綜合評分排序</td>
-        <td><span class="badge b-free">FastAPI + MongoDB</span></td>
-        <td><span class="badge b-p1">P1</span></td>
-      </tr>
-      <tr>
-        <td>前端展示介面</td>
-        <td>篩選面板、商品卡片（含圖片）、分數透明化展示</td>
-        <td><span class="badge b-free">HTML / CSS / JS</span></td>
-        <td><span class="badge b-p1">P1</span></td>
-      </tr>
-      <tr>
-        <td>商品摘要生成</td>
-        <td>用 LLM 將 Top 5 評論壓縮成 2–3 句推薦摘要</td>
-        <td><span class="badge b-api">GPT-4o / Groq API</span></td>
-        <td><span class="badge b-p2">P2</span></td>
-      </tr>
-      <tr>
-        <td>YouTube Whisper 轉文字</td>
-        <td>無自動字幕的影片，用 Faster-Whisper 轉錄（Colab GPU）</td>
-        <td><span class="badge b-free">Faster-Whisper</span></td>
-        <td><span class="badge b-p2">P2</span></td>
-      </tr>
-      <tr>
-        <td>趨勢排行榜</td>
-        <td>本週提及次數成長最快的商品，反映最新市場熱度</td>
-        <td><span class="badge b-free">MongoDB 增量查詢</span></td>
-        <td><span class="badge b-p3">P3</span></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;">
+    <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pink);margin-bottom:14px;">功能需求</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:.85rem;">
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">1</span><div><strong>商品資料擷取</strong><br>日本：Rakuten Ichiba API（官方，每日 3 萬次免費）；韓國：Olive Young 爬蟲</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">2</span><div><strong>評論語料爬取</strong><br>PTT MakeUp 板、Dcard 美妝版、@cosme 排名（日本）、화해 排名（韓國）</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">3</span><div><strong>評論分析</strong><br>立場分析（好評率計算）+ 情緒分類（8 類情緒展示），兩條管道各自獨立</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">4</span><div><strong>評論與商品配對</strong><br>向量語意相似度自動配對，相似度門檻 0.65</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">5</span><div><strong>RAG 語意推薦</strong><br>使用者以自然語言描述需求 → 向量搜尋 → 取 Top-K 最相關商品</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">6</span><div><strong>結構化篩選 API</strong><br>依膚質 × 品類 × 預算多條件過濾，結合好評率綜合排序</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--pink);">7</span><div><strong>前端展示介面</strong><br>篩選面板、商品卡片（含圖片與評分）、推薦依據透明化展示</div></div>
+    </div>
+
+    <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin:20px 0 14px;">非功能需求</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:.85rem;">
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--purple);">8</span><div><strong>效能</strong><br>API 回應時間 &lt; 500ms；推薦結果以 Redis 快取熱門查詢</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--purple);">9</span><div><strong>資料合法性</strong><br>日本商品用官方 API（Rakuten）；評論選用 PTT / Dcard 具公信力平台，刻意不使用 Instagram</div></div>
+      <div style="display:flex;gap:12px;"><span style="min-width:24px;font-weight:800;color:var(--purple);">10</span><div><strong>可維護性</strong><br>全免費方案，月費 NT$0；個人 CPU 筆電可跑完整 Pipeline，不依賴 GPU</div></div>
+    </div>
+  </div>
+  <p style="font-size:.78rem;color:var(--gray);margin-bottom:24px;">詳細技術方案與優先度請見 <strong>07 補充資料</strong>。</p>
 
   <!-- 4-3 系統架構 -->
   <div class="sub-label">4-3 系統架構</div>
@@ -798,23 +744,12 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
   </div>
 
   <!-- 4-4 費用 -->
-  <div class="sub-label">4-4 費用需求（全免費方案）</div>
-  <table class="cost-table">
-    <thead><tr><th>項目</th><th>工具</th><th>免費額度</th><th>月費</th></tr></thead>
-    <tbody>
-      <tr><td>日本商品資料</td><td>Rakuten Ichiba API</td><td>3 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>韓國商品資料</td><td>Olive Young 爬蟲</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>@cosme 口碑排名（日本）</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>화해 口碑排名（韓國）</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>主資料庫</td><td>MongoDB Atlas M0</td><td>512MB</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>向量資料庫</td><td>ChromaDB（本機）</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>後端部署</td><td>Render.com</td><td>750 小時/月</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>前端部署</td><td>GitHub Pages</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>語音轉文字 GPU</td><td>Google Colab + Kaggle</td><td>30h+/週</td><td><span class="free-tag">NT$0</span></td></tr>
-      <tr><td>GPT-4o 摘要（P2）</td><td>OpenAI API</td><td>按用量，一次性</td><td>約 NT$30–60</td></tr>
-      <tr><td><strong>合計</strong></td><td colspan="2"></td><td><strong style="color:var(--green)">NT$0 / 月</strong></td></tr>
-    </tbody>
-  </table>
+  <div class="sub-label">4-4 費用需求</div>
+  <div class="callout ok">
+    <strong>全免費方案，月費 NT$0。</strong>
+    所有工具均使用免費額度，唯 GPT-4o 摘要（P2 加分項）為一次性小額費用約 NT$30–60。
+    詳細費用明細請見 <strong>07 補充資料</strong>。
+  </div>
 </div>
 
 <div class="divider"></div>
@@ -1079,6 +1014,108 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     使用官方 API 而非爬蟲的完整性論證。
     這不是純規劃，而是有驗證過的實作。
   </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ 07 補充資料 ═══════ -->
+<div class="primary-section" id="s7">
+  <div class="section-num n7">07</div>
+  <h2 class="sec">補充資料</h2>
+  <p class="lead">功能需求詳細技術規格與費用明細，供老師審閱或深入追問時參考。</p>
+
+  <div class="sub-label">7-1 功能需求詳細技術方案</div>
+  <table class="req-table">
+    <thead><tr><th>功能模組</th><th>需求說明</th><th>技術方案</th><th>優先度</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>商品資料擷取</td>
+        <td>Rakuten Ichiba API（日本）+ Olive Young 爬蟲（韓國），取得商品名稱、圖片、售價、品牌。Rakuten 官方 API 每日 3 萬次免費；Olive Young 爬蟲無請求限制，需禮貌延遲。</td>
+        <td><span class="badge b-api">官方 API</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>評論語料爬取</td>
+        <td>
+          ① PTT MakeUp 板：requests + over18 Cookie；70+ 日韓品牌關鍵字篩選 ✓<br>
+          ② Dcard 美妝版：Playwright 繞 Cloudflare Turnstile + API JSON 攔截 ✓<br>
+          ③ @cosme 排名：解析 SSR HTML（dl.clearfix），日文 deep-translator 翻中，24 分類 480 筆 ✓<br>
+          ④ 화해 排名：韓國最大美妝評論平台，補充韓系商品口碑評分，與 @cosme 架構對稱 ✓
+        </td>
+        <td><span class="badge b-free">requests/BS4</span><span class="badge b-api">Playwright</span></td>
+        <td><span class="badge b-p1">P1 ✓ 已完成</span></td>
+      </tr>
+      <tr>
+        <td>評論情緒分析</td>
+        <td>
+          <strong>① 立場分析</strong>：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>，positive / negative，計算好評率（約 400MB，CPU）<br>
+          <strong>② 情緒分類</strong>：<code>Johnson8187/Chinese-Emotion</code>，8 類情緒展示（開心／厭惡／憤怒等）
+        </td>
+        <td><span class="badge b-free">uer/roberta（立場）</span><br><span class="badge b-api">Johnson8187（情緒）</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>評論與商品配對</td>
+        <td>將評論自動關聯到對應商品（跨語言語意對齊），相似度門檻 0.65</td>
+        <td><span class="badge b-free">rapidfuzz + RAG</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>RAG 語意推薦</td>
+        <td>使用者描述需求 → 向量搜尋找最相關商品 → 結合好評率排序</td>
+        <td><span class="badge b-free">sentence-transformers + ChromaDB</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>結構化篩選 API</td>
+        <td>依膚質 / 品類 / 來源國 / 預算多條件過濾 + 綜合評分排序</td>
+        <td><span class="badge b-free">FastAPI + MongoDB</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>前端展示介面</td>
+        <td>篩選面板、商品卡片（含圖片）、分數透明化展示</td>
+        <td><span class="badge b-free">HTML / CSS / JS</span></td>
+        <td><span class="badge b-p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>商品摘要生成</td>
+        <td>用 LLM 將 Top 5 評論壓縮成 2–3 句推薦摘要</td>
+        <td><span class="badge b-api">GPT-4o / Groq API</span></td>
+        <td><span class="badge b-p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>YouTube Whisper 轉文字</td>
+        <td>無自動字幕的影片，用 Faster-Whisper 轉錄（Colab GPU）</td>
+        <td><span class="badge b-free">Faster-Whisper</span></td>
+        <td><span class="badge b-p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>趨勢排行榜</td>
+        <td>本週提及次數成長最快的商品，反映最新市場熱度</td>
+        <td><span class="badge b-free">MongoDB 增量查詢</span></td>
+        <td><span class="badge b-p3">P3</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sub-label">7-2 費用需求明細（全免費方案）</div>
+  <table class="cost-table">
+    <thead><tr><th>項目</th><th>工具</th><th>免費額度</th><th>月費</th></tr></thead>
+    <tbody>
+      <tr><td>日本商品資料</td><td>Rakuten Ichiba API</td><td>3 萬次查詢/日</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>韓國商品資料</td><td>Olive Young 爬蟲</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>@cosme 口碑排名（日本）</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>화해 口碑排名（韓國）</td><td>HTML 爬蟲 + deep-translator</td><td>無限制，需禮貌延遲</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>主資料庫</td><td>MongoDB Atlas M0</td><td>512MB</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>向量資料庫</td><td>ChromaDB（本機）</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>後端部署</td><td>Render.com</td><td>750 小時/月</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>前端部署</td><td>GitHub Pages</td><td>無限制</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>語音轉文字 GPU</td><td>Google Colab + Kaggle</td><td>30h+/週</td><td><span class="free-tag">NT$0</span></td></tr>
+      <tr><td>GPT-4o 摘要（P2）</td><td>OpenAI API</td><td>按用量，一次性</td><td>約 NT$30–60</td></tr>
+      <tr><td><strong>合計</strong></td><td colspan="2"></td><td><strong style="color:var(--green)">NT$0 / 月</strong></td></tr>
+    </tbody>
+  </table>
 </div>
 
 </div><!-- /page -->
