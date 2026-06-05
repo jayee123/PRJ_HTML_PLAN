@@ -513,6 +513,67 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
 
   </div>
 
+  <div class="sub-label">3-6 資料清洗方法</div>
+
+  <div class="callout ok" style="margin-bottom:12px;">
+    <strong>以下為已確認實作、可穩定執行的清洗步驟。</strong>
+    不確定準確率的進階清洗（如成分表 regex 解析、業配文偵測）列為初步規劃，不寫入確定流程。
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>清洗步驟</th><th>實作方式</th><th>適用來源</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>商品去重</td>
+        <td>以 <code>rakuten_id</code> / 商品 URL 為唯一 key，<code>seen = set()</code> 過濾重複</td>
+        <td>Rakuten、Olive Young、@cosme、화해</td>
+        <td><span class="badge b-p1">✅ 已實作</span></td>
+      </tr>
+      <tr>
+        <td>空值 / 空白過濾</td>
+        <td><code>if not text or not text.strip(): return</code>；<code>filter(None, [...])</code> 過濾空欄位；<code>if not name: continue</code> 跳過無名商品</td>
+        <td>全部來源</td>
+        <td><span class="badge b-p1">✅ 已實作</span></td>
+      </tr>
+      <tr>
+        <td>文字長度截斷</td>
+        <td>情緒模型輸入：<code>text[:512]</code>（模型 token 上限）<br>評論配對輸入：<code>text[:300]</code><br>Rakuten 商品說明：<code>itemCaption[:200]</code></td>
+        <td>評論 NLP、RAG、Rakuten</td>
+        <td><span class="badge b-p1">✅ 已實作</span></td>
+      </tr>
+      <tr>
+        <td>HTML 標籤去除 + 前後空白</td>
+        <td>BeautifulSoup <code>.get_text(strip=True)</code> 直接取純文字，不保留 HTML 標籤</td>
+        <td>@cosme、Olive Young、화해</td>
+        <td><span class="badge b-p1">✅ 已實作</span></td>
+      </tr>
+      <tr>
+        <td>CSV 編碼統一</td>
+        <td>所有爬蟲輸出一律使用 <code>utf-8-sig</code>（Excel 可直接開啟，不亂碼）</td>
+        <td>全部來源</td>
+        <td><span class="badge b-p1">✅ 已實作</span></td>
+      </tr>
+      <tr>
+        <td>翻譯空字串防呆</td>
+        <td><code>if not text or not text.strip(): return text</code> 避免送空字串給 deep-translator 報錯</td>
+        <td>@cosme（日→中）、화해（韓→中）</td>
+        <td><span class="badge b-p1">✅ 已實作</span></td>
+      </tr>
+      <tr>
+        <td>成分表結構化解析</td>
+        <td>Rakuten 成分在商品說明文字中，需 regex 提取；Olive Young 需另爬詳細頁</td>
+        <td>Rakuten、Olive Young</td>
+        <td><span class="badge b-p2">⚠️ 初步規劃（準確率待驗證）</span></td>
+      </tr>
+      <tr>
+        <td>跨平台商品名稱正規化</td>
+        <td>品牌別名對照表 + rapidfuzz 模糊比對，將中/日/韓不同寫法對齊同一商品</td>
+        <td>全平台配對時</td>
+        <td><span class="badge b-p2">⚠️ 初步規劃（需人工建表）</span></td>
+      </tr>
+    </tbody>
+  </table>
+
 </div>
 
 <div class="divider"></div>
