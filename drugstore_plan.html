@@ -428,10 +428,43 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <li>@cosme：日文 → deep-translator → 繁中（已完成）</li>
         <li>화해：韓文 → deep-translator → 繁中（已完成）</li>
         <li>PTT / Dcard：繁體中文，直接使用</li>
-        <li>情緒模型：選用支援繁中的 HuggingFace 模型</li>
+        <li>立場分析：uer/roberta-jd-binary（二元 positive/negative，繁中適用）</li>
+        <li>情緒分類：Johnson8187/Chinese-Emotion（8 類情緒，展示用）</li>
       </ul>
     </div>
   </div>
+
+  <div class="sub-label">3-4 情緒與立場分析方法</div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
+      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">① 立場分析（好評率核心）</div>
+      <ul style="list-style:none;font-size:.82rem;color:#374151;">
+        <li style="padding:2px 0;">→ 模型：<code>uer/roberta-base-finetuned-jd-binary-chinese</code>（約 400MB，CPU 可跑）</li>
+        <li style="padding:2px 0;">→ 輸出：positive / negative，直接對應好評 / 負評</li>
+        <li style="padding:2px 0;">→ 用途：計算每個商品的 <strong>好評率（sentiment_pos_rate）</strong>，作為推薦排序的核心分數依據</li>
+        <li style="padding:2px 0;">→ 訓練資料為中文電商商品評論（京東），對藥妝評語準確率最高；使用 HuggingFace pipeline，device=-1 跑 CPU</li>
+      </ul>
+    </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;">
+      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">② 情緒分類（商品頁展示）</div>
+      <ul style="list-style:none;font-size:.82rem;color:#374151;">
+        <li style="padding:2px 0;">→ 模型：<code>Johnson8187/Chinese-Emotion</code>（AutoModelForSequenceClassification + Softmax）</li>
+        <li style="padding:2px 0;">→ 輸出：8 類情緒 ── 開心 / 厭惡 / 憤怒 / 悲傷 / 疑問 / 驚奇 / 關切 / 平淡</li>
+        <li style="padding:2px 0;">→ 信心分數 = 最高機率 × 100（0–100 分）</li>
+        <li style="padding:2px 0;">→ 用途：儲存至 <code>emotion_distribution</code> 欄位，前端展示「這個商品評論以開心為主」的情緒圓餅圖</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="callout warn">
+    <strong>為何不用 8-emotion 推算好評率？</strong><br>
+    「驚奇語調」可能是正向驚喜（「效果好到嚇到」）或負向驚訝（「沒想到這麼爛」），語意方向不確定，無法可靠地映射到好/負評。立場分析模型直接為 positive/negative 訓練，精確度更高，兩者分工明確。
+  </div>
+
 </div>
 
 <div class="divider"></div>
@@ -632,7 +665,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
       </div>
       <div class="c2">
         <div class="arch-col-title">處理層</div>
-        <div class="arch-node">情緒分析<br><small>HuggingFace CPU</small></div>
+        <div class="arch-node">立場分析<br><small>uer/roberta → 好評率</small></div>
+        <div class="arch-node">情緒分類<br><small>Johnson8187 → 8 類展示</small></div>
         <div class="arch-node">商品名稱對齊<br><small>rapidfuzz</small></div>
         <div class="arch-node">評分計算<br><small>好評率 × 聲量</small></div>
         <div class="arch-node">GPT-4o 摘要<br><small>P2・加分</small></div>
@@ -857,8 +891,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">😊</div>
-      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">全評論情緒分析</div>
-      <div class="goal-desc">從 PTT、Dcard、YouTube 爬取的<strong>所有評論</strong>均經過 AI 情緒分析模型標記正負傾向，不做抽樣，計算出每個商品的社群好評率。</div>
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">全評論雙模型分析</div>
+      <div class="goal-desc">所有評論均不做抽樣，以 <strong>立場分析</strong>（uer/roberta）標記好評/負評計算社群好評率，同步以 <strong>情緒分類</strong>（Johnson8187）輸出 8 類情緒分布，兩條管道各自獨立運算。</div>
     </div>
     <div class="goal-card" style="text-align:left;padding:20px 22px;">
       <div style="font-size:1.4rem;margin-bottom:8px;">🔍</div>
@@ -893,8 +927,8 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
         <td><span class="badge b-p1">P1 確定交付</span></td>
       </tr>
       <tr>
-        <td>評論情緒分析</td>
-        <td>5,000+ 篇評論做過情緒標記，好評率可視化</td>
+        <td>評論分析（立場 + 情緒）</td>
+        <td>5,000+ 篇評論完成立場分析（好評率可視化）+ 情緒分類（8 類情緒分布），兩個模型各自獨立輸出</td>
         <td><span class="badge b-p1">P1 確定交付</span></td>
       </tr>
       <tr>
