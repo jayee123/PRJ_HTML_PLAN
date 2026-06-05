@@ -465,6 +465,54 @@ h3.sub{font-size:1rem;font-weight:800;margin-bottom:8px;}
     「驚奇語調」可能是正向驚喜（「效果好到嚇到」）或負向驚訝（「沒想到這麼爛」），語意方向不確定，無法可靠地映射到好/負評。立場分析模型直接為 positive/negative 訓練，精確度更高，兩者分工明確。
   </div>
 
+  <div class="sub-label">3-5 RAG 向量搜尋方法</div>
+
+  <div class="callout info" style="margin-bottom:14px;">
+    <strong>嵌入模型：</strong><code>sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</code>
+    ── 約 120MB，CPU 可跑，原生支援中文 / 日文 / 韓文，三語系評論與商品名稱均可向量化，無需額外翻譯前置處理。
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+
+    <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:8px;padding:12px 16px;">
+      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">向量資料庫：ChromaDB（本機 Persistent）</div>
+      <ul style="list-style:none;font-size:.82rem;color:#374151;">
+        <li style="padding:2px 0;">→ <code>chromadb.PersistentClient</code> 存至 <code>./chroma_db</code>，零設定，不需雲端服務</li>
+        <li style="padding:2px 0;">→ Collection：<code>products</code>（商品向量索引）</li>
+        <li style="padding:2px 0;">→ 每個向量附帶 metadata：商品名、品牌、國家、圖片 URL、估算台幣售價</li>
+      </ul>
+    </div>
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;">
+      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">① 商品向量索引建立（build_product_index）</div>
+      <ul style="list-style:none;font-size:.82rem;color:#374151;">
+        <li style="padding:2px 0;">→ 每個商品的向量文字 = <code>商品名 + 品牌 + 分類 + 成分前 5 項</code>（拼接成單一字串）</li>
+        <li style="padding:2px 0;">→ <code>model.encode(texts, show_progress_bar=True)</code> 批次向量化 → <code>col.upsert()</code> 寫入 ChromaDB</li>
+        <li style="padding:2px 0;">→ 以商品 URL 為唯一 ID，重複執行只更新，不會重複建立</li>
+      </ul>
+    </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;">
+      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">② 使用者查詢 → 語意推薦（query_products）</div>
+      <ul style="list-style:none;font-size:.82rem;color:#374151;">
+        <li style="padding:2px 0;">→ 使用者輸入自然語言（例：「乾性肌保濕精華，預算 500 以內」）</li>
+        <li style="padding:2px 0;">→ encode 為查詢向量 → <code>col.query()</code> 相似度搜尋 → 取 Top-K 商品</li>
+        <li style="padding:2px 0;">→ 結果再與 MongoDB 好評率結合，計算 <strong>向量相似度 × 好評率</strong> 最終推薦分數</li>
+      </ul>
+    </div>
+
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;">
+      <div style="font-weight:800;font-size:.87rem;margin-bottom:6px;">③ 評論 ↔ 商品自動配對（match_reviews_to_products）</div>
+      <ul style="list-style:none;font-size:.82rem;color:#374151;">
+        <li style="padding:2px 0;">→ 評論文字（標題 + 內文前 300 字）→ 向量 → 搜尋向量索引中最近似的商品</li>
+        <li style="padding:2px 0;">→ 相似度門檻：<strong>0.65</strong>；低於此值不配對，避免評論被錯誤關聯到不相關商品</li>
+        <li style="padding:2px 0;">→ 配對成功後將 <code>product_id</code> 與 <code>match_score</code> 寫回 MongoDB review 文件</li>
+        <li style="padding:2px 0;">→ 比純關鍵字比對多抓約 30% 語意相關評論（例：PTT 說「這款凝凍超補水」，可配對到「肌ラボ極潤」）</li>
+      </ul>
+    </div>
+
+  </div>
+
 </div>
 
 <div class="divider"></div>
