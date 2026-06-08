@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小羽 — 21 天關係覺察練習</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  min-height:100vh;
+  background:linear-gradient(160deg,#1a0a2e 0%,#2d1b4e 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Segoe UI','Noto Sans TC',Arial,sans-serif;
+  padding:24px 16px;
+}
+.page-label { color:white; text-align:center; margin-bottom:20px; }
+.page-label h1 { font-size:22px; }
+.page-label p  { font-size:13px; opacity:.5; margin-top:4px; }
+
+/* ── Phone frame ── */
+.phone {
+  width:375px; height:780px;
+  background:white;
+  border-radius:44px; overflow:hidden;
+  box-shadow:0 0 0 2px #555, 0 0 0 6px #222, 0 40px 90px rgba(0,0,0,.6);
+  border:2px solid #777;
+  display:flex; flex-direction:column;
+}
+
+/* status bar */
+.statusbar {
+  height:40px; background:white;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; font-size:13px; font-weight:600; flex-shrink:0; color:#111;
+}
+
+/* header */
+.chat-hdr {
+  background:white; border-bottom:1px solid #f0f0f0;
+  padding:10px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+.back-btn { color:#7c5cbf; font-size:22px; cursor:pointer; padding:4px 2px; }
+.bot-ava {
+  width:42px; height:42px; border-radius:14px;
+  background:linear-gradient(135deg,#9b7fd4,#c3a6f0);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0;
+}
+.bot-info { flex:1; }
+.bot-name {
+  font-size:15px; font-weight:700; color:#1a1a1a;
+  display:flex; align-items:center; gap:6px;
+}
+.day-badge {
+  background:#7c5cbf; color:white;
+  font-size:9px; padding:2px 7px; border-radius:10px; font-weight:800;
+}
+.bot-sub { font-size:11px; color:#aaa; margin-top:2px; }
+.hdr-icons { display:flex; gap:14px; font-size:20px; color:#888; }
+
+/* progress bar */
+.progress-wrap {
+  background:#f7f3ff; padding:6px 14px 8px; flex-shrink:0;
+  border-bottom:1px solid #ede8f8;
+}
+.progress-label {
+  display:flex; justify-content:space-between;
+  font-size:10px; color:#9b7fd4; margin-bottom:4px; font-weight:600;
+}
+.progress-bar {
+  height:4px; background:#e8dff8; border-radius:2px;
+}
+.progress-fill {
+  height:4px; background:linear-gradient(90deg,#9b7fd4,#c3a6f0);
+  border-radius:2px; width:4.76%; transition:width .5s;
+}
+
+/* ── Chat bg ── */
+.chat-bg {
+  flex:1; background:#f0ebf8;
+  overflow-y:auto; padding:10px;
+  scroll-behavior:smooth;
+}
+.chat-bg::-webkit-scrollbar { width:3px; }
+.chat-bg::-webkit-scrollbar-thumb { background:#c3a6f0; border-radius:2px; }
+
+.date-div { text-align:center; margin:4px 0 12px; }
+.date-div span {
+  background:rgba(100,50,160,.18); color:#6a3fa0;
+  font-size:11px; padding:3px 12px; border-radius:10px; font-weight:600;
+}
+
+/* messages */
+.mgrp { display:flex; gap:8px; margin-bottom:4px; align-items:flex-end; }
+.mgrp.user { flex-direction:row-reverse; }
+.mgrp + .mgrp.user,
+.mgrp.user + .mgrp { margin-top:10px; }
+
+.mava {
+  width:32px; height:32px; border-radius:10px;
+  background:linear-gradient(135deg,#9b7fd4,#c3a6f0);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0; align-self:flex-end;
+}
+.mwrap { max-width:75%; }
+.mname { font-size:10px; color:#9b7fd4; margin-bottom:3px; padding-left:3px; font-weight:600; }
+.bbl {
+  padding:9px 13px; border-radius:18px;
+  font-size:13.5px; line-height:1.65; word-break:break-word;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);
+}
+.bot-bbl  { background:white; color:#1a1a1a; border-bottom-left-radius:4px; }
+.user-bbl { background:#7c5cbf; color:white; border-bottom-right-radius:4px; }
+.mtime { font-size:10px; color:rgba(0,0,0,.3); margin-top:3px; padding:0 4px; }
+.mgrp.user .mtime { text-align:right; }
+
+/* bold inside bubbles */
+.bbl strong { font-weight:800; }
+
+/* step list */
+.step-list { list-style:none; margin-top:6px; }
+.step-list li {
+  padding:4px 0; display:flex; gap:7px;
+  font-size:13px; line-height:1.55;
+}
+.step-num {
+  min-width:22px; height:22px; border-radius:50%;
+  background:#7c5cbf; color:white;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;
+}
+.step-num.outline {
+  background:transparent; border:1.5px solid #9b7fd4; color:#7c5cbf;
+}
+
+/* divider in bubble */
+.bbl-div { border:none; border-top:1px solid #f0f0f0; margin:8px 0; }
+
+/* task card */
+.task-card {
+  background:#f7f3ff; border:1.5px solid #c3a6f0;
+  border-radius:12px; padding:10px 12px; margin-top:8px;
+}
+.task-card .tc-title { font-size:12px; font-weight:800; color:#7c5cbf; margin-bottom:5px; }
+.task-card .tc-item {
+  display:flex; gap:6px; font-size:12.5px; color:#333; padding:2px 0;
+}
+.tc-dot { color:#9b7fd4; flex-shrink:0; }
+
+/* typing */
+.typing-wrap { display:none; gap:8px; align-items:center; margin-bottom:8px; }
+.typing-wrap.on { display:flex; }
+.typing-bbl {
+  background:white; border-radius:18px; border-bottom-left-radius:4px;
+  padding:10px 14px; display:flex; gap:4px; align-items:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+}
+.tdot {
+  width:7px; height:7px; border-radius:50%; background:#c3a6f0;
+  animation:tp 1.2s infinite;
+}
+.tdot:nth-child(2){ animation-delay:.2s; }
+.tdot:nth-child(3){ animation-delay:.4s; }
+@keyframes tp {
+  0%,80%,100%{ transform:scale(.7); opacity:.4; }
+  40%{ transform:scale(1); opacity:1; }
+}
+
+/* quick replies */
+.quick-strip {
+  padding:8px 10px; display:flex; gap:7px; overflow-x:auto;
+  scrollbar-width:none; background:#f0ebf8; flex-shrink:0;
+}
+.quick-strip::-webkit-scrollbar { display:none; }
+.qr {
+  background:white; color:#7c5cbf;
+  border:1.5px solid #9b7fd4; border-radius:16px;
+  padding:5px 13px; font-size:12px; white-space:nowrap;
+  cursor:pointer; flex-shrink:0; font-family:inherit; font-weight:700;
+  transition:background .15s, color .15s;
+}
+.qr:hover { background:#7c5cbf; color:white; border-color:#7c5cbf; }
+
+/* input bar */
+.input-bar {
+  height:54px; background:#faf8ff; border-top:1px solid #ede8f8;
+  display:flex; align-items:center; padding:8px 10px; gap:8px; flex-shrink:0;
+}
+.txt-inp {
+  flex:1; height:36px; background:white;
+  border:1.5px solid #d8ccf0; border-radius:18px;
+  padding:0 14px; font-size:14px; outline:none; font-family:inherit;
+  transition:border-color .2s;
+}
+.txt-inp:focus { border-color:#7c5cbf; }
+.send-btn {
+  width:36px; height:36px; border-radius:50%;
+  background:#7c5cbf; border:none;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; color:white; flex-shrink:0;
+  transition:background .15s;
+}
+.send-btn:hover { background:#6a4daa; }
+.send-btn:active { background:#5a3d9a; }
+
+/* home bar */
+.home-bar { height:22px; background:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.hb-line { width:120px; height:4px; background:#ddd; border-radius:2px; }
+</style>
+</head>
+<body>
+
+<div class="page-label">
+  <h1>🕊️ 小羽 — 關係覺察練習</h1>
+  <p>21 天 × 每日一練 × 從看見對方到看見自己</p>
+</div>
+
+<div class="phone">
+
+  <!-- status bar -->
+  <div class="statusbar">
+    <span id="clock">9:41</span>
+    <span>🔋 ▋▋▋▋</span>
+  </div>
+
+  <!-- header -->
+  <div class="chat-hdr">
+    <div class="back-btn">‹</div>
+    <div class="bot-ava">🕊️</div>
+    <div class="bot-info">
+      <div class="bot-name">
+        小羽
+        <span class="day-badge">Day 1</span>
+      </div>
+      <div class="bot-sub">21 天關係覺察練習 · 週一～週日</div>
+    </div>
+    <div class="hdr-icons">
+      <span>📞</span>
+      <span>⋯</span>
+    </div>
+  </div>
+
+  <!-- progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Week 1 — 看見對方</span>
+      <span id="prog-text">Day 1 / 21</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="prog-fill"></div>
+    </div>
+  </div>
+
+  <!-- chat area -->
+  <div class="chat-bg" id="chatBg">
+
+    <div class="date-div"><span>今天</span></div>
+
+    <!-- bot: Day 1 opening -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="mname">小羽</div>
+        <div class="bbl bot-bbl">
+          嗨 Jay 😊<br><br>
+          歡迎來到 21 天關係練習！<br><br>
+          先講個故事給你聽——<br><br>
+          有隻猴子救了快淹死的貓，拉上岸後，猴子拿出自己最愛的香蕉給貓。結果貓不吃。<br><br>
+          這不是愛不愛的問題，是<strong>猴子不懂貓</strong>。<br><br>
+          大多數關係問題也是這樣：不是沒有愛，是我們習慣<strong>用自己想要的方式去愛對方</strong>。
+        </div>
+        <div class="mtime">09:01</div>
+      </div>
+    </div>
+
+    <div class="mgrp bot">
+      <div class="mava" style="visibility:hidden;"></div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">
+          所以這 21 天，我們要學的不是技巧，是先<strong>覺察</strong>——先看見對方、再看見自己。<br><br>
+          工具是 <strong>4 步覺察（觀感想行）</strong>：
+          <ul class="step-list" style="margin-top:8px;">
+            <li><span class="step-num">觀</span><span><strong>看到事實</strong>，不是自己的解讀</span></li>
+            <li><span class="step-num">感</span><span><strong>接住情緒</strong>，不急著分析</span></li>
+            <li><span class="step-num">想</span><span><strong>讀懂需求</strong>，不是給自己想給的</span></li>
+            <li><span class="step-num">行</span><span><strong>把覺察變成具體動作</strong></span></li>
+          </ul>
+          <hr class="bbl-div">
+          Week 1 練看見對方 → Week 2 練看見自己 → Week 3 綜合應用。<br><br>
+          準備好了嗎？有任何問題都可以問我 😊
+        </div>
+        <div class="mtime">09:01</div>
+      </div>
+    </div>
+
+    <!-- typing indicator placeholder -->
+    <div class="typing-wrap" id="typingWrap">
+      <div class="mava">🕊️</div>
+      <div class="typing-bbl">
+        <div class="tdot"></div>
+        <div class="tdot"></div>
+        <div class="tdot"></div>
+      </div>
+    </div>
+
+  </div><!-- end chat-bg -->
+
+  <!-- quick replies -->
+  <div class="quick-strip" id="quickStrip">
+    <button class="qr" onclick="sendQuick('準備好了 😊')">準備好了 😊</button>
+    <button class="qr" onclick="sendQuick('猴子跟貓的故事是什麼意思？')">猴子的故事是？</button>
+    <button class="qr" onclick="sendQuick('4 步是什麼？')">4 步是什麼？</button>
+    <button class="qr" onclick="sendQuick('我現在有個例子想聊')">想聊個例子</button>
+  </div>
+
+  <!-- input bar -->
+  <div class="input-bar">
+    <input class="txt-inp" id="userInput" type="text" placeholder="想對小羽說..." maxlength="200"
+      onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="send-btn" onclick="sendMsg()">➤</button>
+  </div>
+
+  <!-- home bar -->
+  <div class="home-bar"><div class="hb-line"></div></div>
+
+</div><!-- end phone -->
+
+<script>
+// ── clock ──────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// ── current state ──────────────────────────────────────────────────
+let day = 1;
+let msgCount = 0;
+
+// ── response map ───────────────────────────────────────────────────
+const responses = [
+  {
+    match: s => /準備好|開始|好啊|ok|好的|好了/i.test(s),
+    reply: () => `🎯 <strong>今天只做一件事</strong>：<br><br>觀察媽媽（或你身邊最近有摩擦的人）<strong>3 個情緒訊號</strong>——<br><br>
+<div style="background:#f7f3ff;border:1.5px solid #c3a6f0;border-radius:12px;padding:10px 12px;margin-top:6px;">
+<div style="font-size:12px;font-weight:800;color:#7c5cbf;margin-bottom:6px;">📌 純觀察，不反應、不分析</div>
+<div style="font-size:13px;color:#333;padding:3px 0;">👁️ <strong>表情</strong>：眉頭有沒有皺？眼神看哪？</div>
+<div style="font-size:13px;color:#333;padding:3px 0;">🗣️ <strong>語氣</strong>：速度快慢？音調高低？有沒有嘆氣？</div>
+<div style="font-size:13px;color:#333;padding:3px 0;">🙋 <strong>肢體</strong>：手在做什麼？坐姿放鬆還是緊繃？</div>
+</div><br>
+就像按下「錄影鍵」，先看見她。今天完成了可以回來跟我說你觀察到什麼 😊`,
+    quick: ['好，我去觀察', '如果她情緒不明顯怎麼辦？', '我現在能觀察到她']
+  },
+  {
+    match: s => /正常|就這樣|沒什麼|普通|沒變化/i.test(s),
+    reply: () => `「就正常這樣」——這其實是很真實的回應 😊<br><br>
+<strong>平靜本身就是一種訊號</strong>。<br><br>
+下次她「正常這樣」的時候，試著再細看一點點——<br><br>
+• 她眉頭有沒有微微皺起？（哪怕只有 0.5 秒）<br>
+• 說話速度比平常快一點還是慢一點？<br>
+• 肩膀是放鬆的，還是微微緊繃？<br><br>
+ISFJ 的人很會「看起來正常」——因為習慣把需求藏起來。所以「正常」底下，有時候藏著「其實有點累但不想說」。<br><br>
+不用現在就找到，今天你已經開始「看」了，這就夠了 ✨`,
+    quick: ['我再仔細看看', '她現在在幹嘛', '我有別的觀察']
+  },
+  {
+    match: s => /觀察到|我看到|她有|她說|她今天|她剛才/i.test(s),
+    reply: () => `謝謝你告訴我！這就是 Day 1 的核心——<strong>開始「看見」</strong>。<br><br>
+我想問你一個問題：<br><br>
+你觀察到的這個訊號，如果用「感」來接——<br>你心裡當下有什麼感受？<br>（不是分析她，是你自己的感覺）<br><br>
+說說看，我們一起練 😊`,
+    quick: ['我有點擔心她', '我覺得沒什麼感覺', '我不確定']
+  },
+  {
+    match: s => /沒有|不知道|不確定|不清楚/i.test(s),
+    reply: () => `沒關係，這完全正常 😊<br><br>
+「不知道自己的感受」其實也是一個很重要的覺察——<br>很多人習慣跳過感受、直接分析，結果跟對方的連結就斷了。<br><br>
+今天不用強迫自己找到答案。<br><br>
+只要記住：<strong>感受沒有對錯，只有真實或假裝。</strong><br><br>
+明天 Day 2 我們繼續練，你做得很好 ✨`,
+    quick: ['好，明天見', '我想繼續聊', '我有個問題']
+  },
+  {
+    match: s => /猴子|香蕉|貓|故事/i.test(s),
+    reply: () => `這個故事的核心是——<br><br>
+猴子<strong>不是不愛貓</strong>，是猴子不懂貓需要什麼。<br><br>
+牠給的是自己最愛的香蕉，出發點是愛，但方式錯了。<br><br>
+很多關係都卡在這裡：<br>
+• 我以為「這樣對他好」就是愛<br>
+• 但對方感受到的是「你根本不懂我」<br><br>
+所以我們要練的是：先<strong>看見對方</strong>，再決定給什麼。<br><br>
+你有沒有想到自己跟誰有過類似的狀況？😊`,
+    quick: ['想到了一個例子', '好像有，但說不清楚', '4 步怎麼用？']
+  },
+  {
+    match: s => /4步|觀感想行|怎麼用|步驟/i.test(s),
+    reply: () => `4 步覺察就是一個「慢下來的工具」：<br><br>
+<ul class="step-list">
+<li><span class="step-num outline">1</span><span><strong>觀</strong>：看事實，不加解讀。「她皺眉」不是「她不高興」，只是眉頭動了。</span></li>
+<li><span class="step-num outline">2</span><span><strong>感</strong>：你心裡有什麼感受？擔心？煩躁？還是想逃？</span></li>
+<li><span class="step-num outline">3</span><span><strong>想</strong>：對方現在可能需要什麼？被理解？空間？還是幫助？</span></li>
+<li><span class="step-num outline">4</span><span><strong>行</strong>：基於以上，做一個最小的具體動作。</span></li>
+</ul>
+<br>不用每次都跑完 4 步，今天先從「觀」開始就夠了 😊`,
+    quick: ['好，我來試試', '太難了怎麼辦', '我有個例子']
+  },
+  {
+    match: s => /難|做不到|太難/i.test(s),
+    reply: () => `哈，完全理解 😊<br><br>
+其實大部分人一開始都覺得難，因為我們從小沒有被教過「觀察情緒」這件事。<br><br>
+所以今天的任務刻意設計得很簡單——<br><strong>純觀察，不用做任何反應。</strong><br><br>
+就算只看到「她今天好像比較安靜」，都算成功。<br>我們是在練肌肉，一點一點來 💪`,
+    quick: ['好，那我試試', '我有個問題', '給我舉個例子']
+  },
+  {
+    match: s => /眼鏡|踩壞|踩到/i.test(s),
+    reply: () => `眼鏡事件——我記得你說的 😊<br><br>
+這是個很好的練習素材。<br><br>
+我想問你：那次她踩壞眼鏡之後，她有什麼<strong>表情或反應</strong>？<br>（不是你的感受，是你觀察到她的樣子）<br><br>
+試著用「觀」來描述給我聽。`,
+    quick: ['她好像很尷尬', '她沒什麼反應', '她說喝珍奶當懲罰']
+  },
+  {
+    match: s => /珍奶|懲罰|賠錢|賠/i.test(s),
+    reply: () => `「喝珍奶當懲罰」這個回應——<br><br>
+我猜你當時覺得很不合理？<br><br>
+從你的角度：懲罰 = 要讓自己不舒服才會記住<br>從她的角度：可能是「我已經很累了，讓自己開心一下」<br><br>
+兩個人對「懲罰」的定義不一樣，所以就卡住了。<br><br>
+這不是誰對誰錯，是<strong>用了不同的語言</strong>。<br><br>
+如果要讓她真的記住眼鏡要放哪，你覺得<strong>對她有效的方式</strong>是什麼？😊`,
+    quick: ['不知道，有什麼建議？', '貼便利貼？', '我想想']
+  },
+  {
+    match: () => true,
+    reply: s => {
+      const generics = [
+        `謝謝你分享這個 😊<br><br>你說的「${s.slice(0,15)}${s.length>15?'…':''}」，讓我想多了解一點——<br><br>這個情況發生的當下，你心裡有什麼感受？`,
+        `我聽到了 😊<br><br>我想先問你：這件事對你來說，最讓你困擾的是什麼？<br>是對方的行為？還是自己不知道怎麼反應？`,
+        `嗯嗯，繼續說 😊 我在聽。<br><br>說完之後，我們一起用「觀感想行」來拆解看看。`,
+      ];
+      return generics[msgCount % generics.length];
+    },
+    quick: ['繼續聊', '我想問別的', '謝謝小羽']
+  }
+];
+
+// ── helpers ────────────────────────────────────────────────────────
+function getTime() {
+  return document.getElementById('clock').textContent;
+}
+
+function appendMsg(html, isUser) {
+  const chat = document.getElementById('chatBg');
+  const typing = document.getElementById('typingWrap');
+  const grp = document.createElement('div');
+  grp.className = 'mgrp ' + (isUser ? 'user' : 'bot');
+  if (isUser) {
+    grp.innerHTML = `
+      <div class="mwrap">
+        <div class="bbl user-bbl">${html}</div>
+        <div class="mtime">${getTime()}</div>
+      </div>`;
+  } else {
+    grp.innerHTML = `
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">${html}</div>
+        <div class="mtime">${getTime()}</div>
+      </div>`;
+  }
+  chat.insertBefore(grp, typing);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function setQuickReplies(list) {
+  const strip = document.getElementById('quickStrip');
+  strip.innerHTML = list.map(t =>
+    `<button class="qr" onclick="sendQuick('${t.replace(/'/g,"&#39;")}')">${t}</button>`
+  ).join('');
+}
+
+function sendMsg() {
+  const inp = document.getElementById('userInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  processInput(text);
+}
+
+function sendQuick(text) {
+  document.getElementById('userInput').value = '';
+  processInput(text);
+}
+
+function processInput(text) {
+  msgCount++;
+  appendMsg(escapeHtml(text), true);
+
+  // show typing
+  const typing = document.getElementById('typingWrap');
+  typing.classList.add('on');
+  document.getElementById('chatBg').scrollTop = document.getElementById('chatBg').scrollHeight;
+
+  // find response
+  const rule = responses.find(r => r.match(text));
+  const replyHtml = typeof rule.reply === 'function' ? rule.reply(text) : rule.reply;
+  const quickList = rule.quick || ['繼續聊', '我想問別的', '謝謝'];
+
+  setTimeout(() => {
+    typing.classList.remove('on');
+    appendMsg(replyHtml, false);
+    setQuickReplies(quickList);
+    document.getElementById('chatBg').scrollTop = document.getElementById('chatBg').scrollHeight;
+  }, 1200 + Math.random() * 600);
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
