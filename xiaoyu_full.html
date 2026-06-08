@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小羽 — 21 天關係覺察練習</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  min-height:100vh;
+  background:linear-gradient(160deg,#1a0a2e 0%,#2d1b4e 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Segoe UI','Noto Sans TC',Arial,sans-serif;
+  padding:24px 16px;
+}
+.page-label { color:white; text-align:center; margin-bottom:20px; }
+.page-label h1 { font-size:22px; }
+.page-label p { font-size:13px; opacity:.5; margin-top:4px; }
+
+.phone {
+  width:375px; height:780px; background:white;
+  border-radius:44px; overflow:hidden;
+  box-shadow:0 0 0 2px #555,0 0 0 6px #222,0 40px 90px rgba(0,0,0,.6);
+  border:2px solid #777; display:flex; flex-direction:column;
+}
+.statusbar {
+  height:40px; background:white; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; font-size:13px; font-weight:600; color:#111;
+}
+.chat-hdr {
+  background:white; border-bottom:1px solid #f0f0f0;
+  padding:10px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+.back-btn { color:#7c5cbf; font-size:22px; cursor:pointer; }
+.bot-ava {
+  width:42px; height:42px; border-radius:14px;
+  background:linear-gradient(135deg,#9b7fd4,#c3a6f0);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0;
+}
+.bot-info { flex:1; }
+.bot-name { font-size:15px; font-weight:700; color:#1a1a1a; display:flex; align-items:center; gap:6px; }
+.day-badge { background:#7c5cbf; color:white; font-size:9px; padding:2px 7px; border-radius:10px; font-weight:800; }
+.bot-sub { font-size:11px; color:#aaa; margin-top:2px; }
+.hdr-icons { display:flex; gap:14px; font-size:20px; color:#888; }
+
+.progress-wrap { background:#f7f3ff; padding:6px 14px 8px; flex-shrink:0; border-bottom:1px solid #ede8f8; }
+.progress-label { display:flex; justify-content:space-between; font-size:10px; color:#9b7fd4; margin-bottom:4px; font-weight:600; }
+.progress-bar { height:4px; background:#e8dff8; border-radius:2px; }
+.progress-fill { height:4px; background:linear-gradient(90deg,#9b7fd4,#c3a6f0); border-radius:2px; width:4.76%; }
+
+.chat-bg {
+  flex:1; background:#f0ebf8; overflow-y:auto; padding:10px; scroll-behavior:smooth;
+}
+.chat-bg::-webkit-scrollbar { width:3px; }
+.chat-bg::-webkit-scrollbar-thumb { background:#c3a6f0; border-radius:2px; }
+
+.date-div { text-align:center; margin:4px 0 12px; }
+.date-div span {
+  background:rgba(100,50,160,.18); color:#6a3fa0;
+  font-size:11px; padding:3px 12px; border-radius:10px; font-weight:600;
+}
+
+.mgrp { display:flex; gap:8px; margin-bottom:4px; align-items:flex-end; }
+.mgrp.user { flex-direction:row-reverse; }
+.mgrp.bot + .mgrp.user, .mgrp.user + .mgrp.bot { margin-top:10px; }
+
+.mava {
+  width:32px; height:32px; border-radius:10px;
+  background:linear-gradient(135deg,#9b7fd4,#c3a6f0);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0; align-self:flex-end;
+}
+.mwrap { max-width:78%; }
+.mname { font-size:10px; color:#9b7fd4; margin-bottom:3px; padding-left:3px; font-weight:600; }
+.bbl {
+  padding:9px 13px; border-radius:18px;
+  font-size:13.5px; line-height:1.7; word-break:break-word;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);
+}
+.bot-bbl { background:white; color:#1a1a1a; border-bottom-left-radius:4px; }
+.user-bbl { background:#7c5cbf; color:white; border-bottom-right-radius:4px; }
+.mtime { font-size:10px; color:rgba(0,0,0,.3); margin-top:3px; padding:0 4px; }
+.mgrp.user .mtime { text-align:right; }
+.bbl strong { font-weight:800; }
+.bbl .dv { border:none; border-top:1px solid #efefef; margin:8px 0; display:block; }
+
+.intro-card {
+  background:white; border-radius:14px; padding:12px 14px; margin-bottom:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08); font-size:13px; line-height:1.7; color:#222;
+}
+.intro-hd { display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+.intro-title { font-weight:800; font-size:13px; color:#7c5cbf; }
+.intro-more { display:none; }
+.intro-toggle { color:#9b7fd4; font-size:12px; font-weight:700; cursor:pointer; margin-top:6px; display:inline-block; }
+
+.sys-card {
+  background:#f7f3ff; border:1.5px solid #c3a6f0; border-radius:14px;
+  padding:14px; margin:10px 0;
+}
+.sys-label { color:#7c5cbf; font-weight:800; font-size:12px; margin-bottom:8px; }
+.sys-body {
+  background:white; border:1px solid #d8ccf0; border-radius:10px;
+  padding:9px 11px; font-size:13px; color:#444; line-height:1.6;
+  white-space:pre-wrap;
+}
+.sys-foot { display:flex; justify-content:flex-end; margin-top:8px; }
+.sys-btn {
+  background:#7c5cbf; color:white; border:none; border-radius:20px;
+  padding:6px 20px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer;
+}
+
+.input-bar {
+  height:54px; background:#faf8ff; border-top:1px solid #ede8f8;
+  display:flex; align-items:center; padding:8px 10px; gap:8px; flex-shrink:0;
+}
+.txt-inp {
+  flex:1; height:36px; background:white; border:1.5px solid #d8ccf0; border-radius:18px;
+  padding:0 14px; font-size:14px; outline:none; font-family:inherit; color:#aaa;
+}
+.send-btn {
+  width:36px; height:36px; border-radius:50%; background:#7c5cbf; border:none;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; color:white; flex-shrink:0;
+}
+.home-bar { height:22px; background:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.hb-line { width:120px; height:4px; background:#ddd; border-radius:2px; }
+</style>
+</head>
+<body>
+
+<div class="page-label">
+  <h1>🕊️ 小羽 — 21 天關係覺察練習</h1>
+  <p>Day 1 完整對話紀錄</p>
+</div>
+
+<div class="phone">
+
+  <div class="statusbar">
+    <span id="clock">9:41</span>
+    <span>🔋 ▋▋▋▋</span>
+  </div>
+
+  <div class="chat-hdr">
+    <div class="back-btn">‹</div>
+    <div class="bot-ava">🕊️</div>
+    <div class="bot-info">
+      <div class="bot-name">小羽 <span class="day-badge">Day 1</span></div>
+      <div class="bot-sub">21 天關係覺察練習 · 週一～週日</div>
+    </div>
+    <div class="hdr-icons"><span>📞</span><span>⋯</span></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Week 1 — 看見對方</span><span>Day 1 / 21</span></div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <div class="chat-bg">
+
+    <div class="date-div"><span>今天</span></div>
+
+    <!-- 課程介紹卡片 -->
+    <div class="intro-card">
+      <div class="intro-hd"><span>🕊️</span><span class="intro-title">21 天關係覺察練習</span></div>
+      一隻猴子救了快淹死的貓，把貓拉上岸後，猴子拿出自己最愛的香蕉給貓——貓不吃香蕉。這不是愛不愛的問題，是猴子不懂貓。
+      <div class="intro-more">
+        <br>大多數關係問題不是沒有愛，而是用自己想要的方式去愛對方。所以我們要學的不是技巧，是先<strong>覺察</strong>——先看見對方、再看見自己。<br><br>
+        <strong>4 步覺察（觀感想行）</strong>：<br>
+        &nbsp;&nbsp;1. <strong>觀</strong>：看到事實，不是看到自己的解讀<br>
+        &nbsp;&nbsp;2. <strong>感</strong>：接住情緒，不是急著分析<br>
+        &nbsp;&nbsp;3. <strong>想</strong>：讀懂需求，不是給自己想給的<br>
+        &nbsp;&nbsp;4. <strong>行</strong>：把覺察變成具體動作<br><br>
+        Week 1 對外（看見對方）→ Week 2 對內（看見自己）→ Week 3 綜合應用。21 天結束你會看到自己<strong>認知升維</strong>——那個不再被慣性綁架的你。
+      </div>
+      <span class="intro-toggle" onclick="var m=this.previousElementSibling;m.style.display=m.style.display==='block'?'none':'block';this.textContent=m.style.display==='block'?'收起 ▲':'展開全文 ▼'">展開全文 ▼</span>
+    </div>
+
+    <!-- 小羽 訊息 1 -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="mname">小羽</div>
+        <div class="bbl bot-bbl">嗨 Jay 😊<br><br>
+今天是 Day 1，我們要一起認識一個核心概念：<strong>大部分關係問題不是沒有愛，而是用錯方式去愛</strong>。<br><br>
+有個故事是這樣的——<br>
+一隻猴子救了快淹死的貓，把貓拉上岸後，猴子拿出自己最愛的香蕉給貓。<br>
+貓不吃香蕉。<br>
+這不是愛不愛的問題，是<strong>猴子不懂貓</strong>。<br><br>
+你跟媽媽的眼鏡事件，其實也卡在類似的地方：<br>
+• 你覺得「懲罰=讓自己痛才會記住」（這是你的邏輯）<br>
+• 她說「懲罰自己喝珍奶」（她的邏輯可能是：我已經很累了，讓自己開心一下）<br><br>
+兩個人用的語言不一樣，所以卡住了。<br><br>
+───<br><br>
+接下來 21 天，我們要學的不是技巧，是<strong>覺察</strong>——先看見對方，再看見自己。<br><br>
+工具是 <strong>4 步覺察（觀感想行）</strong>：<br>
+1. <strong>觀</strong>：看到事實，不是自己的解讀<br>
+2. <strong>感</strong>：接住情緒，不急著分析<br>
+3. <strong>想</strong>：讀懂需求，不是給自己想給的<br>
+4. <strong>行</strong>：把覺察變成具體動作<br><br>
+───<br><br>
+<strong>🎯 今天任務（超簡單）</strong>：<br>
+觀察媽媽 <strong>3 個情緒訊號</strong>（表情、語氣、或肢體動作），純觀察就好——<br>
+• 不做任何反應<br>
+• 不分析<br>
+• 不回饋<br><br>
+就像按下「錄影鍵」，先看見她。<br><br>
+準備好了嗎？有任何問題都可以問我 😊</div>
+        <div class="mtime">09:00</div>
+      </div>
+    </div>
+
+    <!-- 使用者 1 -->
+    <div class="mgrp user">
+      <div class="mwrap">
+        <div class="bbl user-bbl">如何問</div>
+        <div class="mtime">09:03</div>
+      </div>
+    </div>
+
+    <!-- 小羽 訊息 2 -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">嗨Jay 😊<br><br>
+很高興看到你想開始練習！<br><br>
+關於「如何問」——其實今天的任務<strong>不用問</strong>，也<strong>不用跟媽媽說你在觀察</strong>。<br><br>
+你就是在日常互動中，<strong>靜靜地看</strong>：<br>
+- 她說話時的<strong>表情</strong>（眉頭有沒有皺？眼神是看你還是看別的地方？）<br>
+- 她的<strong>語氣</strong>（語速快還是慢？音調高還是平？有沒有嘆氣？）<br>
+- 她的<strong>肢體</strong>（手在做什麼？坐姿放鬆還是僵硬？有沒有轉身走開？）<br><br>
+可能是晚餐時、她在客廳看電視時、或你們隨口聊天時——<strong>就那個當下，你看到什麼，心裡記下來就好</strong>。<br><br>
+不用立刻回應她、不用分析「她為什麼這樣」、也不用做任何改變。<br><br>
+純粹練習「看見」。<br><br>
+今天先試試看，有觀察到什麼都可以回來跟我聊 😊</div>
+        <div class="mtime">09:04</div>
+      </div>
+    </div>
+
+    <!-- 使用者 2 -->
+    <div class="mgrp user">
+      <div class="mwrap">
+        <div class="bbl user-bbl">就正常這樣</div>
+        <div class="mtime">09:05</div>
+      </div>
+    </div>
+
+    <!-- 小羽 訊息 3 -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">嗨 Jay 😊<br><br>
+歡迎來到 21 天關係練習！<br><br>
+你在 onboarding 寫的那段——媽媽又踩壞眼鏡、每次提醒都沒用、最後她說「懲罰自己喝珍奶」——我看得出來你其實挺無奈的。<br><br>
+今天 Day 1 我們要做的是：<strong>認識盲點 + 4 步覺察</strong>。<br><br>
+先講個故事給你聽——<br><br>
+有隻猴子救了快淹死的貓，拉上岸後，猴子拿出自己最愛的香蕉給貓。結果貓不吃。<br><br>
+這不是愛不愛的問題，是<strong>猴子不懂貓</strong>。<br><br>
+大多數關係問題也是這樣：不是沒有愛，是我們習慣<strong>用自己想要的方式去愛對方</strong>。<br><br>
+所以我們要學的不是技巧，是先<strong>覺察</strong>——先看見對方、再看見自己。<br><br>
+<strong>4 步覺察（觀感想行）</strong>：<br>
+1. <strong>觀</strong>：看到事實，不是看到自己的解讀<br>
+2. <strong>感</strong>：接住情緒，不是急著分析<br>
+3. <strong>想</strong>：讀懂需求，不是給自己想給的<br>
+4. <strong>行</strong>：把覺察變成具體動作<br><br>
+接下來 21 天，Week 1 我們先練「對外覺察」（看見對方），Week 2 練「對內覺察」（看見自己），Week 3 綜合應用。<br><br>
+<strong>今天只做一件事</strong>：觀察媽媽 3 個情緒訊號（表情、語氣、肢體），不做任何反應、不分析、不回饋。純觀察。<br><br>
+你準備好了嗎？還是想先聊聊那副眼鏡的事？</div>
+        <div class="mtime">09:06</div>
+      </div>
+    </div>
+
+    <!-- 使用者 3 -->
+    <div class="mgrp user">
+      <div class="mwrap">
+        <div class="bbl user-bbl">我觀察到她:就正常這樣</div>
+        <div class="mtime">09:07</div>
+      </div>
+    </div>
+
+    <!-- 小羽 訊息 4 -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">嗨 Jay 😊<br><br>
+「就正常這樣」——這其實是很真實的回應。<br><br>
+大部分時候，我們以為「觀察情緒訊號」要等對方情緒很明顯的時候才看得到。但<strong>平靜本身就是一種情緒訊號</strong>。<br><br>
+你觀察到的「正常」，可能包含：<br>
+• 她今天表情沒什麼波動<br>
+• 語氣沒有特別高低起伏<br>
+• 肢體動作也是日常狀態<br><br>
+這些都是有效的觀察 👌<br><br>
+<span class="dv"></span>
+<strong>接下來可以試試看</strong>（不急，隨時都行）：<br><br>
+下次當她「正常這樣」的時候，試著再細看一點點——<br><br>
+• 她眉頭有沒有微微皺起？（哪怕只有 0.5 秒）<br>
+• 她講話速度是比平常快一點、還是慢一點？<br>
+• 她的肩膀是放鬆的、還是微微緊繃？<br><br>
+<strong>ISFJ 的她</strong>（S 感官 + J 判斷）很會「看起來正常」——因為她習慣<strong>把需求藏起來、維持表面和諧</strong>。所以「正常」底下，有時候藏著「其實有點累但不想說」。<br><br>
+你不用現在就找到，只是提醒你：<strong>平靜也是一種訊號</strong>，不一定要等她情緒很明顯才開始觀察 😊<br><br>
+<span class="dv"></span>
+今天你已經開始「看」了，這就夠了。明天我們再往下走 ✨</div>
+        <div class="mtime">09:08</div>
+      </div>
+    </div>
+
+    <!-- 使用者 4 -->
+    <div class="mgrp user">
+      <div class="mwrap">
+        <div class="bbl user-bbl">ISFJ 的她（S 感官 + J 判斷）很會「看起來正常」——因為她習慣把需求藏起來、維持表面和諧。所以「正常」底下，有時候藏著「其實有點累但不想說」。ANS:沒有</div>
+        <div class="mtime">09:09</div>
+      </div>
+    </div>
+
+    <!-- 小羽 訊息 5 -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">嗨 Jay 😊<br><br>
+我看到你寫「沒有」——我猜你是在回應某個問題或想法？<br><br>
+不過我這邊沒有看到前面的脈絡，所以我不太確定你是在回應什麼。<br><br>
+可以跟我說一下嗎？是關於：<br>
+• 今天想聊的某個情境？<br>
+• 還是你想確認某個觀察？<br><br>
+跟我說，我們一起拆 😊</div>
+        <div class="mtime">09:10</div>
+      </div>
+    </div>
+
+    <!-- 系統卡片：onboarding 輸入 -->
+    <div class="sys-card">
+      <div class="sys-label">想對小羽說...</div>
+      <div class="sys-body">我當時覺得他真的很不負責任。 而且他完全不在乎的感覺
+之前就有約好要把眼鏡放在哪邊。但是他完全不會遵守
+不知道到底要讓他賠幾萬塊他才會知道要放在那邊</div>
+      <div class="sys-foot"><button class="sys-btn">完成</button></div>
+    </div>
+
+    <!-- 小羽 訊息 6 -->
+    <div class="mgrp bot">
+      <div class="mava">🕊️</div>
+      <div class="mwrap">
+        <div class="bbl bot-bbl">嗨 Jay 😊<br><br>
+我看到你寫的了——媽媽第 3 次踩壞眼鏡、每副 1 萬、你提醒過好多次要放眼鏡盒或安全的地方，但她每次都亂放。你問她怎麼懲罰自己，她說「喝珍奶」，你覺得那根本不叫懲罰。<br><br>
+我聽到你的「不負責任」「完全不在乎」——這個情緒很真實。<br><br>
+想先問你一個關鍵問題：<br><br>
+<strong>你媽媽平常對家裡其他事情（比如煮飯、打掃、照顧你）負責任嗎？</strong><br><br>
+我問這個是因為——如果她對很多事都很負責、唯獨眼鏡這件事一直出包，那「不負責任」可能不是全貌。可能是：<br>
+- 她真的記不住（ISFJ 的 S 很細節、但可能這個點她沒建立習慣）<br>
+- 她覺得「眼鏡放哪」沒你想的那麼重要（J/P 的在意點不同）<br>
+- 她內心有點羞愧 / 不知道怎麼道歉，所以用「喝珍奶」逃避<br><br>
+但如果她對很多事都隨便、那可能真的是另一種狀態。<br><br>
+你覺得呢？她對其他事情的樣子跟眼鏡這件事一樣嗎？<br><br>
+<span class="dv"></span>
+<strong>接下來 21 天我們會這樣練</strong>：<br>
+- Week 1：看見媽媽（她為什麼一直亂放？ISFJ 的她到底怎麼想的？）<br>
+- Week 2：看見你自己（你的「不負責任」感受從哪來？你真正需要的是什麼？）<br>
+- Week 3：整合出一套你跟她都能接受的解法<br><br>
+今天 Day 0 我們先從你的觀察開始——告訴我她平常對其他事的樣子，我想更了解你們的互動 😊</div>
+        <div class="mtime">09:13</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="input-bar">
+    <input class="txt-inp" type="text" placeholder="想對小羽說...">
+    <button class="send-btn">➤</button>
+  </div>
+  <div class="home-bar"><div class="hb-line"></div></div>
+
+</div>
+
+<script>
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.getHours()+':'+String(n.getMinutes()).padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock,30000);
+</script>
+</body>
+</html>
