@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>功能分解圖</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    background: white;
+    margin: 0;
+    padding: 40px 20px;
+    font-family: 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .frame {
+    border: 2px solid #333;
+    padding: 32px 40px 24px 40px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+  }
+  .chart-sub {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .chart-caption {
+    font-size: 13px;
+    margin-top: 16px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+<div class="chart-sub">2-1　功能分解圖（Functional decomposition diagram）</div>
+
+<svg width="1100" height="530"
+     xmlns="http://www.w3.org/2000/svg"
+     style="font-family:'Microsoft JhengHei','PingFang TC','Noto Sans TC',sans-serif;">
+
+  <!-- ══ 連接線 ══ -->
+
+  <!-- Root → L1 -->
+  <line x1="590" y1="91"  x2="590" y2="130" stroke="#333" stroke-width="1.5"/>
+  <line x1="220" y1="130" x2="960" y2="130" stroke="#333" stroke-width="1.5"/>
+  <line x1="220" y1="130" x2="220" y2="148" stroke="#333" stroke-width="1.5"/>
+  <line x1="700" y1="130" x2="700" y2="148" stroke="#333" stroke-width="1.5"/>
+  <line x1="960" y1="130" x2="960" y2="148" stroke="#333" stroke-width="1.5"/>
+
+  <!-- 使用者帳號管理 → L2 -->
+  <line x1="220" y1="184" x2="220" y2="216" stroke="#333" stroke-width="1.5"/>
+  <line x1="140" y1="216" x2="300" y2="216" stroke="#333" stroke-width="1.5"/>
+  <line x1="140" y1="216" x2="140" y2="234" stroke="#333" stroke-width="1.5"/>
+  <line x1="300" y1="216" x2="300" y2="234" stroke="#333" stroke-width="1.5"/>
+
+  <!-- 商品推薦查詢 → L2 -->
+  <line x1="700" y1="184" x2="700" y2="216" stroke="#333" stroke-width="1.5"/>
+  <line x1="540" y1="216" x2="870" y2="216" stroke="#333" stroke-width="1.5"/>
+  <line x1="540" y1="216" x2="540" y2="234" stroke="#333" stroke-width="1.5"/>
+  <line x1="710" y1="216" x2="710" y2="234" stroke="#333" stroke-width="1.5"/>
+  <line x1="870" y1="216" x2="870" y2="234" stroke="#333" stroke-width="1.5"/>
+
+  <!-- 品類篩選 → 推薦結果顯示 -->
+  <line x1="710" y1="270" x2="710" y2="324" stroke="#333" stroke-width="1.5"/>
+
+  <!-- 推薦結果顯示 → L4（4 項） -->
+  <line x1="710" y1="360" x2="710" y2="396" stroke="#333" stroke-width="1.5"/>
+  <line x1="545" y1="396" x2="885" y2="396" stroke="#333" stroke-width="1.5"/>
+  <line x1="545" y1="396" x2="545" y2="414" stroke="#333" stroke-width="1.5"/>
+  <line x1="660" y1="396" x2="660" y2="414" stroke="#333" stroke-width="1.5"/>
+  <line x1="775" y1="396" x2="775" y2="414" stroke="#333" stroke-width="1.5"/>
+  <line x1="885" y1="396" x2="885" y2="414" stroke="#333" stroke-width="1.5"/>
+
+  <!-- ══ 方塊 ══ -->
+
+  <!-- Root -->
+  <rect x="450" y="49" width="280" height="42" fill="#c8c8c8" stroke="#333" stroke-width="1.5"/>
+  <text x="590" y="70" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold">Buy託了AI　日韓藥妝推薦系統</text>
+
+  <!-- L1 -->
+  <rect x="130" y="148" width="180" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="220" y="166" text-anchor="middle" dominant-baseline="middle" font-size="13">使用者帳號管理</text>
+
+  <rect x="615" y="148" width="170" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="700" y="166" text-anchor="middle" dominant-baseline="middle" font-size="13">商品推薦查詢</text>
+
+  <rect x="885" y="148" width="150" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="960" y="166" text-anchor="middle" dominant-baseline="middle" font-size="13">定期資料更新</text>
+
+  <!-- L2 左（帳號管理子項） -->
+  <rect x="80"  y="234" width="120" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="140" y="252" text-anchor="middle" dominant-baseline="middle" font-size="13">會員註冊</text>
+
+  <rect x="240" y="234" width="120" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="300" y="252" text-anchor="middle" dominant-baseline="middle" font-size="13">會員登入</text>
+
+  <!-- L2 右（推薦查詢子項） -->
+  <rect x="460" y="234" width="160" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="540" y="252" text-anchor="middle" dominant-baseline="middle" font-size="13">自然語言需求輸入</text>
+
+  <rect x="660" y="234" width="100" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="710" y="252" text-anchor="middle" dominant-baseline="middle" font-size="13">品類篩選</text>
+
+  <rect x="810" y="234" width="120" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="870" y="252" text-anchor="middle" dominant-baseline="middle" font-size="13">預算區間設定</text>
+
+  <!-- L3 -->
+  <rect x="635" y="324" width="150" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="710" y="342" text-anchor="middle" dominant-baseline="middle" font-size="13">推薦結果顯示</text>
+
+  <!-- L4（4 項） -->
+  <rect x="480" y="414" width="130" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="545" y="432" text-anchor="middle" dominant-baseline="middle" font-size="12">商品名稱＋圖片</text>
+
+  <rect x="620" y="414" width="80"  height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="660" y="432" text-anchor="middle" dominant-baseline="middle" font-size="13">好評率</text>
+
+  <rect x="720" y="414" width="110" height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="775" y="432" text-anchor="middle" dominant-baseline="middle" font-size="13">評論摘要</text>
+
+  <rect x="840" y="414" width="90"  height="36" fill="white" stroke="#333" stroke-width="1.5"/>
+  <text x="885" y="432" text-anchor="middle" dominant-baseline="middle" font-size="13">排序切換</text>
+
+</svg>
+
+<div class="chart-caption">▲圖 2-1-1　功能分解圖</div>
+</div>
+
+</body>
+</html>

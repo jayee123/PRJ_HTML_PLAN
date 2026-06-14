@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>日韓藥妝推薦系統</title>
+  <title>Buy 託了 AI｜日韓藥妝推薦</title>
   <style>
     :root {
       --pink: #f472b6;
@@ -13,14 +13,11 @@
       --purple: #a78bfa;
       --dark: #1e1b2e;
       --gray: #6b7280;
-      --card-bg: #ffffff;
       --radius: 16px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: 'Segoe UI', -apple-system, sans-serif;
+      font-family: 'Segoe UI', -apple-system, 'Microsoft JhengHei', sans-serif;
       background: linear-gradient(135deg, #fdf2f8 0%, #ede9fe 100%);
       min-height: 100vh;
       color: var(--dark);
@@ -45,7 +42,7 @@
       align-items: center;
       gap: 10px;
       font-weight: 800;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--dark);
     }
     .logo-icon {
@@ -53,359 +50,235 @@
       background: linear-gradient(135deg, var(--pink), var(--purple));
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 1.1rem;
+      color: white; font-size: 0.95rem; font-weight: 900;
     }
-    .logo span { color: var(--pink); }
-    nav { display: flex; gap: 8px; }
+    .logo em { font-style: normal; color: var(--pink); }
+    nav { display: flex; gap: 6px; }
     nav a {
-      padding: 6px 16px;
+      padding: 6px 14px;
       border-radius: 20px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: var(--gray);
       text-decoration: none;
       transition: all 0.2s;
     }
-    nav a:hover, nav a.active {
-      background: var(--pink-light);
-      color: var(--pink);
-      font-weight: 600;
-    }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .flag { font-size: 1.3rem; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
-    .flag:hover { opacity: 1; }
+    nav a.active, nav a:hover { background: var(--pink-light); color: var(--pink); font-weight: 600; }
+    .header-flags { font-size: 1.3rem; display: flex; gap: 6px; }
 
     /* ── HERO ── */
-    .hero {
-      text-align: center;
-      padding: 64px 24px 48px;
-    }
+    .hero { text-align: center; padding: 52px 24px 36px; }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--pink-light);
-      border: 1px solid var(--pink-mid);
-      color: var(--pink);
-      border-radius: 20px;
-      padding: 6px 16px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin-bottom: 20px;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--pink-light); border: 1px solid var(--pink-mid);
+      color: var(--pink); border-radius: 20px;
+      padding: 5px 14px; font-size: 0.81rem; font-weight: 600; margin-bottom: 18px;
     }
-    .hero h1 {
-      font-size: 2.6rem;
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 14px;
-    }
+    .hero h1 { font-size: 2.3rem; font-weight: 900; line-height: 1.2; margin-bottom: 12px; }
     .hero h1 em {
       font-style: normal;
       background: linear-gradient(135deg, var(--pink), var(--purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .hero p {
-      color: var(--gray);
-      font-size: 1.05rem;
-      max-width: 480px;
-      margin: 0 auto 36px;
-      line-height: 1.7;
-    }
+    .hero p { color: var(--gray); font-size: 0.96rem; max-width: 440px; margin: 0 auto 28px; line-height: 1.7; }
 
-    /* ── FILTER CARD ── */
-    .filter-card {
+    /* ── SEARCH ── */
+    .search-wrap { max-width: 700px; margin: 36px auto 14px; padding: 0 24px; }
+    .search-box {
+      display: flex;
       background: white;
-      border-radius: var(--radius);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
-      padding: 32px;
-      max-width: 860px;
-      margin: 0 auto 48px;
-    }
-    .filter-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--gray);
-      margin-bottom: 20px;
-    }
-    .filter-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    .filter-group label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--dark);
-      margin-bottom: 8px;
-    }
-    .filter-group select,
-    .filter-group input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 10px;
-      font-size: 0.92rem;
-      color: var(--dark);
-      background: #fafafa;
-      appearance: none;
-      outline: none;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      overflow: hidden;
+      border: 2px solid transparent;
       transition: border-color 0.2s;
     }
-    .filter-group select:focus,
-    .filter-group input:focus {
-      border-color: var(--pink);
-      background: white;
+    .search-box:focus-within { border-color: var(--pink); }
+    .search-box input {
+      flex: 1; padding: 15px 20px; border: none; outline: none;
+      font-size: 0.93rem; color: var(--dark); background: transparent;
     }
-
-    /* Budget slider */
-    .budget-row { display: flex; align-items: center; gap: 16px; }
-    .budget-row input[type=range] {
-      flex: 1;
-      border: none;
-      background: none;
-      padding: 0;
-      accent-color: var(--pink);
-    }
-    .budget-val {
-      font-weight: 700;
-      color: var(--pink);
-      white-space: nowrap;
-      font-size: 1rem;
-      min-width: 80px;
-      text-align: right;
-    }
-
-    /* Tags */
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-    .tag {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      border: 1.5px solid #e5e7eb;
-      color: var(--gray);
-      cursor: pointer;
-      transition: all 0.2s;
-      background: white;
-    }
-    .tag:hover { border-color: var(--pink); color: var(--pink); }
-    .tag.active {
-      background: var(--pink);
-      border-color: var(--pink);
-      color: white;
-    }
-
-    .search-btn {
-      width: 100%;
-      padding: 14px;
+    .search-box input::placeholder { color: #b0b7c3; }
+    .search-box button {
       background: linear-gradient(135deg, var(--pink), var(--coral));
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      letter-spacing: 0.03em;
+      color: white; border: none; padding: 0 26px;
+      font-size: 0.88rem; font-weight: 700; cursor: pointer;
+      white-space: nowrap; transition: opacity 0.2s;
     }
-    .search-btn:hover { opacity: 0.92; }
-    .search-btn:active { transform: scale(0.99); }
+    .search-box button:hover { opacity: 0.88; }
 
-    /* ── SOURCE BADGES ── */
+    /* ── FILTERS ── */
+    .filter-row {
+      max-width: 700px; margin: 0 auto 30px; padding: 0 24px;
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .filter-row select {
+      padding: 8px 12px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 0.85rem; color: var(--dark); background: white; outline: none; cursor: pointer;
+    }
+    .filter-row select:focus { border-color: var(--pink); }
+    .budget-wrap {
+      display: flex; align-items: center; gap: 8px;
+      background: white; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 6px 12px; font-size: 0.85rem; color: var(--gray);
+    }
+    .budget-wrap input[type=range] { width: 90px; accent-color: var(--pink); }
+    .budget-val { color: var(--pink); font-weight: 700; white-space: nowrap; }
+
+    /* ── SOURCE BAR ── */
     .source-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin-bottom: 32px; flex-wrap: wrap;
     }
-    .source-label { font-size: 0.8rem; color: var(--gray); font-weight: 600; }
-    .source-badge {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border: 1.5px solid;
+    .source-label { font-size: 0.78rem; color: var(--gray); font-weight: 600; }
+    .src-badge {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 0.78rem; font-weight: 600; border: 1.5px solid;
     }
-    .src-yt   { border-color: #ff4444; color: #ff4444; background: #fff5f5; }
-    .src-ig   { border-color: #e1306c; color: #e1306c; background: #fff0f5; }
-    .src-blog { border-color: #6366f1; color: #6366f1; background: #f0f0ff; }
-    .src-tt   { border-color: #010101; color: #010101; background: #f5f5f5; }
-    .src-pt   { border-color: #e60023; color: #e60023; background: #fff5f5; }
+    .src-ptt    { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+    .src-dcard  { border-color: #ea580c; color: #ea580c; background: #fff7ed; }
+    .src-cosme  { border-color: #db2777; color: #db2777; background: #fdf2f8; }
+    .src-hwahae { border-color: #7c3aed; color: #7c3aed; background: #f5f3ff; }
 
-    /* ── RESULTS GRID ── */
-    main { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+    /* ── MAIN ── */
+    main { max-width: 1120px; margin: 0 auto; padding: 0 24px 80px; }
 
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 20px;
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
     }
-    .section-header h2 { font-size: 1.25rem; font-weight: 800; }
-    .section-header span { font-size: 0.85rem; color: var(--gray); }
+    .results-header h2 { font-size: 1.1rem; font-weight: 800; }
+    .sort-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .sort-btn {
+      padding: 5px 12px; border-radius: 20px; font-size: 0.77rem;
+      font-weight: 600; border: 1.5px solid #e5e7eb; background: white;
+      color: var(--gray); cursor: pointer; transition: all 0.2s;
+    }
+    .sort-btn.active { background: var(--pink); border-color: var(--pink); color: white; }
+    .sort-btn:hover:not(.active) { border-color: var(--pink); color: var(--pink); }
 
+    /* ── CARDS GRID ── */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
       gap: 20px;
     }
 
+    /* ── CARD ── */
     .product-card {
-      background: white;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
+      background: white; border-radius: var(--radius);
+      overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      cursor: pointer; border: 2px solid transparent;
     }
-    .product-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(244,114,182,0.15);
-    }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(244,114,182,0.14); }
+    .product-card.active { border-color: var(--pink); transform: none; box-shadow: 0 4px 20px rgba(244,114,182,0.20); }
 
     .card-img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      background: var(--pink-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3.5rem;
-      position: relative;
+      width: 100%; aspect-ratio: 1; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative;
     }
-    .card-img .origin-flag {
-      position: absolute;
-      top: 10px; left: 10px;
-      font-size: 1.3rem;
-      background: white;
-      border-radius: 8px;
-      padding: 2px 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .origin-flag {
+      position: absolute; top: 10px; left: 10px; font-size: 1.2rem;
+      background: white; border-radius: 8px; padding: 2px 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
     }
-    .score-badge {
-      position: absolute;
-      top: 10px; right: 10px;
-      background: linear-gradient(135deg, var(--pink), var(--coral));
-      color: white;
-      border-radius: 10px;
-      padding: 3px 10px;
-      font-size: 0.78rem;
-      font-weight: 800;
+    .approval-badge {
+      position: absolute; top: 10px; right: 10px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white; border-radius: 10px; padding: 3px 9px;
+      font-size: 0.75rem; font-weight: 800;
     }
 
-    .card-body { padding: 14px 16px 16px; }
+    .card-body { padding: 14px 16px 10px; }
     .card-brand {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--pink);
-      margin-bottom: 4px;
+      font-size: 0.69rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--pink); margin-bottom: 4px;
     }
-    .card-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-    .card-desc {
-      font-size: 0.8rem;
-      color: var(--gray);
-      line-height: 1.5;
-      margin-bottom: 12px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .card-price {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--dark);
-    }
-    .card-price small {
-      font-size: 0.75rem;
-      color: var(--gray);
-      font-weight: 400;
-      margin-left: 4px;
-    }
-    .card-mentions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.78rem;
-      color: var(--gray);
-    }
-    .card-mentions span { color: var(--pink); font-weight: 700; }
+    .card-name { font-size: 0.91rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
 
-    /* Sources chips under card */
-    .card-sources {
-      display: flex;
-      gap: 4px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .src-chip {
-      font-size: 0.68rem;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: 600;
-    }
-    .src-chip.yt   { background: #fff5f5; color: #ff4444; }
-    .src-chip.blog { background: #f0f0ff; color: #6366f1; }
-    .src-chip.ig   { background: #fff0f5; color: #e1306c; }
-    .src-chip.tt   { background: #f5f5f5; color: #010101; }
+    .approval-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .approval-label { font-size: 0.71rem; color: var(--gray); white-space: nowrap; }
+    .approval-bar-wrap { flex: 1; height: 5px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+    .approval-bar { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 3px; }
+    .approval-pct { font-size: 0.77rem; font-weight: 700; color: #10b981; white-space: nowrap; }
 
-    /* ── INSIGHT PANEL ── */
-    .insight-panel {
-      background: linear-gradient(135deg, var(--dark), #312e6b);
-      border-radius: var(--radius);
-      padding: 28px 32px;
-      margin-bottom: 40px;
-      color: white;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 24px;
+    .card-footer { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .card-price { font-size: 1rem; font-weight: 800; }
+    .card-price small { font-size: 0.71rem; color: var(--gray); font-weight: 400; margin-left: 2px; }
+    .review-count { font-size: 0.75rem; color: var(--gray); }
+    .review-count span { color: var(--pink); font-weight: 700; }
+
+    .card-sources { display: flex; gap: 4px; flex-wrap: wrap; }
+    .src-chip { font-size: 0.64rem; padding: 2px 7px; border-radius: 8px; font-weight: 600; }
+    .src-chip.ptt    { background: #f0fdf4; color: #16a34a; }
+    .src-chip.dcard  { background: #fff7ed; color: #ea580c; }
+    .src-chip.cosme  { background: #fdf2f8; color: #db2777; }
+    .src-chip.hwahae { background: #f5f3ff; color: #7c3aed; }
+
+    /* ── SUMMARY HINT ── */
+    .summary-hint {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; background: var(--pink-light);
+      font-size: 0.75rem; color: var(--pink); font-weight: 600;
+      border-top: 1px solid #fce7f3;
     }
-    .insight-item h4 {
-      font-size: 0.78rem;
-      font-weight: 600;
-      opacity: 0.6;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
+    .summary-hint .arrow { margin-left: auto; transition: transform 0.3s; display: inline-block; }
+    .product-card.active .summary-hint .arrow { transform: rotate(180deg); }
+
+    /* ── SUMMARY PANEL ── */
+    .summary-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.45s ease;
+      background: white;
     }
-    .insight-item .val {
-      font-size: 1.6rem;
-      font-weight: 900;
-      margin-bottom: 4px;
+    .product-card.active .summary-panel { max-height: 500px; }
+
+    .summary-inner { padding: 14px 16px 16px; border-top: 1px solid #fce7f3; }
+
+    /* loading dots */
+    .loading-dots { display: flex; align-items: center; gap: 5px; padding: 6px 0; }
+    .loading-dots span {
+      width: 7px; height: 7px; background: var(--pink-mid);
+      border-radius: 50%; animation: dotBounce 1.2s infinite;
     }
-    .insight-item p { font-size: 0.82rem; opacity: 0.7; }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce {
+      0%, 60%, 100% { transform: translateY(0); background: var(--pink-mid); }
+      30% { transform: translateY(-6px); background: var(--pink); }
+    }
+    .loading-text { font-size: 0.77rem; color: var(--gray); margin-left: 4px; }
+
+    /* summary body */
+    .summary-content { display: none; }
+    .summary-content.show { display: block; }
+    .summary-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.68rem; background: var(--pink-light); color: var(--pink);
+      border-radius: 8px; padding: 2px 8px; font-weight: 600; margin-bottom: 10px;
+    }
+    .sum-block { margin-bottom: 10px; }
+    .sum-title {
+      font-size: 0.78rem; font-weight: 800; margin-bottom: 6px;
+    }
+    .sum-title.adv { color: #059669; }
+    .sum-title.caut { color: #d97706; }
+    .sum-block ul { list-style: none; }
+    .sum-block ul li {
+      font-size: 0.81rem; color: #374151; line-height: 1.6;
+      padding: 2px 0 2px 14px; position: relative;
+    }
+    .sum-block ul li::before { content: '·'; position: absolute; left: 3px; font-weight: 900; }
+    .sum-block.adv li::before { color: #10b981; }
+    .sum-block.caut li::before { color: #d97706; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .filter-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 1.8rem; }
-      .insight-panel { grid-template-columns: 1fr; }
+    @media (max-width: 680px) {
+      .hero h1 { font-size: 1.75rem; }
       nav { display: none; }
+      .filter-row { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -414,271 +287,424 @@
 <!-- HEADER -->
 <header>
   <div class="logo">
-    <div class="logo-icon">✦</div>
-    美<span>次元</span>
+    <div class="logo-icon">託</div>
+    Buy <em>託了 AI</em>
   </div>
   <nav>
-    <a href="#" class="active">探索推薦</a>
-    <a href="#">趨勢排行</a>
-    <a href="#">我的清單</a>
-    <a href="#">比價地圖</a>
+    <a href="#" class="active">推薦查詢</a>
   </nav>
-  <div class="header-right">
-    <span class="flag" title="日本">🇯🇵</span>
-    <span class="flag" title="韓國">🇰🇷</span>
-  </div>
+  <div class="header-flags">🇯🇵 🇰🇷</div>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">✦ AI 聚合分析・來自 5 大平台</div>
-  <h1>找到<em>真正適合你</em><br>的日韓藥妝</h1>
-  <p>整合 YouTube、部落格、Instagram、TikTok 上萬則評測，<br>根據你的膚質、需求與預算，精準推薦。</p>
-</section>
-
-<!-- FILTER CARD -->
-<div style="max-width:860px; margin:0 auto; padding:0 24px;">
-<div class="filter-card">
-  <div class="filter-title">設定你的條件</div>
-
-  <div class="filter-grid">
-    <div class="filter-group">
-      <label>品類</label>
-      <select>
-        <option>全部品類</option>
-        <option>保濕・乳液</option>
-        <option>防曬</option>
-        <option>精華液</option>
-        <option>面膜</option>
-        <option>卸妝</option>
-        <option>底妝</option>
-        <option>口紅・唇彩</option>
-        <option>眼影・眼線</option>
-        <option>身體保養</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>膚質</label>
-      <select>
-        <option>不限膚質</option>
-        <option>乾性肌</option>
-        <option>油性肌</option>
-        <option>混合肌</option>
-        <option>敏感肌</option>
-        <option>痘痘肌</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>品牌來源</label>
-      <select>
-        <option>日韓全部</option>
-        <option>🇯🇵 日本品牌</option>
-        <option>🇰🇷 韓國品牌</option>
-      </select>
-    </div>
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-box">
+    <input type="text" id="searchInput"
+      placeholder="例如：敏感肌適合的保濕防曬、油肌不黏膩的精華液…" />
+    <button onclick="handleSearch()">✦ 為我推薦</button>
   </div>
-
-  <div class="filter-group" style="margin-bottom:16px;">
-    <label>最高預算（TWD）</label>
-    <div class="budget-row">
-      <input type="range" id="budgetSlider" min="100" max="3000" step="50" value="800"
-        oninput="document.getElementById('budgetVal').textContent = 'NT$ ' + this.value" />
-      <div class="budget-val" id="budgetVal">NT$ 800</div>
-    </div>
-  </div>
-
-  <div style="margin-bottom:16px;">
-    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:10px;">膚況與需求（可多選）</label>
-    <div class="tag-row">
-      <div class="tag active" onclick="this.classList.toggle('active')">💧 保濕</div>
-      <div class="tag" onclick="this.classList.toggle('active')">✨ 美白</div>
-      <div class="tag" onclick="this.classList.toggle('active')">🌞 防曬</div>
-      <div class="tag" onclick="this.classList.toggle('active')">🌿 無香精</div>
-      <div class="tag active" onclick="this.classList.toggle('active')">🧴 抗老</div>
-      <div class="tag" onclick="this.classList.toggle('active')">🌸 控油</div>
-      <div class="tag" onclick="this.classList.toggle('active')">🛡 敏感友善</div>
-      <div class="tag" onclick="this.classList.toggle('active')">♻️ 純素</div>
-      <div class="tag" onclick="this.classList.toggle('active')">🏃 平價首選</div>
-      <div class="tag" onclick="this.classList.toggle('active')">⭐ 爆款熱銷</div>
-    </div>
-  </div>
-
-  <button class="search-btn">✦ 為我推薦</button>
 </div>
+
+<!-- FILTERS -->
+<div class="filter-row">
+  <select id="catFilter">
+    <option value="">全部品類</option>
+    <option>保濕・乳液</option>
+    <option>防曬</option>
+    <option>精華液</option>
+    <option>面膜</option>
+    <option>卸妝</option>
+    <option>清潔</option>
+    <option>底妝</option>
+    <option>美白</option>
+  </select>
+  <div class="budget-wrap">
+    預算
+    <input type="range" id="budgetSlider" min="100" max="3000" step="50" value="1500"
+      oninput="document.getElementById('budgetVal').textContent = 'NT$ ' + this.value" />
+    <span class="budget-val" id="budgetVal">NT$ 1500</span>
+  </div>
+  <select id="originFilter">
+    <option value="">日韓全部</option>
+    <option value="JP">🇯🇵 日本品牌</option>
+    <option value="KR">🇰🇷 韓國品牌</option>
+  </select>
 </div>
 
 <!-- SOURCE BAR -->
 <div class="source-bar">
-  <span class="source-label">資料來源：</span>
-  <div class="source-badge src-yt">▶ YouTube</div>
-  <div class="source-badge src-ig">◉ Instagram</div>
-  <div class="source-badge src-blog">✍ 部落格</div>
-  <div class="source-badge src-tt">♪ TikTok</div>
-  <div class="source-badge src-pt">⊕ Pinterest</div>
+  <span class="source-label">評論來源：</span>
+  <div class="src-badge src-ptt">◎ PTT 美妝板</div>
+  <div class="src-badge src-dcard">◈ Dcard 美妝版</div>
+  <div class="src-badge src-cosme">✿ @cosme</div>
+  <div class="src-badge src-hwahae">♡ 화해</div>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 <main>
-
-  <!-- INSIGHT PANEL -->
-  <div class="insight-panel">
-    <div class="insight-item">
-      <h4>本次分析資料量</h4>
-      <div class="val">12,847</div>
-      <p>篇評測・影片・貼文</p>
-    </div>
-    <div class="insight-item">
-      <h4>最熱門品牌</h4>
-      <div class="val">HADA LABO</div>
-      <p>出現於 3,200+ 則評測</p>
-    </div>
-    <div class="insight-item">
-      <h4>平均評分門檻</h4>
-      <div class="val">87 / 100</div>
-      <p>只顯示社群好評產品</p>
+  <div class="results-header">
+    <h2 id="resultsTitle">🔍 推薦結果（依語意相關度排序）</h2>
+    <div class="sort-btns">
+      <button class="sort-btn active" onclick="setSort(this,'相關度')">語意相關度</button>
+      <button class="sort-btn" onclick="setSort(this,'好評率')">好評率 高→低</button>
+      <button class="sort-btn" onclick="setSort(this,'價格低')">價格 低→高</button>
+      <button class="sort-btn" onclick="setSort(this,'價格高')">價格 高→低</button>
     </div>
   </div>
 
-  <!-- PRODUCT RESULTS -->
-  <div class="section-header">
-    <h2>🔥 為你推薦（依符合度排序）</h2>
-    <span>共找到 48 個產品</span>
-  </div>
+  <div class="cards-grid" id="cardsGrid">
 
-  <div class="cards-grid">
-
-    <!-- Card 1 -->
-    <div class="product-card">
-      <div class="card-img" style="background:#fce4ec;">
-        🧴
+    <!-- ── Card 1: HADA LABO ── -->
+    <div class="product-card" onclick="toggleSummary(this,0)">
+      <div class="card-img" style="background:#fce4ec;">🧴
         <div class="origin-flag">🇯🇵</div>
-        <div class="score-badge">✦ 96分</div>
+        <div class="approval-badge">好評率 96%</div>
       </div>
       <div class="card-body">
         <div class="card-brand">HADA LABO</div>
         <div class="card-name">極潤 HA 超補水凝露</div>
-        <div class="card-desc">五重玻尿酸配方，乾性敏感肌膚首選，質地清爽不黏膩。</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:96%"></div></div>
+          <span class="approval-pct">96%</span>
+        </div>
         <div class="card-footer">
-          <div class="card-price">NT$ 299 <small>/ 100mL</small></div>
-          <div class="card-mentions"><span>4.2k</span> 則提及</div>
+          <div class="card-price">NT$ 299<small> / 100mL</small></div>
+          <div class="review-count"><span>412</span> 則評論</div>
         </div>
         <div class="card-sources">
-          <span class="src-chip yt">YouTube</span>
-          <span class="src-chip blog">部落格</span>
-          <span class="src-chip ig">IG</span>
+          <span class="src-chip ptt">PTT</span>
+          <span class="src-chip dcard">Dcard</span>
+          <span class="src-chip cosme">@cosme</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>五重玻尿酸配方，保水效果長達 12 小時，PTT 與 Dcard 使用者高度一致認可</li>
+                <li>質地清爽不黏膩，油肌與混合肌亦適用，@cosme 長期排行前三</li>
+                <li>CP 值極高，售價親民但效果媲美高價保養品</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 2 -->
-    <div class="product-card">
-      <div class="card-img" style="background:#e8f5e9;">
-        🌿
+    <!-- ── Card 2: COSRX ── -->
+    <div class="product-card" onclick="toggleSummary(this,1)">
+      <div class="card-img" style="background:#e8f5e9;">🌿
         <div class="origin-flag">🇰🇷</div>
-        <div class="score-badge">✦ 94分</div>
+        <div class="approval-badge">好評率 94%</div>
       </div>
       <div class="card-body">
         <div class="card-brand">COSRX</div>
         <div class="card-name">蝸牛黏蛋白修護精華</div>
-        <div class="card-desc">96.3% 蝸牛分泌物，修護屏障、淡化痘印效果顯著。</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:94%"></div></div>
+          <span class="approval-pct">94%</span>
+        </div>
         <div class="card-footer">
-          <div class="card-price">NT$ 620 <small>/ 96mL</small></div>
-          <div class="card-mentions"><span>6.1k</span> 則提及</div>
+          <div class="card-price">NT$ 620<small> / 96mL</small></div>
+          <div class="review-count"><span>637</span> 則評論</div>
         </div>
         <div class="card-sources">
-          <span class="src-chip yt">YouTube</span>
-          <span class="src-chip ig">IG</span>
-          <span class="src-chip tt">TikTok</span>
+          <span class="src-chip dcard">Dcard</span>
+          <span class="src-chip hwahae">화해</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>96.3% 蝸牛分泌物濃度，修護效果在 화해 獲大量正評</li>
+                <li>快速淡化痘印與暗沉，多位使用者表示 2–4 週可見改善</li>
+                <li>質感清透，多款膚質實測相容性佳</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 3 -->
-    <div class="product-card">
-      <div class="card-img" style="background:#fff9c4;">
-        ☀️
+    <!-- ── Card 3: BEAUTY OF JOSEON ── -->
+    <div class="product-card" onclick="toggleSummary(this,2)">
+      <div class="card-img" style="background:#fff9c4;">☀️
         <div class="origin-flag">🇰🇷</div>
-        <div class="score-badge">✦ 93分</div>
+        <div class="approval-badge">好評率 93%</div>
       </div>
       <div class="card-body">
         <div class="card-brand">BEAUTY OF JOSEON</div>
         <div class="card-name">朝鮮美人 米飯防曬霜 SPF50+</div>
-        <div class="card-desc">無白殘留、輕薄透氣，全膚質適用，敏感肌測試合格。</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:93%"></div></div>
+          <span class="approval-pct">93%</span>
+        </div>
         <div class="card-footer">
-          <div class="card-price">NT$ 490 <small>/ 50mL</small></div>
-          <div class="card-mentions"><span>8.3k</span> 則提及</div>
+          <div class="card-price">NT$ 490<small> / 50mL</small></div>
+          <div class="review-count"><span>823</span> 則評論</div>
         </div>
         <div class="card-sources">
-          <span class="src-chip yt">YouTube</span>
-          <span class="src-chip blog">部落格</span>
-          <span class="src-chip tt">TikTok</span>
+          <span class="src-chip ptt">PTT</span>
+          <span class="src-chip dcard">Dcard</span>
+          <span class="src-chip hwahae">화해</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>真正零白殘留，深色膚色使用者在 PTT 亦高度推薦</li>
+                <li>SPF50+ PA++++ 防護力充足，戶外長時間使用免擔心</li>
+                <li>敏感肌低刺激測試通過，清爽不悶不黏膩</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 4 -->
-    <div class="product-card">
-      <div class="card-img" style="background:#f3e5f5;">
-        💜
+    <!-- ── Card 4: TRANSINO ── -->
+    <div class="product-card" onclick="toggleSummary(this,3)">
+      <div class="card-img" style="background:#f3e5f5;">💜
         <div class="origin-flag">🇯🇵</div>
-        <div class="score-badge">✦ 92分</div>
+        <div class="approval-badge">好評率 92%</div>
       </div>
       <div class="card-body">
         <div class="card-brand">TRANSINO</div>
         <div class="card-name">藥用美白精華液</div>
-        <div class="card-desc">第二類醫藥品，傳明酸成分，淡斑效果口碑極佳。</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:92%"></div></div>
+          <span class="approval-pct">92%</span>
+        </div>
         <div class="card-footer">
-          <div class="card-price">NT$ 780 <small>/ 50mL</small></div>
-          <div class="card-mentions"><span>2.9k</span> 則提及</div>
+          <div class="card-price">NT$ 780<small> / 50mL</small></div>
+          <div class="review-count"><span>291</span> 則評論</div>
         </div>
         <div class="card-sources">
-          <span class="src-chip blog">部落格</span>
-          <span class="src-chip ig">IG</span>
+          <span class="src-chip ptt">PTT</span>
+          <span class="src-chip cosme">@cosme</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>傳明酸成分經醫學驗證，@cosme 美白精華排行長期名列前三</li>
+                <li>日本第二類醫藥品認證，成分安全性有保障</li>
+              </ul>
+            </div>
+            <div class="sum-block caut">
+              <div class="sum-title caut">【注意事項】</div>
+              <ul>
+                <li>多位使用者表示需持續使用 8–12 週才有明顯效果，需耐心</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 5 -->
-    <div class="product-card">
-      <div class="card-img" style="background:#e3f2fd;">
-        🫙
+    <!-- ── Card 5: LANEIGE ── -->
+    <div class="product-card" onclick="toggleSummary(this,4)">
+      <div class="card-img" style="background:#e3f2fd;">🫙
         <div class="origin-flag">🇰🇷</div>
-        <div class="score-badge">✦ 91分</div>
+        <div class="approval-badge">好評率 91%</div>
       </div>
       <div class="card-body">
         <div class="card-brand">LANEIGE</div>
         <div class="card-name">水酷保濕晚安凍膜</div>
-        <div class="card-desc">睡眠面膜經典款，晚上敷上早上洗，保水感維持整日。</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:91%"></div></div>
+          <span class="approval-pct">91%</span>
+        </div>
         <div class="card-footer">
-          <div class="card-price">NT$ 699 <small>/ 70mL</small></div>
-          <div class="card-mentions"><span>5.5k</span> 則提及</div>
+          <div class="card-price">NT$ 699<small> / 70mL</small></div>
+          <div class="review-count"><span>554</span> 則評論</div>
         </div>
         <div class="card-sources">
-          <span class="src-chip yt">YouTube</span>
-          <span class="src-chip ig">IG</span>
-          <span class="src-chip tt">TikTok</span>
+          <span class="src-chip dcard">Dcard</span>
+          <span class="src-chip hwahae">화해</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>凝膠質地快速吸收，睡眠期間持續補水，早晨肌膚飽水有光澤</li>
+                <li>Dcard 美妝版大量推薦為「懶人保養必備」</li>
+                <li>容量充足、氣味清香，整體使用體驗高度好評</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 6 -->
-    <div class="product-card">
-      <div class="card-img" style="background:#fbe9e7;">
-        🌺
+    <!-- ── Card 6: MINON ── -->
+    <div class="product-card" onclick="toggleSummary(this,5)">
+      <div class="card-img" style="background:#fbe9e7;">🌸
         <div class="origin-flag">🇯🇵</div>
-        <div class="score-badge">✦ 90分</div>
+        <div class="approval-badge">好評率 90%</div>
       </div>
       <div class="card-body">
         <div class="card-brand">MINON</div>
         <div class="card-name">氨基酸保濕乳液</div>
-        <div class="card-desc">極乾敏感肌與異位性皮膚炎適用，藥妝界神話級產品。</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:90%"></div></div>
+          <span class="approval-pct">90%</span>
+        </div>
         <div class="card-footer">
-          <div class="card-price">NT$ 540 <small>/ 100mL</small></div>
-          <div class="card-mentions"><span>3.7k</span> 則提及</div>
+          <div class="card-price">NT$ 540<small> / 100mL</small></div>
+          <div class="review-count"><span>376</span> 則評論</div>
         </div>
         <div class="card-sources">
-          <span class="src-chip yt">YouTube</span>
-          <span class="src-chip blog">部落格</span>
+          <span class="src-chip ptt">PTT</span>
+          <span class="src-chip cosme">@cosme</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>專為極乾性與敏感肌設計，異位性皮膚炎患者使用後反應良好</li>
+                <li>氨基酸成分溫和不刺激，PTT 過敏肌討論串長期首選推薦</li>
+              </ul>
+            </div>
+            <div class="sum-block caut">
+              <div class="sum-title caut">【注意事項】</div>
+              <ul>
+                <li>部分使用者反映乾燥季節需搭配精華液加強保濕效果</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Card 7: ANESSA ── -->
+    <div class="product-card" onclick="toggleSummary(this,6)">
+      <div class="card-img" style="background:#fffde7;">🌞
+        <div class="origin-flag">🇯🇵</div>
+        <div class="approval-badge">好評率 89%</div>
+      </div>
+      <div class="card-body">
+        <div class="card-brand">ANESSA</div>
+        <div class="card-name">金瓶完美防曬乳液 SPF50+ PA++++</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:89%"></div></div>
+          <span class="approval-pct">89%</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">NT$ 850<small> / 60mL</small></div>
+          <div class="review-count"><span>748</span> 則評論</div>
+        </div>
+        <div class="card-sources">
+          <span class="src-chip ptt">PTT</span>
+          <span class="src-chip cosme">@cosme</span>
+          <span class="src-chip hwahae">화해</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>SPF50+ PA++++ 防護力業界頂尖，@cosme 戶外型使用者大量正評</li>
+                <li>防水防汗配方，長時間戶外活動不脫妝、不泛白</li>
+                <li>日韓跨市場同步獲高評，화해 亦列防曬推薦榜前段</li>
+              </ul>
+            </div>
+            <div class="sum-block caut">
+              <div class="sum-title caut">【注意事項】</div>
+              <ul>
+                <li>質地較濃稠，油性肌使用者建議薄塗避免厚重感</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Card 8: SOME BY MI ── -->
+    <div class="product-card" onclick="toggleSummary(this,7)">
+      <div class="card-img" style="background:#e0f2fe;">🧼
+        <div class="origin-flag">🇰🇷</div>
+        <div class="approval-badge">好評率 88%</div>
+      </div>
+      <div class="card-body">
+        <div class="card-brand">SOME BY MI</div>
+        <div class="card-name">AHA BHA PHA 30天奇蹟護膚皂</div>
+        <div class="approval-row">
+          <span class="approval-label">好評率</span>
+          <div class="approval-bar-wrap"><div class="approval-bar" style="width:88%"></div></div>
+          <span class="approval-pct">88%</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">NT$ 380<small> / 106g</small></div>
+          <div class="review-count"><span>519</span> 則評論</div>
+        </div>
+        <div class="card-sources">
+          <span class="src-chip dcard">Dcard</span>
+          <span class="src-chip hwahae">화해</span>
+        </div>
+      </div>
+      <div class="summary-hint">✦ 點擊查看 AI 評論摘要 <span class="arrow">▼</span></div>
+      <div class="summary-panel">
+        <div class="summary-inner">
+          <div class="loading-dots"><span></span><span></span><span></span><span class="loading-text">Gemini AI 分析中…</span></div>
+          <div class="summary-content">
+            <div class="summary-tag">✦ Gemini AI 生成摘要</div>
+            <div class="sum-block adv">
+              <div class="sum-title adv">【主要優勢】</div>
+              <ul>
+                <li>三酸複合配方（AHA/BHA/PHA）溫和去角質，화해 大量正評</li>
+                <li>Dcard 30 天挑戰熱度高，使用者普遍反映毛孔縮小效果顯著</li>
+                <li>平價高效，CP 值在韓系清潔品中名列前茅</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -687,22 +713,53 @@
 </main>
 
 <script>
-  // Tags toggle
-  document.querySelectorAll('.tag').forEach(tag => {
-    tag.addEventListener('click', () => tag.classList.toggle('active'));
-  });
+  const summaryLoaded = new Array(8).fill(false);
 
-  // Budget slider live update
-  const slider = document.getElementById('budgetSlider');
-  const budgetVal = document.getElementById('budgetVal');
-  slider.addEventListener('input', () => {
-    budgetVal.textContent = 'NT$ ' + slider.value;
-  });
+  function toggleSummary(card, idx) {
+    const isActive = card.classList.contains('active');
+    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
 
-  // Card hover animation on mobile (touch)
-  document.querySelectorAll('.product-card').forEach(card => {
-    card.addEventListener('touchstart', () => card.style.transform = 'translateY(-4px)');
-    card.addEventListener('touchend', () => card.style.transform = '');
+    if (!isActive) {
+      card.classList.add('active');
+
+      const loading = card.querySelector('.loading-dots');
+      const content = card.querySelector('.summary-content');
+
+      if (!summaryLoaded[idx]) {
+        summaryLoaded[idx] = true;
+        loading.style.display = 'flex';
+        content.classList.remove('show');
+        setTimeout(() => {
+          loading.style.display = 'none';
+          content.classList.add('show');
+        }, 1300);
+      } else {
+        loading.style.display = 'none';
+        content.classList.add('show');
+      }
+    }
+  }
+
+  function setSort(btn, mode) {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const labels = {
+      '相關度': '🔍 推薦結果（依語意相關度排序）',
+      '好評率': '🔍 推薦結果（依好評率 高→低 排序）',
+      '價格低': '🔍 推薦結果（依價格 低→高 排序）',
+      '價格高': '🔍 推薦結果（依價格 高→低 排序）',
+    };
+    document.getElementById('resultsTitle').textContent = labels[mode];
+  }
+
+  function handleSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) return;
+    document.getElementById('resultsTitle').textContent = `🔍「${q}」的推薦結果`;
+  }
+
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSearch();
   });
 </script>
 
