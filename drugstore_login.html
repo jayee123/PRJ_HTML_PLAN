@@ -57,7 +57,21 @@
       text-decoration: none; transition: all 0.2s;
     }
     nav a.active, nav a:hover { background: var(--pink-light); color: var(--pink); font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
     .header-flags { font-size: 1.3rem; }
+    .auth-link {
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 0.86rem; color: var(--gray);
+      text-decoration: none; transition: all 0.2s;
+    }
+    .auth-link:hover, .auth-link.active { background: var(--pink-light); color: var(--pink); font-weight: 600; }
+    .auth-btn {
+      padding: 6px 16px; border-radius: 20px;
+      font-size: 0.86rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--pink), var(--coral));
+      color: white; text-decoration: none; transition: opacity 0.2s;
+    }
+    .auth-btn:hover { opacity: 0.88; }
 
     /* MAIN */
     .page-wrap {
@@ -193,10 +207,12 @@
   </a>
   <nav>
     <a href="drugstore_recommend.html">推薦查詢</a>
-    <a href="drugstore_login.html" class="active">會員登入</a>
-    <a href="drugstore_register.html">會員註冊</a>
   </nav>
-  <div class="header-flags">🇯🇵 🇰🇷</div>
+  <div class="header-right">
+    <span class="header-flags">🇯🇵 🇰🇷</span>
+    <a href="drugstore_login.html" class="auth-link active">登入</a>
+    <a href="drugstore_register.html" class="auth-btn">註冊</a>
+  </div>
 </header>
 
 <div class="page-wrap">
