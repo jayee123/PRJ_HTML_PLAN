@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>會員註冊｜Buy 託了 AI</title>
+  <style>
+    :root {
+      --pink: #f472b6;
+      --pink-light: #fdf2f8;
+      --pink-mid: #fbcfe8;
+      --coral: #fb7185;
+      --purple: #a78bfa;
+      --dark: #1e1b2e;
+      --gray: #6b7280;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', -apple-system, 'Microsoft JhengHei', sans-serif;
+      background: linear-gradient(135deg, #fdf2f8 0%, #ede9fe 100%);
+      min-height: 100vh;
+      color: var(--dark);
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #f3e8ff;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(244,114,182,0.08);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.15rem; color: var(--dark);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 0.95rem; font-weight: 900;
+    }
+    .logo em { font-style: normal; color: var(--pink); }
+    nav { display: flex; gap: 6px; }
+    nav a {
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 0.86rem; color: var(--gray);
+      text-decoration: none; transition: all 0.2s;
+    }
+    nav a.active, nav a:hover { background: var(--pink-light); color: var(--pink); font-weight: 600; }
+    .header-flags { font-size: 1.3rem; }
+
+    .page-wrap {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      padding: 44px 40px 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .auth-logo .icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      border-radius: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.3rem; font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .auth-logo h1 { font-size: 1.35rem; font-weight: 800; margin-bottom: 4px; }
+    .auth-logo h1 em { font-style: normal; color: var(--pink); }
+    .auth-logo p { font-size: 0.85rem; color: var(--gray); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 7px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.93rem;
+      color: var(--dark);
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-group input:focus {
+      border-color: var(--pink);
+      background: white;
+    }
+    .form-group input::placeholder { color: #b0b7c3; }
+
+    /* password strength */
+    .strength-bar {
+      height: 4px;
+      background: #f3f4f6;
+      border-radius: 3px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s, background 0.3s;
+    }
+    .strength-label {
+      font-size: 0.72rem;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.82rem;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+    .terms input[type=checkbox] {
+      margin-top: 2px;
+      accent-color: var(--pink);
+      flex-shrink: 0;
+    }
+    .terms a { color: var(--pink); text-decoration: none; font-weight: 600; }
+    .terms a:hover { text-decoration: underline; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--pink), var(--coral));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.97rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:active { transform: scale(0.99); }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      color: #d1d5db; font-size: 0.78rem; margin-bottom: 20px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: #e5e7eb;
+    }
+
+    .switch-link {
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--gray);
+    }
+    .switch-link a {
+      color: var(--pink); font-weight: 700; text-decoration: none;
+    }
+    .switch-link a:hover { text-decoration: underline; }
+
+    .msg {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .msg.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; display: block; }
+    .msg.error   { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; display: block; }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 32px 24px 28px; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="drugstore_recommend.html">
+    <div class="logo-icon">託</div>
+    Buy <em>託了 AI</em>
+  </a>
+  <nav>
+    <a href="drugstore_recommend.html">推薦查詢</a>
+    <a href="drugstore_login.html">會員登入</a>
+    <a href="drugstore_register.html" class="active">會員註冊</a>
+  </nav>
+  <div class="header-flags">🇯🇵 🇰🇷</div>
+</header>
+
+<div class="page-wrap">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <div class="icon">託</div>
+      <h1>加入 <em>Buy 託了 AI</em></h1>
+      <p>建立帳號，享受個人化日韓藥妝推薦</p>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <form onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label for="email">電子郵件</label>
+        <input type="email" id="email" placeholder="輸入你的 Email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">密碼</label>
+        <input type="password" id="password" placeholder="至少 8 個字元"
+          oninput="checkStrength(this.value)" required />
+        <div class="strength-bar">
+          <div class="strength-fill" id="strengthFill"></div>
+        </div>
+        <div class="strength-label" id="strengthLabel"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm">確認密碼</label>
+        <input type="password" id="confirm" placeholder="再輸入一次密碼" required />
+      </div>
+
+      <label class="terms">
+        <input type="checkbox" id="agreeTerms" />
+        我已閱讀並同意<a href="#">服務條款</a>與<a href="#">隱私政策</a>
+      </label>
+
+      <button type="submit" class="submit-btn">建立帳號</button>
+    </form>
+
+    <div class="divider">已有帳號</div>
+
+    <div class="switch-link">
+      <a href="drugstore_login.html">返回登入</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function checkStrength(val) {
+    const fill  = document.getElementById('strengthFill');
+    const label = document.getElementById('strengthLabel');
+    if (!val) { fill.style.width = '0%'; label.textContent = ''; return; }
+
+    let score = 0;
+    if (val.length >= 8)  score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const levels = [
+      { w: '25%', bg: '#f87171', text: '密碼強度：弱' },
+      { w: '50%', bg: '#fb923c', text: '密碼強度：普通' },
+      { w: '75%', bg: '#facc15', text: '密碼強度：中等' },
+      { w: '100%', bg: '#4ade80', text: '密碼強度：強' },
+    ];
+    const lv = levels[score - 1] || levels[0];
+    fill.style.width = lv.w;
+    fill.style.background = lv.bg;
+    label.textContent = lv.text;
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    const email   = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm  = document.getElementById('confirm').value;
+    const agreed   = document.getElementById('agreeTerms').checked;
+    const msg      = document.getElementById('msg');
+
+    msg.className = 'msg';
+    msg.textContent = '';
+
+    if (!email || !password || !confirm) {
+      msg.className = 'msg error';
+      msg.textContent = '請填寫所有欄位。';
+      return;
+    }
+    if (password.length < 8) {
+      msg.className = 'msg error';
+      msg.textContent = '密碼至少需要 8 個字元。';
+      return;
+    }
+    if (password !== confirm) {
+      msg.className = 'msg error';
+      msg.textContent = '兩次密碼輸入不一致，請重新確認。';
+      return;
+    }
+    if (!agreed) {
+      msg.className = 'msg error';
+      msg.textContent = '請勾選同意服務條款與隱私政策。';
+      return;
+    }
+
+    // Demo: simulate register success
+    msg.className = 'msg success';
+    msg.textContent = '✓ 帳號建立成功！正在跳轉至登入頁…';
+    setTimeout(() => {
+      window.location.href = 'drugstore_login.html';
+    }, 1400);
+  }
+</script>
+
+</body>
+</html>
