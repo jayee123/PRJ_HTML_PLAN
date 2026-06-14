@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
@@ -374,7 +374,7 @@
   <div class="cards-grid" id="cardsGrid">
 
     <!-- ── Card 1: HADA LABO ── -->
-    <div class="product-card" onclick="toggleSummary(this,0)">
+    <div class="product-card">
       <div class="card-img" style="background:#fce4ec;">🧴
         <div class="origin-flag">🇯🇵</div>
         <div class="approval-badge">好評率 96%</div>
@@ -417,7 +417,7 @@
     </div>
 
     <!-- ── Card 2: COSRX ── -->
-    <div class="product-card" onclick="toggleSummary(this,1)">
+    <div class="product-card">
       <div class="card-img" style="background:#e8f5e9;">🌿
         <div class="origin-flag">🇰🇷</div>
         <div class="approval-badge">好評率 94%</div>
@@ -459,7 +459,7 @@
     </div>
 
     <!-- ── Card 3: BEAUTY OF JOSEON ── -->
-    <div class="product-card" onclick="toggleSummary(this,2)">
+    <div class="product-card">
       <div class="card-img" style="background:#fff9c4;">☀️
         <div class="origin-flag">🇰🇷</div>
         <div class="approval-badge">好評率 93%</div>
@@ -502,7 +502,7 @@
     </div>
 
     <!-- ── Card 4: TRANSINO ── -->
-    <div class="product-card" onclick="toggleSummary(this,3)">
+    <div class="product-card">
       <div class="card-img" style="background:#f3e5f5;">💜
         <div class="origin-flag">🇯🇵</div>
         <div class="approval-badge">好評率 92%</div>
@@ -549,7 +549,7 @@
     </div>
 
     <!-- ── Card 5: LANEIGE ── -->
-    <div class="product-card" onclick="toggleSummary(this,4)">
+    <div class="product-card">
       <div class="card-img" style="background:#e3f2fd;">🫙
         <div class="origin-flag">🇰🇷</div>
         <div class="approval-badge">好評率 91%</div>
@@ -591,7 +591,7 @@
     </div>
 
     <!-- ── Card 6: MINON ── -->
-    <div class="product-card" onclick="toggleSummary(this,5)">
+    <div class="product-card">
       <div class="card-img" style="background:#fbe9e7;">🌸
         <div class="origin-flag">🇯🇵</div>
         <div class="approval-badge">好評率 90%</div>
@@ -638,7 +638,7 @@
     </div>
 
     <!-- ── Card 7: ANESSA ── -->
-    <div class="product-card" onclick="toggleSummary(this,6)">
+    <div class="product-card">
       <div class="card-img" style="background:#fffde7;">🌞
         <div class="origin-flag">🇯🇵</div>
         <div class="approval-badge">好評率 89%</div>
@@ -687,7 +687,7 @@
     </div>
 
     <!-- ── Card 8: SOME BY MI ── -->
-    <div class="product-card" onclick="toggleSummary(this,7)">
+    <div class="product-card">
       <div class="card-img" style="background:#e0f2fe;">🧼
         <div class="origin-flag">🇰🇷</div>
         <div class="approval-badge">好評率 88%</div>
@@ -734,30 +734,49 @@
 <script>
   const summaryLoaded = new Array(8).fill(false);
 
-  function toggleSummary(card, idx) {
-    const isActive = card.classList.contains('active');
-    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
-
-    if (!isActive) {
-      card.classList.add('active');
-
-      const loading = card.querySelector('.loading-dots');
-      const content = card.querySelector('.summary-content');
-
-      if (!summaryLoaded[idx]) {
-        summaryLoaded[idx] = true;
-        loading.style.display = 'flex';
-        content.classList.remove('show');
-        setTimeout(() => {
-          loading.style.display = 'none';
-          content.classList.add('show');
-        }, 1300);
-      } else {
+  function activateCard(card) {
+    const cards = Array.from(document.querySelectorAll('.product-card'));
+    const idx = cards.indexOf(card);
+    card.classList.add('active');
+    const loading = card.querySelector('.loading-dots');
+    const content = card.querySelector('.summary-content');
+    if (!summaryLoaded[idx]) {
+      summaryLoaded[idx] = true;
+      loading.style.display = 'flex';
+      content.classList.remove('show');
+      setTimeout(() => {
         loading.style.display = 'none';
         content.classList.add('show');
-      }
+      }, 1300);
+    } else {
+      loading.style.display = 'none';
+      content.classList.add('show');
     }
   }
+
+  document.getElementById('cardsGrid').addEventListener('click', function(e) {
+    const hint = e.target.closest('.summary-hint');
+    const panel = e.target.closest('.summary-panel');
+    const card  = e.target.closest('.product-card');
+    if (!card) return;
+
+    if (hint) {
+      // 只有點箭頭列才可以收合
+      if (card.classList.contains('active')) {
+        card.classList.remove('active');
+      } else {
+        document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+        activateCard(card);
+      }
+    } else if (!panel) {
+      // 點卡片其他區域 → 展開（不收合）
+      if (!card.classList.contains('active')) {
+        document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+        activateCard(card);
+      }
+    }
+    // 點 summary-panel 內容區 → 什麼都不做
+  });
 
   function setSort(btn, mode) {
     document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
@@ -784,3 +803,4 @@
 
 </body>
 </html>
+
