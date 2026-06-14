@@ -268,11 +268,6 @@
         <input type="password" id="confirm" placeholder="再輸入一次密碼" required />
       </div>
 
-      <label class="terms">
-        <input type="checkbox" id="agreeTerms" />
-        我已閱讀並同意<a href="#">服務條款</a>與<a href="#">隱私政策</a>
-      </label>
-
       <button type="submit" class="submit-btn">建立帳號</button>
     </form>
 
@@ -314,7 +309,6 @@
     const email   = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirm  = document.getElementById('confirm').value;
-    const agreed   = document.getElementById('agreeTerms').checked;
     const msg      = document.getElementById('msg');
 
     msg.className = 'msg';
@@ -335,12 +329,6 @@
       msg.textContent = '兩次密碼輸入不一致，請重新確認。';
       return;
     }
-    if (!agreed) {
-      msg.className = 'msg error';
-      msg.textContent = '請勾選同意服務條款與隱私政策。';
-      return;
-    }
-
     // Demo: simulate register success
     msg.className = 'msg success';
     msg.textContent = '✓ 帳號建立成功！正在跳轉至登入頁…';
