@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>碳排公式與台灣碳費預測系統分析</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{
+    --bg:#0f1720; --panel:#161f2b; --panel2:#1c2635; --text:#e7edf5; --muted:#93a1b5;
+    --accent:#3ddc97; --accent2:#4f8cff; --warn:#f5a524; --border:#2a3648;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI","Noto Sans TC",-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+  header.hero{padding:48px 24px 32px;text-align:center;background:linear-gradient(160deg,#132033,#0f1720)}
+  header.hero h1{margin:0 0 8px;font-size:1.9rem}
+  header.hero p{margin:0;color:var(--muted)}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(61,220,151,.15);color:var(--accent);font-size:.8rem;margin:4px}
+  nav.toc{max-width:900px;margin:0 auto 40px;padding:16px 24px;background:var(--panel);border:1px solid var(--border);border-radius:12px}
+  nav.toc h2{font-size:1rem;color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em}
+  nav.toc ol{margin:0;padding-left:20px;columns:2;gap:24px}
+  nav.toc a{color:var(--accent2);text-decoration:none}
+  nav.toc a:hover{text-decoration:underline}
+  main{max-width:900px;margin:0 auto;padding:0 24px 80px}
+  section{margin-bottom:56px;scroll-margin-top:20px}
+  h2{font-size:1.4rem;border-left:4px solid var(--accent);padding-left:12px;margin-bottom:20px}
+  h3{color:var(--accent2);margin-top:32px}
+  p{color:#cdd9e8}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:16px 0}
+  .formula{font-size:1.3rem;text-align:center;background:var(--panel2);border:1px dashed var(--accent);border-radius:10px;padding:18px;margin:20px 0;font-family:"Cambria Math","Times New Roman",serif;letter-spacing:.02em}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+  th{background:var(--panel2);color:var(--accent)}
+  tr:nth-child(even){background:rgba(255,255,255,.02)}
+  code, pre{font-family:Consolas,"Courier New",monospace}
+  pre{background:#0b121b;border:1px solid var(--border);border-radius:10px;padding:16px;overflow-x:auto;font-size:.85rem}
+  .mermaid{background:#fff;border-radius:12px;padding:16px;margin:16px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .callout{border-left:4px solid var(--warn);background:rgba(245,165,36,.08);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0}
+  .callout b{color:var(--warn)}
+  .tag-ok{color:var(--accent)}
+  ul{color:#cdd9e8}
+  footer{text-align:center;color:var(--muted);padding:24px;font-size:.85rem}
+  a.ref{color:var(--accent2)}
+  canvas{background:#0b121b;border-radius:10px;padding:8px}
+  @media (max-width:640px){nav.toc ol{columns:1}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>碳排公式與台灣碳費預測系統分析</h1>
+  <p>AIoT ESG DSS｜適用範圍：台灣國內企業碳費制度（不含歐盟 CBAM／ISO 14064 國際查證）</p>
+  <span class="badge">GHG Protocol 公式</span>
+  <span class="badge">氣候變遷因應法・碳費三子法</span>
+  <span class="badge">scikit-learn 線性迴歸預測</span>
+</header>
+
+<nav class="toc">
+  <h2>目錄</h2>
+  <ol>
+    <li><a href="#s1">碳排放量計算公式</a></li>
+    <li><a href="#s2">台灣碳費制度分析</a></li>
+    <li><a href="#s3">碳費試算與預測設計</a></li>
+    <li><a href="#s4">系統資料流程圖</a></li>
+    <li><a href="#s5">API 規格</a></li>
+    <li><a href="#s6">資料庫 Schema 擴充</a></li>
+    <li><a href="#s7">限制與免責聲明</a></li>
+    <li><a href="#s8">參考資料</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="s1">
+  <h2>1. 碳排放量計算公式</h2>
+  <p>溫室氣體盤查採用 GHG Protocol 通用公式，將每一項排放源的活動數據換算為 CO2 當量後加總：</p>
+  <div class="formula">Total CO2e&nbsp; = &nbsp;Σ<sub>i=1..n</sub> ( AD<sub>i</sub> &times; EF<sub>i</sub> &times; GWP<sub>i</sub> )</div>
+  <table>
+    <tr><th>符號</th><th>名稱</th><th>說明</th></tr>
+    <tr><td><b>AD</b></td><td>Activity Data 活動數據</td><td>用電度數(kWh)、用水量(m³)、油品用量(L)、紙張用量(kg) 等實際發生量</td></tr>
+    <tr><td><b>EF</b></td><td>Emission Factor 排放係数</td><td>每單位活動量產生的溫室氣體量</td></tr>
+    <tr><td><b>GWP</b></td><td>Global Warming Potential 全球暖化潛勢</td><td>將 CH4、N2O 等氣體換算為 CO2 當量的權重</td></tr>
+    <tr><td><b>n</b></td><td>排放源數量</td><td>企業盤查範圍內所有排放類別加總</td></tr>
+  </table>
+
+  <h3>對應本系統資料表</h3>
+  <p>台灣官方公告排放係数（台電電力係数、能源局油品係数等）已是 <b>EF × GWP 合併值</b>，系統直接以合併係数相乘：</p>
+  <div class="formula">CO2e (kg) &nbsp;= &nbsp;AD &times; (EF &times; GWP 合併係数)</div>
+  <table>
+    <tr><th>公式符號</th><th>系統資料表欄位</th></tr>
+    <tr><td>AD</td><td><code>emission_records.amount</code>／IoT 的 <code>energy_kwh</code>、<code>water_liter</code></td></tr>
+    <tr><td>EF × GWP 合併係数</td><td><code>carbon_factors.coefficient</code>（如電力 0.4940 kgCO2e/kWh）</td></tr>
+    <tr><td>CO2e</td><td><code>emission_records.emission_kg</code>／<code>iot_logs.carbon_kg</code></td></tr>
+  </table>
+  <pre>def calculate_co2e(activity_data, emission_factor, gwp=1.0):
+    # Total CO2e = Σ(AD × EF × GWP)
+    return float(activity_data) * float(emission_factor) * float(gwp)</pre>
+</section>
+
+<section id="s2">
+  <h2>2. 台灣碳費制度分析</h2>
+  <p>依環境部 2024/08/29 公告「碳費三子法」（碳費收費辦法、自主減量計畫管理辦法、增量抵換管理辦法）及 2024/10/07 公告費率：</p>
+
+  <h3>2.1 徵收對象與門檻</h3>
+  <ul>
+    <li>徵收對象：年溫室氣體排放量達 <b>2.5 萬公噸 CO2e</b> 以上之電力、燃氣供應業及製造業（首批約 281 家企業、500 座工廠）</li>
+    <li>起扣額度 K 值：<b>25,000 公噸 CO2e</b>（高碳洩漏風險行業 K = 0）</li>
+  </ul>
+
+  <h3>2.2 徵收費率</h3>
+  <table>
+    <tr><th>費率別</th><th>金額 (NT$/tCO2e)</th><th>適用條件</th></tr>
+    <tr><td>一般費率</td><td>300</td><td>未提出自主減量計畫</td></tr>
+    <tr><td>優惠費率 A</td><td>50</td><td>自主減量計畫符合「行業別指定削減率」</td></tr>
+    <tr><td>優惠費率 B</td><td>100</td><td>自主減量計畫符合「技術標竿指定削減率」</td></tr>
+  </table>
+  <p>官方規劃每 2 年檢討調升，2030 年上看 1,200–1,800 元/噸。</p>
+
+  <h3>2.3 高碳洩漏風險排放量調整係数</h3>
+  <table>
+    <tr><th>階段</th><th>調整係数</th></tr>
+    <tr><td>第一期</td><td>0.2</td></tr>
+    <tr><td>第二期</td><td>0.4</td></tr>
+    <tr><td>第三期</td><td>0.6</td></tr>
+  </table>
+
+  <h3>2.4 計算公式</h3>
+  <div class="formula">收費排放量 = (年排放量 &minus; K值) &times; 調整係数&nbsp;&nbsp;<small>(一般行業，K=25,000噸，係数=1)</small></div>
+  <div class="formula">收費排放量 = 年排放量 &times; 調整係数&nbsp;&nbsp;<small>(高碳洩漏風險，K=0，係数=0.2/0.4/0.6)</small></div>
+  <div class="formula">碳費 (NT$) = 收費排放量(tCO2e) &times; 徵收費率(NT$/tCO2e)</div>
+
+  <h3>2.5 徵收時程</h3>
+  <table>
+    <tr><th>年度</th><th>動作</th></tr>
+    <tr><td>2025（114年）</td><td>試申報，不繳費</td></tr>
+    <tr><td>2026（115年）</td><td>依 2025 年排放量與適用費率，正式繳交碳費</td></tr>
+    <tr><td>之後逐年</td><td>依當年度排放量申報繳費</td></tr>
+  </table>
+</section>
+
+<section id="s3">
+  <h2>3. 碳費試算與預測設計</h2>
+  <div class="callout"><b>設計原則：</b>資料量小、需可解釋可稽核 &rarr; 採 <code>scikit-learn</code> 一元線性迴歸（Linear Regression）抓月排放量趨勢外推年度排放量，而非 ARIMA / LSTM 等複雜模型，避免過度配適且方便向填報人員說明。資料不足 2 個月時自動退回「月平均 &times; 12」法。</div>
+
+  <h3>3.1 演算法流程與預測公式</h3>
+  <p>Step 1：彙總今年度至今(YTD)每月碳排放量（<code>emission_records</code> + <code>iot_logs</code>）</p>
+  <div class="formula">X = 月份索引 [1, 2, ... n]&nbsp;&nbsp;，&nbsp;&nbsp;y = 對應月排放量(kg)</div>
+  <div class="formula">model = LinearRegression().fit(X, y)&nbsp;&nbsp;&rarr;&nbsp;&nbsp;斜率(趨勢) + R&sup2;(可信度)</div>
+  <div class="formula">預估全年排放量 &nbsp;= &nbsp;YTD實際值 &nbsp;+&nbsp; Σ model.predict(剩餘月份)</div>
+  <p>Step 4：將「預估全年排放量」代入第 2.4 節台灣碳費公式，試算年度預估碳費。資料 &lt; 2 個月時無法擬合迴歸線，改用 <span class="tag-ok">平均月排放量 &times; 12</span>。</p>
+  <pre>def forecast_annual_emission(monthly_emissions_kg):
+    months = [float(m) for m in monthly_emissions_kg if m is not None]
+    n = len(months); ytd = sum(months)
+    if n < 2:
+        return {'method': 'average_x12', 'projected_annual_emission_kg': ytd / n * 12, ...}
+
+    X = np.arange(1, n + 1).reshape(-1, 1)        # 月份索引
+    y = np.array(months)                           # 月排放量
+    model = LinearRegression().fit(X, y)
+    r2 = model.score(X, y)
+    remaining = np.clip(model.predict(np.arange(n+1, 13).reshape(-1,1)), 0, None)
+    projected = ytd + float(remaining.sum())        # YTD + 剩餘月份預測值
+    return {'method': 'linear_regression', 'trend_slope_kg_per_month': model.coef_[0],
+            'r2_score': r2, 'projected_annual_emission_kg': projected, ...}</pre>
+
+  <h3>3.2 資料來源</h3>
+  <table>
+    <tr><th>來源</th><th>說明</th></tr>
+    <tr><td><code>emission_records</code></td><td>人工月填報排放源（電力/用水/交通/紙張/廢棄物），僅計入 <code>status='approved'</code></td></tr>
+    <tr><td><code>iot_logs</code></td><td>IoT 感測器/模擬器即時上傳用電用水換算之碳排</td></tr>
+  </table>
+
+  <h3>3.3 範例：預測趨勢示意圖（示範資料，非真實數值）</h3>
+  <canvas id="demoChart" height="110"></canvas>
+</section>
+
+<section id="s4">
+  <h2>4. 系統資料流程圖</h2>
+
+  <h3>4.1 整體資料流（IoT → 碳排 → 碳費預測 → 治理決策）</h3>
+  <div class="mermaid">
+flowchart TD
+    A[IoT 感測器 / 模擬器 api/simulate] -->|energy_kwh, water_liter, co2, pm25...| B[save_iot_record]
+    B --> C[calculate_carbon 計算 CO2e]
+    C --> D[(iot_logs)]
+    E[人工 ESG 月填報 esg_records] -->|amount + factor_id| F[calculate_co2e AD×EF]
+    F --> G[(emission_records)]
+    D --> H[月份彙總 GROUP BY YYYY-MM]
+    G --> H
+    H --> I[forecast_annual_emission scikit-learn線性迴歸推估年排放量]
+    I --> J[estimate_carbon_fee 套用碳費三子法公式]
+    J --> K[(carbon_fee_forecasts 歷史快照)]
+    J --> L["/api/carbon_fee/forecast"]
+    L --> M[報表頁 碳費預估卡片與圖表]
+    D --> N[analyze_iot 風險評分]
+    N --> O[governance_decision 治理建議]
+    O --> P[(decisions)]
+    C --> Q[generate_ai_decision Groq / 規則式AI]
+    Q --> P
+  </div>
+
+  <h3>4.2 碳費計算判斷流程</h3>
+  <div class="mermaid">
+flowchart TD
+    Start[年度預估排放量 annual_ton] --> Check{是否為高碳洩漏風險行業?}
+    Check -- 是 --> HL["K = 0　係数 = 依期別 0.2 / 0.4 / 0.6"]
+    Check -- 否 --> NL["K = 25000噸　係数 = 1"]
+    HL --> Charge[收費排放量 = annual_ton × 係数]
+    NL --> Charge2["收費排放量 = max(annual_ton - K, 0) × 係数"]
+    Charge --> Rate{選擇費率別}
+    Charge2 --> Rate
+    Rate -- 一般 300元 --> Fee[碳費 = 收費排放量 × 費率]
+    Rate -- 優惠A 50元 --> Fee
+    Rate -- 優惠B 100元 --> Fee
+    Fee --> Result[預估碳費 NT$ + 是否達徵收門檻]
+  </div>
+
+  <h3>4.3 月排放預測流程</h3>
+  <div class="mermaid">
+flowchart LR
+    M1["emission_records 已核准月填報"] --> Union[UNION 依月份合併]
+    M2["iot_logs 依recorded_at月份彙總"] --> Union
+    Union --> Group["GROUP BY YYYY-MM 得到今年YTD各月排放量"]
+    Group --> Check{已知月數 >= 2?}
+    Check -- 否 --> Avg["平均月排放量 = YTD ÷ 月數 (method=average_x12)"]
+    Check -- 是 --> Fit["sklearn LinearRegression 擬合月份趨勢"]
+    Fit --> Pred["預測剩餘月份排放量(負值裁切0)"]
+    Pred --> ProjML["預估年排放量 = YTD + 剩餘月份預測值 (method=linear_regression)"]
+    Avg --> ProjAvg["預估年排放量 = 平均月排放量 × 12"]
+    ProjML --> Fee[代入碳費公式試算]
+    ProjAvg --> Fee
+  </div>
+</section>
+
+<section id="s5">
+  <h2>5. API 規格</h2>
+  <div class="panel">
+    <p><code>GET /api/carbon_fee/forecast</code></p>
+    <table>
+      <tr><th>Query 參數</th><th>說明</th><th>預設值</th></tr>
+      <tr><td><code>year</code></td><td>試算年度</td><td>今年</td></tr>
+      <tr><td><code>rate_tier</code></td><td>general / preferential_a / preferential_b</td><td>general</td></tr>
+      <tr><td><code>high_leakage_risk</code></td><td>true / false</td><td>false</td></tr>
+      <tr><td><code>leakage_period</code></td><td>1 / 2 / 3</td><td>1</td></tr>
+    </table>
+    <pre>{
+  "success": true,
+  "year": 2026,
+  "method": "linear_regression",
+  "basis_months": 6,
+  "ytd_emission_kg": 1820.5,
+  "avg_monthly_emission_kg": 303.42,
+  "trend_slope_kg_per_month": 12.8,
+  "r2_score": 0.87,
+  "projected_annual_emission_kg": 3812.6,
+  "annual_emission_ton": 3.81,
+  "k_threshold_ton": 25000,
+  "adjustment_coefficient": 1.0,
+  "chargeable_emission_ton": 0,
+  "applicable_rate_ntd": 300,
+  "rate_tier": "general",
+  "exceeds_threshold": false,
+  "estimated_fee_ntd": 0,
+  "monthly_trend": [{"month": "2026-01", "emission_kg": 280.1}]
+}</pre>
+    <p><small><code>method</code> 為 <code>linear_regression</code>(&ge;2個月資料，用sklearn迴歸)或 <code>average_x12</code>(資料不足2個月退回月平均法)。<code>r2_score</code> 為模型決定係数，越接近1代表趨勢線擬合度越高。</small></p>
+  </div>
+</section>
+
+<section id="s6">
+  <h2>6. 資料庫 Schema 擴充</h2>
+  <p>新增 <code>carbon_fee_forecasts</code> 資料表，保存每次試算的歷史快照：</p>
+  <pre>CREATE TABLE carbon_fee_forecasts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  forecast_year INT NOT NULL,
+  forecast_method VARCHAR(30) NOT NULL DEFAULT 'linear_regression',
+  basis_months INT NOT NULL,
+  ytd_emission_kg DECIMAL(14,2) NOT NULL,
+  avg_monthly_emission_kg DECIMAL(14,2) NOT NULL,
+  trend_slope_kg_per_month DECIMAL(10,2) NOT NULL DEFAULT 0,
+  r2_score DECIMAL(5,3) NULL,
+  projected_annual_emission_kg DECIMAL(14,2) NOT NULL,
+  rate_tier VARCHAR(20) NOT NULL DEFAULT 'general',
+  high_leakage_risk TINYINT(1) NOT NULL DEFAULT 0,
+  adjustment_coefficient DECIMAL(4,2) NOT NULL DEFAULT 1.00,
+  k_threshold_ton DECIMAL(10,2) NOT NULL DEFAULT 25000.00,
+  chargeable_emission_ton DECIMAL(12,2) NOT NULL DEFAULT 0,
+  applicable_rate_ntd DECIMAL(10,2) NOT NULL DEFAULT 300.00,
+  estimated_fee_ntd DECIMAL(14,2) NOT NULL DEFAULT 0,
+  exceeds_threshold TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_forecast_year (forecast_year)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;</pre>
+</section>
+
+<section id="s7">
+  <h2>7. 限制與免責聲明</h2>
+  <div class="callout">
+    <ul>
+      <li>本系統碳費試算僅供<b>內部管理決策參考</b>，非環境部核定之正式碳盤查／查證數據，不能作為法定申報依據。</li>
+      <li>正式申報須依「溫室氣體排放量盤查登錄及查驗管理辦法」完成第三方查驗，本系統不執行查驗流程。</li>
+      <li>台灣碳費費率、門檻及係数將依環境部後續公告調整（每 2 年檢討一次），系統常數需隨法規更新維護。</li>
+      <li>預測採 scikit-learn 一元線性迴歸，僅能捕捉線性趨勢；若排放量有明顯季節性或非線性成長，預估值會有誤差，建議每月覆核並參考 r2_score 判斷趨勢線可信度。</li>
+      <li>本分析僅涵蓋台灣國內碳費制度，不含歐盟 CBAM、ISO 14064 國際查證等跨國規範。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s8">
+  <h2>8. 參考資料</h2>
+  <ul>
+    <li><a class="ref" href="https://www.cca.gov.tw/affairs/carbon-fee-fund/2301.html" target="_blank">碳費專區－核心業務｜環境部氣候變遷署</a></li>
+    <li><a class="ref" href="https://enews.moenv.gov.tw/Page/3B3C62C78849F32F/3a0a408a-33e5-4a0d-9939-23e8222c5284" target="_blank">環境部公告「碳費徵收費率」</a></li>
+    <li><a class="ref" href="https://csr.cw.com.tw/article/43569" target="_blank">碳費徵收懶人包》碳費費率多少？怎麼計算？－CSR@天下</a></li>
+    <li><a class="ref" href="https://csrone.com/news/8758" target="_blank">碳費2026開徵懶人包－CSRone 永續智庫</a></li>
+    <li><a class="ref" href="https://www.greenpeace.org/taiwan/update/30747/" target="_blank">碳費每噸300元起徵！碳權、碳費、碳稅是什麼？－綠色和平</a></li>
+    <li><a class="ref" href="https://csr.cw.com.tw/article/43639" target="_blank">碳費收費辦法出爐，起徵點為年排放2.5萬噸－CSR@天下</a></li>
+    <li><a class="ref" href="https://oaout.moenv.gov.tw/laW/LawContent.aspx?id=GL007914" target="_blank">環境部主管法規共用系統－碳費收費辦法</a></li>
+  </ul>
+</section>
+
+</main>
+
+<footer>AIoT ESG DSS｜docs/CARBON_TAX_ANALYSIS.html</footer>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+  const ctx = document.getElementById('demoChart');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['1月','2月','3月','4月','5月','6月','7月(預測)','8月(預測)','9月(預測)','10月(預測)','11月(預測)','12月(預測)'],
+      datasets: [
+        { label: '實際月排放量 (kgCO2e)', data: [280,265,310,295,320,340,null,null,null,null,null,null], borderColor:'#3ddc97', backgroundColor:'rgba(61,220,151,.15)', tension:.3 },
+        { label: '預測月排放量 (scikit-learn 線性迴歸外推，斜率約+12.8kg/月)', data: [null,null,null,null,null,340,347,360,372,385,398,411], borderColor:'#4f8cff', borderDash:[6,4], tension:.3 }
+      ]
+    },
+    options: { responsive:true, plugins:{ legend:{ labels:{ color:'#cdd9e8' } } }, scales:{ x:{ ticks:{color:'#93a1b5'} }, y:{ ticks:{color:'#93a1b5'} } } }
+  });
+</script>
+</body>
+</html>
