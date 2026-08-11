@@ -213,6 +213,15 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   <a href="#s11"><span>11</span>API 端點</a>
   <a href="#s12"><span>12</span>稽核紀錄</a>
   <a href="#s13"><span>13</span>開發路線</a>
+  <a href="#s14"><span>14</span>公版私版分工</a>
+  <a href="#s15"><span>15</span>使用者身分分離</a>
+  <a href="#s16"><span>16</span>SSO 單一登入</a>
+  <a href="#s17"><span>17</span>用量 Handshake</a>
+  <a href="#s18"><span>18</span>試用期定案</a>
+  <a href="#s19"><span>19</span>APP 管理入口</a>
+  <a href="#s20"><span>20</span>開發文件</a>
+  <a href="#s21"><span>21</span>前台註冊登入</a>
+  <a href="#s22"><span>22</span>待確認（公版）</a>
 </nav>
 
 <main>
@@ -1181,10 +1190,389 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   </table></div>
 </section>
 
+<!-- ============ 14 ============ -->
+<section id="s14">
+  <div class="sec-head"><span class="sec-num">14</span><h2>公版與私版分工原則</h2></div>
+  <p class="lead">本節起為<b>公版（多 APP 共用層）</b>補充規格，對應 2026-08-09 會議確認事項，與第 1–13 節「羽升幸福養成學苑」私版課程系統為並列文件。公版只管三件事——會員、交易、用量；其餘一切屬於各私版 APP 自行定義與儲存，公版不碰。</p>
+
+  <figure>
+    <figcaption><b>圖 14.1</b> 公版三件事 vs 私版各自發揮</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="40" width="340" height="230" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="34" y="60" class="hd">公版 · 唯一登入層</text>
+
+      <rect x="50" y="76" width="280" height="54" rx="2" class="box-r"/>
+      <text x="190" y="98" text-anchor="middle" class="nt">會員（users）</text>
+      <text x="190" y="116" text-anchor="middle" class="nl">身分・登入・訂閱狀態</text>
+
+      <rect x="50" y="146" width="280" height="54" rx="2" class="box-r"/>
+      <text x="190" y="168" text-anchor="middle" class="nt">交易（subscriptions）</text>
+      <text x="190" y="186" text-anchor="middle" class="nl">方案・扣款・對帳</text>
+
+      <rect x="50" y="216" width="280" height="54" rx="2" class="box-r"/>
+      <text x="190" y="238" text-anchor="middle" class="nt">用量（ai_usage_logs）</text>
+      <text x="190" y="256" text-anchor="middle" class="nl">Token 成本彙總</text>
+
+      <rect x="560" y="20" width="300" height="280" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="574" y="40" class="hd">私版 · 各自發揮</text>
+
+      <rect x="580" y="56" width="260" height="56" rx="2" class="box-t"/>
+      <text x="710" y="80" text-anchor="middle" class="nt">幸福關係 APP</text>
+      <text x="710" y="98" text-anchor="middle" class="nl">暱稱・MBTI・配對對象</text>
+
+      <rect x="580" y="146" width="260" height="56" rx="2" class="box"/>
+      <text x="710" y="170" text-anchor="middle" class="ns">APP 2</text>
+      <text x="710" y="188" text-anchor="middle" class="nl">規劃中</text>
+
+      <rect x="580" y="236" width="260" height="56" rx="2" class="box"/>
+      <text x="710" y="260" text-anchor="middle" class="ns">APP 3</text>
+      <text x="710" y="278" text-anchor="middle" class="nl">規劃中</text>
+
+      <path d="M330 103 C 420 103 460 84 580 84" class="ln-t" marker-end="url(#at)"/>
+      <text x="445" y="90" text-anchor="middle" class="nl" fill="#16697A">SSO 身分</text>
+
+      <path d="M580 174 C 460 174 420 243 330 243" class="ln-r" marker-end="url(#ar)"/>
+      <text x="445" y="222" text-anchor="middle" class="nl" fill="#C8402F">用量回報</text>
+
+      <text x="574" y="308" class="nl">所有私版皆比照此模式串接，圖中以「幸福關係」為例</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>層</th><th>負責範圍</th><th>不負責</th></tr></thead>
+    <tbody>
+      <tr><td class="k">公版</td><td>使用者身分與登入、訂閱與金流、Token 用量彙總與對帳</td><td>課程內容、暱稱、MBTI、配對、對話歷史等一切 App 專屬邏輯</td></tr>
+      <tr><td class="k">私版</td><td>自己的業務邏輯與資料（如第 1–13 節的課程系統）</td><td>自建密碼系統、自算對外總成本（皆以公版為準）</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15">
+  <div class="sec-head"><span class="sec-num">15</span><h2>使用者身分分離</h2></div>
+  <p class="lead">公版 <code>users</code> 是唯一身分來源，只放「跟 App 無關」的欄位；每支私版自己的 profile 表透過 <code>user_id</code> 關聯，兩者資料庫可以實體分離，不做跨庫外鍵。</p>
+
+  <figure>
+    <figcaption><b>圖 15.1</b> 公版 users 與私版 profile 的關聯</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+      <rect x="350" y="30" width="200" height="60" rx="2" class="box-r"/>
+      <text x="450" y="54" text-anchor="middle" class="nt">users（公版）</text>
+      <text x="450" y="72" text-anchor="middle" class="nl">id・phone・email・name</text>
+
+      <path d="M450 90 L450 140" class="ln dash"/>
+      <line x1="190" y1="140" x2="710" y2="140" class="ln dash"/>
+      <text x="450" y="130" text-anchor="middle" class="nl">user_id（API 關聯，非資料庫外鍵）</text>
+
+      <path d="M190 140 L190 170" class="ln-t dash" marker-end="url(#at)"/>
+      <path d="M450 140 L450 170" class="ln-t dash" marker-end="url(#at)"/>
+      <path d="M710 140 L710 170" class="ln-t dash" marker-end="url(#at)"/>
+
+      <rect x="80" y="170" width="220" height="60" rx="2" class="box-t"/>
+      <text x="190" y="194" text-anchor="middle" class="nt">xingfu_profiles</text>
+      <text x="190" y="212" text-anchor="middle" class="nl">幸福關係・nickname/mbti</text>
+
+      <rect x="340" y="170" width="220" height="60" rx="2" class="box"/>
+      <text x="450" y="194" text-anchor="middle" class="ns">app2_profiles</text>
+      <text x="450" y="212" text-anchor="middle" class="nl">依 App 2 自訂欄位</text>
+
+      <rect x="600" y="170" width="220" height="60" rx="2" class="box"/>
+      <text x="710" y="194" text-anchor="middle" class="ns">app3_profiles</text>
+      <text x="710" y="212" text-anchor="middle" class="nl">依 App 3 自訂欄位</text>
+
+      <rect x="10" y="256" width="880" height="46" rx="2" class="band"/>
+      <text x="26" y="280" class="nm">每支私版各自的 profile 表都用同一把 user_id 對回公版，不共用 schema，不做跨庫 FK</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>users（公版，唯一身分來源）</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>PK，系統產生，<b>不得用 email 或手機號當 ID</b></td></tr>
+      <tr><td class="k">phone</td><td class="k">text</td><td>可為 null，唯一索引（若有值）</td></tr>
+      <tr><td class="k">email</td><td class="k">text</td><td>可為 null，唯一索引（若有值）</td></tr>
+      <tr><td class="k">password_hash</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">name</td><td class="k">text</td><td>真實姓名</td></tr>
+      <tr><td class="k">status</td><td class="k">enum</td><td><code>active</code> / <code>suspended</code></td></tr>
+      <tr><td class="k">created_at</td><td class="k">timestamptz</td><td>註冊時間</td></tr>
+      <tr><td class="k">last_login_at</td><td class="k">timestamptz</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>phone</code>、<code>email</code> 至少要有一個有值，兩者皆可作登入識別，但都不是主鍵。</p>
+
+  <h3>xingfu_profiles（私版範例：幸福關係）</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>PK</td></tr>
+      <tr><td class="k">user_id</td><td class="k">uuid</td><td>來自公版 <code>users.id</code>，透過 SSO 換取，非資料庫外鍵</td></tr>
+      <tr><td class="k">nickname</td><td class="k">text</td><td>私版暱稱，如 steve</td></tr>
+      <tr><td class="k">mbti</td><td class="k">text</td><td>如 ENTJ</td></tr>
+      <tr><td class="k">partner_profile_id</td><td class="k">uuid</td><td>配對對象，自參考本表</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note warn">
+    <span class="h">待改動</span>
+    目前公版「用戶管理」頁面顯示的暱稱／MBTI 欄位、以及舊資料庫殘留欄位（到期日、方案名稱等），要整批移出公版 <code>users</code>，改為私版自己的表；公版 <code>users</code> 清空重建，資料庫內容只留測試用的 4 個帳號。
+  </div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16">
+  <div class="sec-head"><span class="sec-num">16</span><h2>SSO 單一登入</h2></div>
+  <p class="lead">公版登入一次，免二次登入即可跳進任一支私版 APP。私版不自建密碼系統，身分永遠透過公版的一次性換證流程取得。</p>
+
+  <figure>
+    <figcaption><b>圖 16.1</b> 跳轉換證時序</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg">
+      <rect x="100" y="20" width="160" height="40" rx="2" class="box-r"/>
+      <text x="180" y="45" text-anchor="middle" class="nt">公版</text>
+      <rect x="640" y="20" width="160" height="40" rx="2" class="box-t"/>
+      <text x="720" y="45" text-anchor="middle" class="nt">私版 APP</text>
+
+      <line x1="180" y1="60" x2="180" y2="300" class="ln dash"/>
+      <line x1="720" y1="60" x2="720" y2="300" class="ln dash"/>
+
+      <text x="180" y="90" text-anchor="middle" class="ns">① 使用者登入公版</text>
+      <text x="180" y="106" text-anchor="middle" class="nl">取得 session + refresh token</text>
+
+      <path d="M180 140 L720 140" class="ln-t" marker-end="url(#at)"/>
+      <text x="450" y="130" text-anchor="middle" class="nl" fill="#16697A">② redirect + exchange_code（60 秒有效・一次性）</text>
+
+      <path d="M720 200 L180 200" class="ln" marker-end="url(#a)"/>
+      <text x="450" y="190" text-anchor="middle" class="nl">③ POST /api/public/sso/verify</text>
+
+      <path d="M180 260 L720 260" class="ln-t" marker-end="url(#at)"/>
+      <text x="450" y="250" text-anchor="middle" class="nl" fill="#16697A">④ 回傳 user_id / email / phone / name / 訂閱狀態</text>
+
+      <text x="720" y="290" text-anchor="middle" class="ns">⑤ 建立本地 session，免二次登入</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="note">
+    <span class="h">關鍵原則</span>
+    私版<b>不自建密碼系統</b>，登入一律經公版完成。使用者於公版登出時，各私版 session 靠短效 token 自然過期即可，不強求即時通知所有私版；日後如需即時撤銷，再加 webhook。
+  </div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17">
+  <div class="sec-head"><span class="sec-num">17</span><h2>Token 用量 Handshake</h2></div>
+  <p class="lead">私版各自產生的 token 用量，要即時回報回公版彙總，作為對外（跟金流商對帳）唯一真實來源——不是私版各算各的。</p>
+
+  <figure>
+    <figcaption><b>圖 17.1</b> 私版用量回報到公版彙總</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="60" width="150" height="70" rx="2" class="box-t"/>
+      <text x="85" y="90" text-anchor="middle" class="nt">私版對話</text>
+      <text x="85" y="108" text-anchor="middle" class="nl">AI API 回傳 usage</text>
+
+      <path d="M160 95 L190 95" class="ln" marker-end="url(#a)"/>
+      <rect x="190" y="60" width="180" height="70" rx="2" class="box"/>
+      <text x="280" y="86" text-anchor="middle" class="ns">回報</text>
+      <text x="280" y="106" text-anchor="middle" class="nm">POST /api/public/</text>
+      <text x="280" y="120" text-anchor="middle" class="nm">usage/report</text>
+
+      <path d="M370 95 L400 95" class="ln-t" marker-end="url(#at)"/>
+      <rect x="400" y="60" width="190" height="70" rx="2" class="box-n"/>
+      <text x="495" y="86" text-anchor="middle" class="nt">公版 ai_usage_logs</text>
+      <text x="495" y="106" text-anchor="middle" class="nl">累加 input/output tokens</text>
+
+      <path d="M590 95 L620 95" class="ln-t" marker-end="url(#at)"/>
+      <rect x="620" y="60" width="150" height="70" rx="2" class="box-g"/>
+      <text x="695" y="86" text-anchor="middle" class="nt">成本計算</text>
+      <text x="695" y="106" text-anchor="middle" class="nl">cost_usd → cost_ntd</text>
+
+      <path d="M770 95 L800 95" class="ln-r" marker-end="url(#ar)"/>
+      <rect x="800" y="60" width="90" height="70" rx="2" class="box-r"/>
+      <text x="845" y="90" text-anchor="middle" class="nt">對帳</text>
+      <text x="845" y="108" text-anchor="middle" class="nl">紅陽科技</text>
+
+      <rect x="10" y="150" width="880" height="34" rx="2" class="band"/>
+      <text x="26" y="172" class="nm">私版本地也可留一份用量記錄供自己呈現，但扣款與總成本永遠以公版彙總為準，避免雙重真實來源；回報失敗需重試／佇列，用量原則上不可回補</text>
+    </svg>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18">
+  <div class="sec-head"><span class="sec-num">18</span><h2>試用期與訂閱定案</h2></div>
+  <p class="lead">第 13 節列為待確認事項的試用期天數，已於 2026-08-09 會議定案：<b>7 天免費試用</b>，不再是開放問題。</p>
+
+  <figure>
+    <figcaption><b>圖 18.1</b> 試用期時間軸</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg">
+      <line x1="40" y1="110" x2="860" y2="110" stroke="#41525F" stroke-width="1.3" marker-end="url(#a)"/>
+
+      <line x1="100" y1="96" x2="100" y2="124" stroke="#0F1720" stroke-width="1.5"/>
+      <text x="100" y="88" text-anchor="middle" class="nm">D0</text>
+      <text x="100" y="142" text-anchor="middle" class="nl">註冊完成・trial 開始</text>
+
+      <line x1="500" y1="96" x2="500" y2="124" stroke="#B07A16" stroke-width="1.5"/>
+      <text x="500" y="88" text-anchor="middle" class="nm" fill="#B07A16">D7</text>
+      <text x="500" y="142" text-anchor="middle" class="nl">試用期滿</text>
+
+      <path d="M500 124 C 500 150 420 150 400 156" class="ln-t" marker-end="url(#at)"/>
+      <rect x="300" y="156" width="220" height="44" rx="2" class="box-n"/>
+      <text x="410" y="174" text-anchor="middle" class="ns">已綁卡</text>
+      <text x="410" y="190" text-anchor="middle" class="nl">自動扣款・重算 30 天週期</text>
+
+      <path d="M500 124 C 500 150 620 150 640 156" class="ln-r" marker-end="url(#ar)"/>
+      <rect x="640" y="156" width="220" height="44" rx="2" class="box-r"/>
+      <text x="750" y="174" text-anchor="middle" class="ns">未綁卡／扣款失敗</text>
+      <text x="750" y="190" text-anchor="middle" class="nl">expired・提示訂閱</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">subscriptions.status</td><td>新增起始狀態 <code>trial</code></td></tr>
+      <tr><td class="k">trial_end_at</td><td>註冊時間 + 7 天</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note warn">
+    <span class="h">待你定案</span>
+    試用期間對話／使用次數是否設限，還是完全不限？
+  </div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19">
+  <div class="sec-head"><span class="sec-num">19</span><h2>APP 管理與私版後台入口</h2></div>
+  <p class="lead">後台「APP 管理」列表要能一鍵跳到該 APP 的私版後台，不用公版自己猜網址規則。</p>
+
+  <figure>
+    <figcaption><b>圖 19.1</b> 從 APP 管理跳轉私版後台</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="220" height="60" rx="2" class="box"/>
+      <text x="140" y="54" text-anchor="middle" class="nt">APP 管理列表</text>
+      <text x="140" y="72" text-anchor="middle" class="nl">每一列一支 APP</text>
+
+      <path d="M250 60 L320 60" class="ln" marker-end="url(#a)"/>
+      <rect x="320" y="30" width="180" height="60" rx="2" class="box-t"/>
+      <text x="410" y="54" text-anchor="middle" class="nt">前往後台</text>
+      <text x="410" y="72" text-anchor="middle" class="nl">按鈕・開新分頁</text>
+
+      <path d="M500 60 L570 60" class="ln-t" marker-end="url(#at)"/>
+      <rect x="570" y="30" width="300" height="60" rx="2" class="box-r"/>
+      <text x="720" y="54" text-anchor="middle" class="nt">私版後台</text>
+      <text x="720" y="72" text-anchor="middle" class="nl">admin_url，如 https://xxx.app/manage</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>資料表</th><th>欄位</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">apps</td><td class="k">admin_url</td><td>私版後台網址，由私版登記 APP 時自行填入</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>網址慣例建議：私版後台統一以 <code>/manage</code> 結尾；公版不用猜或自己組字串，直接讀 <code>admin_url</code>。</p>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20">
+  <div class="sec-head"><span class="sec-num">20</span><h2>開發文件（白皮書）</h2></div>
+  <p class="lead">未來新私版 APP 加入時，照白皮書自行串接公版三件事（會員、交易、用量），不用每次口頭溝通。</p>
+
+  <ul class="pl">
+    <li>SSO 串接流程（對應第 16 節）</li>
+    <li>用量回報 API 規格（對應第 17 節）</li>
+    <li>會員身分 API 規格（對應第 15 節）</li>
+    <li>金鑰／環境變數取得方式</li>
+  </ul>
+
+  <h3>dev_docs</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>PK</td></tr>
+      <tr><td class="k">title</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">file_url</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">version</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">updated_at</td><td class="k">timestamptz</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note">
+    <span class="h">後台位置</span>
+    「開發文件」頁籤（admin only），可上傳／管理文件並提供下載連結。
+  </div>
+</section>
+
+<!-- ============ 21 ============ -->
+<section id="s21">
+  <div class="sec-head"><span class="sec-num">21</span><h2>前台註冊登入流程</h2></div>
+  <p class="lead">註冊一步完成，登入提供 Email／手機兩種方式並存。使用者主鍵一律是系統產生的 UUID（對應第 15 節），email／手機只是登入識別欄位。</p>
+
+  <figure>
+    <figcaption><b>圖 21.1</b> 註冊（一步）與登入（雙軌）</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="30" width="380" height="60" rx="2" class="box-t"/>
+      <text x="230" y="54" text-anchor="middle" class="nt">註冊（一步完成）</text>
+      <text x="230" y="72" text-anchor="middle" class="nl">邀請碼 + 姓名 + email + 密碼</text>
+
+      <path d="M230 90 L230 120" class="ln-t" marker-end="url(#at)"/>
+      <rect x="40" y="120" width="380" height="50" rx="2" class="box-n"/>
+      <text x="230" y="150" text-anchor="middle" class="ns">建立 users 記錄・不需簡訊驗證</text>
+
+      <path d="M650 40 L730 80 L650 120 L570 80 Z" class="box-g"/>
+      <text x="650" y="76" text-anchor="middle" class="ns">登入方式？</text>
+      <text x="650" y="94" text-anchor="middle" class="nl">Email / 手機</text>
+
+      <path d="M600 105 L560 150" class="ln" marker-end="url(#a)"/>
+      <path d="M700 105 L740 150" class="ln" marker-end="url(#a)"/>
+
+      <rect x="480" y="150" width="160" height="50" rx="2" class="box"/>
+      <text x="560" y="180" text-anchor="middle" class="ns">Email 登入</text>
+
+      <rect x="700" y="150" width="180" height="50" rx="2" class="box"/>
+      <text x="790" y="180" text-anchor="middle" class="ns">手機登入（OTP）</text>
+
+      <path d="M560 200 L620 230" class="ln-t" marker-end="url(#at)"/>
+      <path d="M790 200 L740 230" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="560" y="230" width="260" height="44" rx="2" class="box-n"/>
+      <text x="690" y="256" text-anchor="middle" class="nt">取得 session</text>
+    </svg>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 22 ============ -->
+<section id="s22">
+  <div class="sec-head"><span class="sec-num">22</span><h2>待確認事項（公版）</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>問題</th><th>本文件暫定</th></tr></thead>
+    <tbody>
+      <tr><td class="k">01</td><td>試用期間對話／使用次數是否設限</td><td>未定，需指定</td></tr>
+      <tr><td class="k">02</td><td>公版角色是否只要 admin / staff 兩級</td><td>暫定兩級，其餘角色歸私版</td></tr>
+      <tr><td class="k">03</td><td>SSO 的 exchange_code 有效期</td><td>暫定 60 秒</td></tr>
+      <tr><td class="k">04</td><td>用量回報失敗的重試策略</td><td>未定，需指定重試次數與間隔</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
 </main>
 </div>
 
-<footer>羽升幸福養成學苑 · 後台技術文件 v2.0 · 2026-08-04</footer>
+<footer>羽升幸福養成學苑 · 後台技術文件 v2.1（含公版補充） · 2026-08-09</footer>
 
 </body>
 </html>
