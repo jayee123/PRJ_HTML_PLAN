@@ -215,13 +215,12 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   <a href="#s13"><span>13</span>開發路線</a>
   <a href="#s14"><span>14</span>公版私版分工</a>
   <a href="#s15"><span>15</span>使用者身分分離</a>
-  <a href="#s16"><span>16</span>SSO 單一登入</a>
-  <a href="#s17"><span>17</span>用量 Handshake</a>
-  <a href="#s18"><span>18</span>試用期定案</a>
-  <a href="#s19"><span>19</span>APP 管理入口</a>
-  <a href="#s20"><span>20</span>開發文件</a>
-  <a href="#s21"><span>21</span>前台註冊登入</a>
-  <a href="#s22"><span>22</span>待確認（公版）</a>
+  <a href="#s16"><span>16</span>用量 Handshake</a>
+  <a href="#s17"><span>17</span>試用期定案</a>
+  <a href="#s18"><span>18</span>APP 管理入口</a>
+  <a href="#s19"><span>19</span>開發文件</a>
+  <a href="#s20"><span>20</span>前台註冊登入</a>
+  <a href="#s21"><span>21</span>待確認（公版）</a>
 </nav>
 
 <main>
@@ -1324,51 +1323,11 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
 
 <!-- ============ 16 ============ -->
 <section id="s16">
-  <div class="sec-head"><span class="sec-num">16</span><h2>SSO 單一登入</h2></div>
-  <p class="lead">公版登入一次，免二次登入即可跳進任一支私版 APP。私版不自建密碼系統，身分永遠透過公版的一次性換證流程取得。</p>
-
-  <figure>
-    <figcaption><b>圖 16.1</b> 跳轉換證時序</figcaption>
-    <div class="fig-body">
-    <svg class="d" viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg">
-      <rect x="100" y="20" width="160" height="40" rx="2" class="box-r"/>
-      <text x="180" y="45" text-anchor="middle" class="nt">公版</text>
-      <rect x="640" y="20" width="160" height="40" rx="2" class="box-t"/>
-      <text x="720" y="45" text-anchor="middle" class="nt">私版 APP</text>
-
-      <line x1="180" y1="60" x2="180" y2="300" class="ln dash"/>
-      <line x1="720" y1="60" x2="720" y2="300" class="ln dash"/>
-
-      <text x="180" y="90" text-anchor="middle" class="ns">① 使用者登入公版</text>
-      <text x="180" y="106" text-anchor="middle" class="nl">取得 session + refresh token</text>
-
-      <path d="M180 140 L720 140" class="ln-t" marker-end="url(#at)"/>
-      <text x="450" y="130" text-anchor="middle" class="nl" fill="#16697A">② redirect + exchange_code（60 秒有效・一次性）</text>
-
-      <path d="M720 200 L180 200" class="ln" marker-end="url(#a)"/>
-      <text x="450" y="190" text-anchor="middle" class="nl">③ POST /api/public/sso/verify</text>
-
-      <path d="M180 260 L720 260" class="ln-t" marker-end="url(#at)"/>
-      <text x="450" y="250" text-anchor="middle" class="nl" fill="#16697A">④ 回傳 user_id / email / phone / name / 訂閱狀態</text>
-
-      <text x="720" y="290" text-anchor="middle" class="ns">⑤ 建立本地 session，免二次登入</text>
-    </svg>
-    </div>
-  </figure>
-
-  <div class="note">
-    <span class="h">關鍵原則</span>
-    私版<b>不自建密碼系統</b>，登入一律經公版完成。使用者於公版登出時，各私版 session 靠短效 token 自然過期即可，不強求即時通知所有私版；日後如需即時撤銷，再加 webhook。
-  </div>
-</section>
-
-<!-- ============ 17 ============ -->
-<section id="s17">
-  <div class="sec-head"><span class="sec-num">17</span><h2>Token 用量 Handshake</h2></div>
+  <div class="sec-head"><span class="sec-num">16</span><h2>Token 用量 Handshake</h2></div>
   <p class="lead">私版各自產生的 token 用量，要即時回報回公版彙總，作為對外（跟金流商對帳）唯一真實來源——不是私版各算各的。</p>
 
   <figure>
-    <figcaption><b>圖 17.1</b> 私版用量回報到公版彙總</figcaption>
+    <figcaption><b>圖 16.1</b> 私版用量回報到公版彙總</figcaption>
     <div class="fig-body">
     <svg class="d" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="60" width="150" height="70" rx="2" class="box-t"/>
@@ -1403,13 +1362,13 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   </figure>
 </section>
 
-<!-- ============ 18 ============ -->
-<section id="s18">
-  <div class="sec-head"><span class="sec-num">18</span><h2>試用期與訂閱定案</h2></div>
+<!-- ============ 17 ============ -->
+<section id="s17">
+  <div class="sec-head"><span class="sec-num">17</span><h2>試用期與訂閱定案</h2></div>
   <p class="lead">第 13 節列為待確認事項的試用期天數，已於 2026-08-09 會議定案：<b>7 天免費試用</b>，不再是開放問題。</p>
 
   <figure>
-    <figcaption><b>圖 18.1</b> 試用期時間軸</figcaption>
+    <figcaption><b>圖 17.1</b> 試用期時間軸</figcaption>
     <div class="fig-body">
     <svg class="d" viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg">
       <line x1="40" y1="110" x2="860" y2="110" stroke="#41525F" stroke-width="1.3" marker-end="url(#a)"/>
@@ -1449,13 +1408,13 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   </div>
 </section>
 
-<!-- ============ 19 ============ -->
-<section id="s19">
-  <div class="sec-head"><span class="sec-num">19</span><h2>APP 管理與私版後台入口</h2></div>
+<!-- ============ 18 ============ -->
+<section id="s18">
+  <div class="sec-head"><span class="sec-num">18</span><h2>APP 管理與私版後台入口</h2></div>
   <p class="lead">後台「APP 管理」列表要能一鍵跳到該 APP 的私版後台，不用公版自己猜網址規則。</p>
 
   <figure>
-    <figcaption><b>圖 19.1</b> 從 APP 管理跳轉私版後台</figcaption>
+    <figcaption><b>圖 18.1</b> 從 APP 管理跳轉私版後台</figcaption>
     <div class="fig-body">
     <svg class="d" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
       <rect x="30" y="30" width="220" height="60" rx="2" class="box"/>
@@ -1485,14 +1444,13 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   <p>網址慣例建議：私版後台統一以 <code>/manage</code> 結尾；公版不用猜或自己組字串，直接讀 <code>admin_url</code>。</p>
 </section>
 
-<!-- ============ 20 ============ -->
-<section id="s20">
-  <div class="sec-head"><span class="sec-num">20</span><h2>開發文件（白皮書）</h2></div>
+<!-- ============ 19 ============ -->
+<section id="s19">
+  <div class="sec-head"><span class="sec-num">19</span><h2>開發文件（白皮書）</h2></div>
   <p class="lead">未來新私版 APP 加入時，照白皮書自行串接公版三件事（會員、交易、用量），不用每次口頭溝通。</p>
 
   <ul class="pl">
-    <li>SSO 串接流程（對應第 16 節）</li>
-    <li>用量回報 API 規格（對應第 17 節）</li>
+    <li>用量回報 API 規格（對應第 16 節）</li>
     <li>會員身分 API 規格（對應第 15 節）</li>
     <li>金鑰／環境變數取得方式</li>
   </ul>
@@ -1515,13 +1473,13 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   </div>
 </section>
 
-<!-- ============ 21 ============ -->
-<section id="s21">
-  <div class="sec-head"><span class="sec-num">21</span><h2>前台註冊登入流程</h2></div>
+<!-- ============ 20 ============ -->
+<section id="s20">
+  <div class="sec-head"><span class="sec-num">20</span><h2>前台註冊登入流程</h2></div>
   <p class="lead">註冊一步完成，登入提供 Email／手機兩種方式並存。使用者主鍵一律是系統產生的 UUID（對應第 15 節），email／手機只是登入識別欄位。</p>
 
   <figure>
-    <figcaption><b>圖 21.1</b> 註冊（一步）與登入（雙軌）</figcaption>
+    <figcaption><b>圖 20.1</b> 註冊（一步）與登入（雙軌）</figcaption>
     <div class="fig-body">
     <svg class="d" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
       <rect x="40" y="30" width="380" height="60" rx="2" class="box-t"/>
@@ -1555,16 +1513,15 @@ footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center
   </figure>
 </section>
 
-<!-- ============ 22 ============ -->
-<section id="s22">
-  <div class="sec-head"><span class="sec-num">22</span><h2>待確認事項（公版）</h2></div>
+<!-- ============ 21 ============ -->
+<section id="s21">
+  <div class="sec-head"><span class="sec-num">21</span><h2>待確認事項（公版）</h2></div>
   <div class="tw"><table>
     <thead><tr><th>#</th><th>問題</th><th>本文件暫定</th></tr></thead>
     <tbody>
       <tr><td class="k">01</td><td>試用期間對話／使用次數是否設限</td><td>未定，需指定</td></tr>
       <tr><td class="k">02</td><td>公版角色是否只要 admin / staff 兩級</td><td>暫定兩級，其餘角色歸私版</td></tr>
-      <tr><td class="k">03</td><td>SSO 的 exchange_code 有效期</td><td>暫定 60 秒</td></tr>
-      <tr><td class="k">04</td><td>用量回報失敗的重試策略</td><td>未定，需指定重試次數與間隔</td></tr>
+      <tr><td class="k">03</td><td>用量回報失敗的重試策略</td><td>未定，需指定重試次數與間隔</td></tr>
     </tbody>
   </table></div>
 </section>
