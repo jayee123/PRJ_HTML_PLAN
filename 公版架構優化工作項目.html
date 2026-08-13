@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公版架構優化工作項目 — 張荃宇</title>
+<style>
+  :root{
+    --paper:#f2f0ea;
+    --surface:#ffffff;
+    --ink:#221f2c;
+    --ink-soft:#5c5768;
+    --ink-faint:#8b8494;
+    --line:#ddd6cd;
+    --accent:#6f3f5c;
+    --accent-soft:#f0e2ea;
+    --keep:#3f7d5c;      --keep-soft:#e2f0e7;
+    --optimize:#3a6ea8;  --optimize-soft:#e2ecf6;
+    --new:#b8752b;       --new-soft:#f6ead9;
+    --risk:#a4433a;      --risk-soft:#f5e1de;
+    --shadow: 0 1px 2px rgba(34,31,44,0.06), 0 8px 24px -12px rgba(34,31,44,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#1c1720; --surface:#251f2b; --ink:#f1eef4; --ink-soft:#b7aec0; --ink-faint:#847a90;
+      --line:#3a3241; --accent:#d99cc0; --accent-soft:#3a2735;
+      --keep:#7cc9a2; --keep-soft:#23372c;
+      --optimize:#8ab4e0; --optimize-soft:#1f2f3f;
+      --new:#e3ab5f; --new-soft:#3a2c1a;
+      --risk:#e0897e; --risk-soft:#3a2320;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#1c1720; --surface:#251f2b; --ink:#f1eef4; --ink-soft:#b7aec0; --ink-faint:#847a90;
+    --line:#3a3241; --accent:#d99cc0; --accent-soft:#3a2735;
+    --keep:#7cc9a2; --keep-soft:#23372c;
+    --optimize:#8ab4e0; --optimize-soft:#1f2f3f;
+    --new:#e3ab5f; --new-soft:#3a2c1a;
+    --risk:#e0897e; --risk-soft:#3a2320;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  :root[data-theme="light"]{
+    --paper:#f2f0ea; --surface:#ffffff; --ink:#221f2c; --ink-soft:#5c5768; --ink-faint:#8b8494;
+    --line:#ddd6cd; --accent:#6f3f5c; --accent-soft:#f0e2ea;
+    --keep:#3f7d5c; --keep-soft:#e2f0e7;
+    --optimize:#3a6ea8; --optimize-soft:#e2ecf6;
+    --new:#b8752b; --new-soft:#f6ead9;
+    --risk:#a4433a; --risk-soft:#f5e1de;
+    --shadow: 0 1px 2px rgba(34,31,44,0.06), 0 8px 24px -12px rgba(34,31,44,0.12);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Hiragino Sans GB",system-ui,sans-serif;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); color:var(--accent); }
+
+  h1,h2,h3{
+    font-family:"Noto Serif TC","Source Han Serif TC","Georgia",serif;
+    font-weight:700;
+    text-wrap:balance;
+    color:var(--ink);
+    margin:0;
+  }
+
+  .wrap{ max-width:800px; margin:0 auto; padding:0 24px 96px; }
+
+  /* ---- Top nav ---- */
+  .topnav{
+    position:sticky; top:0; z-index:10;
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topnav-inner{
+    max-width:800px; margin:0 auto; padding:14px 24px;
+    display:flex; gap:20px; align-items:center;
+    overflow-x:auto;
+    font-size:13px;
+  }
+  .topnav a{
+    color:var(--ink-soft); text-decoration:none; white-space:nowrap;
+    padding:5px 10px; border-radius:999px; letter-spacing:.02em;
+  }
+  .topnav a:hover, .topnav a:focus-visible{ background:var(--accent-soft); color:var(--accent); outline:none;}
+
+  /* ---- Cover ---- */
+  .cover{ padding:56px 0 40px; border-bottom:1px solid var(--line); }
+  .eyebrow{
+    font-family:ui-monospace,"SF Mono",Consolas,monospace;
+    font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:14px; display:block;
+  }
+  .cover h1{ font-size:clamp(28px,4vw,38px); line-height:1.3; }
+  .cover .sub{ margin-top:14px; color:var(--ink-soft); font-size:16px; max-width:60ch;}
+  .meta-row{
+    margin-top:24px; display:flex; flex-wrap:wrap; gap:10px 28px;
+    font-size:13px; color:var(--ink-faint);
+    font-family:ui-monospace,"SF Mono",Consolas,monospace;
+  }
+  .meta-row b{ color:var(--ink-soft); font-weight:600; }
+
+  /* ---- Timeline strip ---- */
+  .timeline{ padding:28px 0 8px; }
+  .timeline h2.small{ font-size:13px; font-family:ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-weight:600; margin-bottom:14px;}
+  .tl-scroll{ overflow-x:auto; padding-bottom:6px; }
+  .tl-row{ display:flex; gap:0; min-width:640px; }
+  .tl-item{ flex:1; position:relative; padding:18px 14px 4px; border-top:2px solid var(--line); }
+  .tl-item.hit{ border-top:2px solid var(--accent); }
+  .tl-item .dot{ position:absolute; top:-5px; left:14px; width:8px; height:8px; border-radius:50%; background:var(--line); }
+  .tl-item.hit .dot{ background:var(--accent); }
+  .tl-date{ font-family:ui-monospace,monospace; font-size:12px; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .tl-label{ font-size:13px; color:var(--ink-soft); margin-top:4px; }
+
+  /* ---- Section ---- */
+  section.block{ padding:44px 0; border-bottom:1px solid var(--line); scroll-margin-top:64px; }
+  section.block:last-of-type{ border-bottom:none; }
+  .block-head{ margin-bottom:22px; }
+  .block-head h2{ font-size:22px; }
+  .block-head .desc{ color:var(--ink-soft); font-size:14.5px; margin-top:8px; max-width:66ch; }
+
+  /* ---- Tag pill ---- */
+  .tag{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:11.5px; font-weight:600; letter-spacing:.03em;
+    padding:3px 9px; border-radius:999px; line-height:1.6;
+  }
+  .tag.keep{ background:var(--keep-soft); color:var(--keep); }
+  .tag.optimize{ background:var(--optimize-soft); color:var(--optimize); }
+  .tag.new{ background:var(--new-soft); color:var(--new); }
+  .tag.risk{ background:var(--risk-soft); color:var(--risk); }
+  .tag.prio{ background:transparent; color:var(--ink-faint); border:1px solid var(--line); }
+
+  /* ---- Module card ---- */
+  .module{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+    padding:22px 24px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+  }
+  .module h3{ font-size:17px; margin-bottom:4px; }
+  .module .tags{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 16px; }
+  .module .row{ margin-top:14px; }
+  .module .row .k{
+    font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px; display:block;
+  }
+  .module .row .v{ font-size:14.5px; color:var(--ink); }
+  .module .row .v.soft{ color:var(--ink-soft); }
+  .module ul.items{ margin:0; padding-left:0; list-style:none; }
+  .module ul.items li{
+    position:relative; padding-left:20px; margin-bottom:8px; font-size:14.5px; color:var(--ink);
+  }
+  .module ul.items li::before{
+    content:"—"; position:absolute; left:0; color:var(--ink-faint);
+  }
+  .module ul.items li .tag{ margin-right:6px; transform:translateY(-1px); }
+
+  /* ---- Keep list ---- */
+  .keep-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+  .keep-card{
+    background:var(--keep-soft); border:1px solid color-mix(in srgb, var(--keep) 30%, var(--line));
+    border-radius:10px; padding:16px 18px; font-size:14px; color:var(--ink);
+  }
+  .keep-card .tag{ margin-bottom:8px; }
+
+  /* ---- Table ---- */
+  .table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface); box-shadow:var(--shadow); }
+  table{ border-collapse:collapse; width:100%; min-width:620px; font-size:13.5px; }
+  th,td{ text-align:left; padding:11px 16px; border-bottom:1px solid var(--line); vertical-align:top; }
+  thead th{
+    font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:600; background:color-mix(in srgb, var(--paper) 60%, var(--surface));
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.num{ font-variant-numeric:tabular-nums; font-family:ui-monospace,monospace; }
+
+  /* ---- Open questions ---- */
+  .qa{ display:flex; flex-direction:column; gap:12px; }
+  .qa-item{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .qa-item .qmark{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+    background:var(--accent-soft); color:var(--accent); font-family:ui-monospace,monospace;
+    font-size:13px; display:flex; align-items:center; justify-content:center; font-weight:700;
+  }
+  .qa-item .qtext{ font-size:14.5px; }
+  .qa-item .qtext .who{ color:var(--ink-faint); font-size:12.5px; margin-top:4px; display:block; }
+
+  footer.end{ padding:40px 0 0; color:var(--ink-faint); font-size:12.5px; font-family:ui-monospace,monospace; }
+
+  @media (max-width:600px){
+    .cover{ padding:40px 0 28px; }
+    .module{ padding:18px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-inner">
+    <a href="#status">現況</a>
+    <a href="#members">會員/帳號</a>
+    <a href="#home">首頁</a>
+    <a href="#billing">訂閱/Token</a>
+    <a href="#tenant">店鋪三層</a>
+    <a href="#catalog">上架殼</a>
+    <a href="#keep">保留清單</a>
+    <a href="#roadmap">時程對照</a>
+    <a href="#open">待確認</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="cover">
+    <span class="eyebrow">公版工作項目 · 草稿 v1</span>
+    <h1>公版（Marketplace）架構優化工作項目</h1>
+    <p class="sub">依「教學平台 公版規格 v2」對照現有系統截圖，並參考 Udemy 等成熟線上課程平台盤點差距，整理出負責範圍內的優化與新增項目。</p>
+    <div class="meta-row">
+      <span><b>負責人</b> 張荃宇（公版架構）</span>
+      <span><b>依據</b> 公版規格 v2 · 2026-07-06</span>
+      <span><b>盤點日</b> 2026-07-09</span>
+      <span><b>對照樣本</b> 羽升幸福養成學苑 後台 16 張截圖</span>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <h2 class="small">時程對照（依規格書甘特圖）</h2>
+    <div class="tl-scroll">
+      <div class="tl-row">
+        <div class="tl-item hit"><span class="dot"></span><div class="tl-date">7/25</div><div class="tl-label">測試環境跑通</div></div>
+        <div class="tl-item hit"><span class="dot"></span><div class="tl-date">8/10</div><div class="tl-label">公版前台改版</div></div>
+        <div class="tl-item hit"><span class="dot"></span><div class="tl-date">8/31</div><div class="tl-label">公版/私版分層落地</div></div>
+        <div class="tl-item"><span class="dot"></span><div class="tl-date">9/15</div><div class="tl-label">私版模板化</div></div>
+        <div class="tl-item"><span class="dot"></span><div class="tl-date">9/30</div><div class="tl-label">正式 1.0 收費上線</div></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block" id="status">
+    <div class="block-head">
+      <h2>一、現況總覽</h2>
+      <p class="desc">16 張截圖都來自「羽升幸福養成學苑」——目前唯一一支課程 App 的老師端後台，加上前台的對話式介面（21 天練習 / 我卡住幫我拆）。這正是規格書第 0 節所說的「上一版：單一課程 App」，也是這次要拆出公版的原始素材。</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>模組</th><th>目前歸屬</th><th>公版化判斷</th></tr></thead>
+        <tbody>
+          <tr><td>統計總覽 / 用戶管理</td><td>單一老師視角</td><td>要拆出 Super User 版本，屬公版</td></tr>
+          <tr><td>線上課程管理 / 實體課程管理</td><td>該課程專屬內容</td><td>編輯器本體屬私版，「上架殼」欄位屬公版</td></tr>
+          <tr><td>訂閱管理 / 付款記錄</td><td>綁在單一課程方案上</td><td>應改為帳號層級一套，屬公版核心</td></tr>
+          <tr><td>報名紀錄 / 通知管理</td><td>單店鋪資料</td><td>引擎共用、資料依老師分流，屬公版</td></tr>
+          <tr><td>AI 對話紀錄 / 記憶管理 / Token 統計 / 學習進度</td><td>課程與用戶對話歷程</td><td>內容屬私版，但需補上租戶關聯欄位</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block" id="members">
+    <div class="block-head">
+      <h2>二、會員 / 帳號系統</h2>
+      <p class="desc">公版規格第 2 章的第一優先項目，也是規格書建議「先做垂直切片」的入口。</p>
+    </div>
+
+    <div class="module">
+      <h3>帳號主鍵改為 Email</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag prio">高優先 · 7/25</span>
+      </div>
+      <div class="row">
+        <span class="k">現況（截圖依據）</span>
+        <span class="v soft">用戶管理表把「手機」放在最醒目欄位，Email 只是姓名下方的次要文字；訂閱、報名、付款各表也都用手機當查詢鍵。</span>
+      </div>
+      <div class="row">
+        <span class="k">Udemy 對照</span>
+        <span class="v soft">帳號 = Email／OAuth，一次登入即可看到所有已購課程與學習歷程，帳號與課程內容完全解耦。</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>用戶表新增「Email 已驗證」「驗證信發送時間」欄位，Email 提升為主要顯示鍵</li>
+          <li>手機號欄位改為灰色選填，退到次要位置（規格 2.4）</li>
+          <li>各查詢框（搜尋用戶／訂閱／報名）預設以 Email 搜尋，手機為輔助</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module">
+      <h3>註冊流程一步驟化 + 驗證信</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag prio">高優先 · 7/25</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>個人資料頁與建立資料頁合併成單頁表單（Email／暱稱／手機選填／生日選填）</li>
+          <li>寄送驗證信 + active 連結，取代兩次輸入 Email 的舊做法</li>
+          <li>邀請碼欄位保留但預設關閉，留給測試期使用</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="home">
+    <div class="block-head">
+      <h2>三、首頁 / 導覽頁（一票玩到底）</h2>
+      <p class="desc">16 張截圖裡完全沒有「多 App 選單首頁」——目前登入後直接進單一 App。這塊要從零設計，也是使用者第一眼看到「這是書城而不是單一課程」的地方。</p>
+    </div>
+
+    <div class="module">
+      <h3>App／課程卡片首頁</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag prio">高優先 · 8/10</span>
+      </div>
+      <div class="row">
+        <span class="k">Udemy 對照</span>
+        <span class="v soft">課程卡片標準欄位：縮圖、標題、講師、評分星數、學生數、價格；可篩選分類／評分／價格。但商業模式更接近 Netflix／迪士尼樂園年票——一次付費、卡片式列出「可玩設施」，而不是逐堂購買，這點規格書已經點名。</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>設計共用「App 卡片」元件：縮圖、名稱、一句話說明、所屬老師、狀態（可用／即將上線）</li>
+          <li>即使初期只有 1 支 App，也照多 App 版型建置，避免未來每加一支 App 就要重做版面</li>
+          <li>先不做 Udemy 式搜尋／評分系統（依會議「務實而非銀行級精準」原則），列表式卡片即可</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module">
+      <h3>首次導覽頁（90 秒預告）</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag prio">中優先 · 8/10</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>建立 <code>user_app_seen</code> 這類簡單狀態表，記錄「已看過導覽頁」，不需要複雜設計</li>
+          <li>第二次以後進入右上角「✕」可直接關閉，對照 Udemy「課程介紹頁 + 免費試看片段」的概念</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="billing">
+    <div class="block-head">
+      <h2>四、訂閱 / 付款 / Token（金流公版核心）</h2>
+      <p class="desc">這是目前系統與規格書落差最大的一塊——現有訂閱資料是「以課程為單位」，跟「一票玩到底」的帳號層級訂閱互相矛盾，建議列為優先對齊項目。</p>
+    </div>
+
+    <div class="module">
+      <h3>訂閱脫鉤成帳號層級</h3>
+      <div class="tags">
+        <span class="tag risk">架構落差</span>
+        <span class="tag optimize">優化</span>
+        <span class="tag prio">高優先 · 8/31</span>
+      </div>
+      <div class="row">
+        <span class="k">現況（截圖依據）</span>
+        <span class="v soft">訂閱管理表「服務」欄位固定顯示「MBTI 幸福關係」，方案名稱同時出現 Premium／基本方案／進階方案，金額分別是 NT$100／300／490／890，命名和金額都沒有統一邏輯。</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>方案統一命名為 <b>Basic／Advance／Premium</b> 三檔，移除中文混用的「基本方案」「進階方案」</li>
+          <li>訂閱資料改為綁在帳號上，「服務」欄位轉為「最後使用的 App」顯示用途，不再是訂閱主體</li>
+          <li>付款記錄的方案名稱同步統一，避免同一使用者的付款紀錄出現兩套命名</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module">
+      <h3>Token 額度上限 + 即時告警</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag keep">保留既有報表</span>
+        <span class="tag prio">高優先 · 8/31</span>
+      </div>
+      <div class="row">
+        <span class="k">現況</span>
+        <span class="v soft">Token 使用統計頁只有「歷史用量報表」（按日期／用戶／服務三種檢視 + CSV 匯出），沒有「上限控管」或「即將用完告警」機制。</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>每人每期設 Token budget cap，搭配即時用量監控，到上限即提示升級（規格 11.4）</li>
+          <li>7 天免費試玩到期／額度到達上限，觸發通知管理裡的新通知類型</li>
+          <li>三種檢視維度＋CSV 匯出的資料結構保留，直接擴充到跨老師、跨 App 維度即可，不需重做</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="tenant">
+    <div class="block-head">
+      <h2>五、系統 / 店鋪三層架構</h2>
+      <p class="desc">目前後台只存在「單一老師視角」，完全沒有 Super User（平台方看所有老師）畫面，也沒有 tenant_id 切換機制——這是公版規格第 4 章的核心，也是荃宇分工裡「參考小鵝通／丁丁架構」要交付的主體。</p>
+    </div>
+
+    <div class="module">
+      <h3>老師身分（tenant_id）貫穿所有表</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag prio">高優先 · 8/31</span>
+      </div>
+      <div class="row">
+        <span class="k">Udemy 對照</span>
+        <span class="v soft">Udemy Instructor Dashboard（老師只看自己課程的營收與學生）對比 Udemy 平台方後台，是最直接的參照；小鵝通／丁丁的多店鋪後台也是同一邏輯。</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>用戶管理／課程管理／訂閱／付款每張表加上 <code>tenant_id</code></li>
+          <li>Row-Level Security：老師登入只看自己教的課程與學員；Super User 可切換查看所有店鋪</li>
+          <li>Super User 總覽儀表板：跨老師的總營收／總用戶／總活躍度</li>
+        </ul>
+      </div>
+      <div class="row">
+        <span class="k">可直接沿用</span>
+        <span class="v">現有統計總覽頁的卡片式 KPI（總用戶數／本月營收／活躍用戶／本月報名 ＋ 趨勢圖 ＋ 近期活動）資訊架構清楚，Super User 版可複用同一套元件，只是資料範圍從單店鋪換成全平台。</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="catalog">
+    <div class="block-head">
+      <h2>六、課程上架共用殼（「上架一本書／一個課」）</h2>
+      <p class="desc">章節／單元編輯器與實體課程看板本身做得堪用，屬於私版內容範圍；荃宇要定義的是外面那層「上架殼」——公版共用欄位。</p>
+    </div>
+
+    <div class="module">
+      <h3>上架殼欄位定義</h3>
+      <div class="tags">
+        <span class="tag new">新增</span>
+        <span class="tag keep">編輯器保留</span>
+        <span class="tag prio">中優先 · 9/15</span>
+      </div>
+      <div class="row">
+        <span class="k">Udemy 對照</span>
+        <span class="v soft">建立課程精靈式流程（基本資料 → 大綱 → 定價 → 發布），課程卡片標準欄位（封面、標題、講師、評分、價格），是上架殼最小欄位集的參考基準。</span>
+      </div>
+      <div class="row">
+        <span class="k">工作項目</span>
+        <ul class="items">
+          <li>定義上架殼共用欄位：封面圖、一句話簡介、分類標籤、老師名稱、對應定價方案</li>
+          <li>依規格第 5 章原則：每談成一個新課程再增列私版欄位，不預先窮舉（例如奇門遁甲的盤面資料、幸福關係的 MBTI 狀態）</li>
+        </ul>
+      </div>
+      <div class="row">
+        <span class="k">可直接沿用</span>
+        <span class="v">章節／單元編輯器（拖拉排序、影片連結、PDF／PPTX 教材上傳）與實體課程看板（規劃中／報名中／進行中／已結束）都不需大改，直接當私版內容編輯核心。</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="keep">
+    <div class="block-head">
+      <h2>七、保留清單彙總</h2>
+      <p class="desc">避免重工——這些既有設計已經驗證堪用，公版化時直接抽成共用元件即可。</p>
+    </div>
+    <div class="keep-grid">
+      <div class="keep-card">
+        <span class="tag keep">保留</span>
+        <div>側邊欄「總覽／課程／營運／AI」分組邏輯清楚，之後只要在最上方加一個「App／店鋪切換器」，不需重新設計導覽結構。</div>
+      </div>
+      <div class="keep-card">
+        <span class="tag keep">保留</span>
+        <div>各列表頁「搜尋列 ＋ 篩選下拉 ＋ 匯出 CSV」的一致模式，可直接抽成公版共用元件，往後每個新模組都能套用。</div>
+      </div>
+      <div class="keep-card">
+        <span class="tag keep">保留</span>
+        <div>Token 使用統計的三維度檢視（按日期／用戶／服務）資料結構良好，公版化時只需擴充維度，不必重新設計。</div>
+      </div>
+      <div class="keep-card">
+        <span class="tag keep">保留</span>
+        <div>AI 對話紀錄／記憶管理的分類標籤（目標／關係／個性）與時間戳機制已經可用，私版內容不動，只需補上租戶關聯欄位。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="roadmap">
+    <div class="block-head">
+      <h2>八、優先順序總表</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>里程碑</th><th>對應工作項目</th><th>標籤</th></tr></thead>
+        <tbody>
+          <tr><td class="num">7/25</td><td>Email 主鍵 ＋ 驗證信 ＋ 一步驟註冊</td><td><span class="tag new">新增</span></td></tr>
+          <tr><td class="num">8/10</td><td>首頁 App 卡片 ＋ 首次導覽頁</td><td><span class="tag new">新增</span></td></tr>
+          <tr><td class="num">8/31</td><td>訂閱脫鉤帳號層級 ＋ Token 額度告警 ＋ tenant_id 貫穿全表 ＋ Super User 視圖</td><td><span class="tag optimize">優化</span> <span class="tag new">新增</span></td></tr>
+          <tr><td class="num">9/15</td><td>課程上架殼欄位定義 ＋ 私版關聯欄位補齊</td><td><span class="tag new">新增</span></td></tr>
+          <tr><td class="num">9/30</td><td>正式收費上線前整合測試</td><td><span class="tag risk">待驗證</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block" id="open">
+    <div class="block-head">
+      <h2>九、待確認（需與 Jeff／Steve 對齊）</h2>
+    </div>
+    <div class="qa">
+      <div class="qa-item">
+        <div class="qmark">1</div>
+        <div class="qtext">訂閱要做成「帳號層級」一套，還是保留「App 層級」各自疊加？規格書明講一票玩到底，但目前系統是逐 App 訂閱——這是最大的架構落差，建議優先對齊。
+          <span class="who">關鍵決策人：Jeff</span>
+        </div>
+      </div>
+      <div class="qa-item">
+        <div class="qmark">2</div>
+        <div class="qtext">Super User 角色的權限範圍要多細？能否代老師操作、能否看到金流明細？
+          <span class="who">關鍵決策人：Jeff</span>
+        </div>
+      </div>
+      <div class="qa-item">
+        <div class="qmark">3</div>
+        <div class="qtext">課程上架殼欄位現在就定案，還是等第二個課程（奇門遁甲／幸福關係）談成後再定？依規格第 5 章原則，應該是談成一個課才加一次欄位。
+          <span class="who">關鍵決策人：Steve</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="end">公版規格 v2 · 2026-07-06 ｜ 對照樣本：羽升幸福養成學苑後台 16 張截圖 ｜ 整理：張荃宇</footer>
+
+</div>
+</body>
+</html>
