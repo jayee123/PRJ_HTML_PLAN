@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>羽升幸福養成學苑 — 後台技術文件 v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0F1720;
+  --ink2:#41525F;
+  --ink3:#7C8B96;
+  --paper:#E9EEF1;
+  --card:#FFFFFF;
+  --rule:#C4D0D8;
+  --rule2:#DFE7EB;
+  --teal:#16697A;
+  --teal-w:#DCEAEE;
+  --red:#C8402F;
+  --red-w:#F7E2DE;
+  --gold:#B07A16;
+  --gold-w:#F6EBD4;
+  --green:#2E7D5B;
+  --green-w:#DEEDE6;
+  --wash:#DCE6EB;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  --serif:'Noto Serif TC','Songti TC',serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-weight:400;font-size:15px;line-height:1.8;
+  background-image:
+    linear-gradient(to right,rgba(15,23,32,.045) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(15,23,32,.045) 1px,transparent 1px);
+  background-size:28px 28px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- masthead ---------- */
+.mast{
+  border-bottom:1px solid var(--rule);background:var(--ink);color:#EDF2F4;
+  padding:44px 32px 34px;
+}
+.mast-in{max-width:1180px;margin:0 auto}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#7FA9B4}
+.mast h1{
+  font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,50px);
+  line-height:1.18;margin:14px 0 10px;letter-spacing:-.01em;
+}
+.mast p{margin:0;color:#9FB2BC;max-width:640px;font-size:14.5px;line-height:1.75}
+.meta{display:flex;flex-wrap:wrap;gap:0;margin-top:26px;border-top:1px solid #2A3742;padding-top:16px}
+.meta div{padding-right:34px;margin-right:34px;border-right:1px solid #2A3742}
+.meta div:last-child{border-right:0}
+.meta dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#6E8C97;text-transform:uppercase;margin:0}
+.meta dd{margin:3px 0 0;font-size:14px;color:#E3EBEE}
+
+/* ---------- shell ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:0 32px 100px;display:grid;grid-template-columns:196px 1fr;gap:52px}
+nav.toc{position:sticky;top:26px;align-self:start;padding-top:44px;max-height:calc(100vh - 52px);overflow:auto}
+nav.toc h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin:0 0 12px;font-weight:500}
+nav.toc a{display:flex;gap:9px;text-decoration:none;color:var(--ink2);font-size:13px;padding:4px 0;line-height:1.5;border-bottom:1px solid transparent}
+nav.toc a span{font-family:var(--mono);color:var(--ink3);font-size:11px;padding-top:2px}
+nav.toc a:hover{color:var(--teal)}
+nav.toc a:hover span{color:var(--teal)}
+main{padding-top:44px;min-width:0}
+
+/* ---------- sections ---------- */
+section{margin-bottom:70px;scroll-margin-top:24px}
+.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:26px}
+.sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--red);letter-spacing:.06em}
+h2{font-family:var(--serif);font-weight:900;font-size:26px;margin:0;letter-spacing:-.01em}
+h3{font-family:var(--sans);font-weight:700;font-size:16.5px;margin:36px 0 12px;padding-left:11px;border-left:3px solid var(--teal)}
+h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:26px 0 10px}
+p{margin:0 0 14px;color:#26333D}
+.lead{font-size:16px;color:var(--ink2);max-width:66ch}
+code{font-family:var(--mono);font-size:.86em;background:var(--wash);padding:1px 6px;border-radius:3px;color:#123946}
+
+/* ---------- figure ---------- */
+figure{margin:26px 0 30px;background:var(--card);border:1px solid var(--rule);position:relative}
+figure::before,figure::after{content:'';position:absolute;width:9px;height:9px;border:1px solid var(--teal);opacity:.5}
+figure::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+figure::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+figcaption{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);padding:11px 18px;border-bottom:1px solid var(--rule2);display:flex;gap:10px;align-items:center
+}
+figcaption b{color:var(--teal);font-weight:600}
+figure .fig-body{padding:22px 18px 24px;overflow-x:auto}
+svg.d{display:block;width:100%;height:auto;min-width:600px}
+
+/* svg type */
+.nt{font-family:var(--sans);font-size:13px;font-weight:500;fill:var(--ink)}
+.ns{font-family:var(--sans);font-size:11px;fill:var(--ink3)}
+.nm{font-family:var(--mono);font-size:11px;fill:var(--ink2)}
+.nl{font-family:var(--mono);font-size:10.5px;fill:var(--ink3);letter-spacing:.08em}
+.hd{font-family:var(--mono);font-size:10px;letter-spacing:.18em;fill:var(--ink3)}
+.big{font-family:var(--serif);font-size:17px;font-weight:900;fill:var(--ink)}
+.box{fill:#fff;stroke:var(--rule);stroke-width:1.2}
+.box-t{fill:var(--teal-w);stroke:var(--teal);stroke-width:1.2}
+.box-r{fill:var(--red-w);stroke:var(--red);stroke-width:1.2}
+.box-g{fill:var(--gold-w);stroke:var(--gold);stroke-width:1.2}
+.box-n{fill:var(--green-w);stroke:var(--green);stroke-width:1.2}
+.band{fill:var(--wash);stroke:none}
+.ln{stroke:var(--ink2);stroke-width:1.3;fill:none}
+.ln-t{stroke:var(--teal);stroke-width:1.5;fill:none}
+.ln-r{stroke:var(--red);stroke-width:1.5;fill:none}
+.dash{stroke-dasharray:4 4}
+
+/* ---------- table ---------- */
+.tw{overflow-x:auto;margin:18px 0 26px;border:1px solid var(--rule);background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:13.5px}
+th{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  text-align:left;color:var(--ink3);font-weight:600;padding:11px 14px;border-bottom:1.5px solid var(--ink);white-space:nowrap
+}
+td{padding:10px 14px;border-bottom:1px solid var(--rule2);vertical-align:top;color:#26333D}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#F4F8F9}
+td code{background:#EEF3F5}
+.k{font-family:var(--mono);font-size:12.5px;color:#123946;white-space:nowrap}
+.pk{color:var(--red);font-weight:600}
+
+/* ---------- permission grid ---------- */
+.pg{overflow-x:auto;border:1px solid var(--rule);background:var(--card);margin:20px 0}
+.pg table{min-width:640px}
+.pg th.rl{text-align:center;width:92px}
+.pg td.c{text-align:center;font-size:16px;line-height:1}
+.dot{display:inline-block;width:13px;height:13px;border-radius:50%}
+.d-full{background:var(--green)}
+.d-half{background:var(--gold)}
+.d-none{background:transparent;border:1.5px solid #C9D4DA}
+.d-flag{background:var(--red)}
+.legend{display:flex;flex-wrap:wrap;gap:20px;padding:12px 16px;border-top:1px solid var(--rule2);font-size:12.5px;color:var(--ink2);align-items:center}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+
+/* ---------- callout ---------- */
+.note{border-left:3px solid var(--teal);background:#F2F7F8;padding:14px 18px;margin:20px 0;font-size:14px}
+.note.warn{border-color:var(--red);background:#FBF1EF}
+.note b{font-weight:700}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:5px}
+.note.warn .h{color:var(--red)}
+
+ul.pl{margin:12px 0 18px;padding-left:0;list-style:none}
+ul.pl li{position:relative;padding-left:22px;margin-bottom:9px;color:#26333D}
+ul.pl li::before{content:'';position:absolute;left:3px;top:11px;width:7px;height:7px;background:var(--teal);border-radius:50%}
+
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;padding:2px 8px;border-radius:2px;vertical-align:1px}
+.p-a{background:var(--red-w);color:var(--red)}
+.p-t{background:var(--gold-w);color:var(--gold)}
+.p-s{background:var(--wash);color:var(--ink2)}
+
+footer{border-top:1px solid var(--rule);padding:28px 32px 60px;text-align:center;color:var(--ink3);font-size:12.5px;font-family:var(--mono);letter-spacing:.08em}
+
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;gap:0;padding:0 20px 70px}
+  nav.toc{position:static;max-height:none;padding-top:30px;border-bottom:1px solid var(--rule);padding-bottom:20px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:2px 18px}
+  nav.toc h4{grid-column:1/-1}
+  main{padding-top:30px}
+  .mast{padding:34px 20px 28px}
+  .meta div{border-right:0;padding-right:0;margin-right:26px}
+}
+@media(prefers-reduced-motion:no-preference){
+  section{animation:rise .5s ease both;animation-timeline:view();animation-range:entry 0% cover 18%}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0 0 L10 5 L0 10 z" fill="#41525F"/></marker>
+  <marker id="at" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0 0 L10 5 L0 10 z" fill="#16697A"/></marker>
+  <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0 0 L10 5 L0 10 z" fill="#C8402F"/></marker>
+</defs></svg>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="tag">Technical Specification / v2.0</div>
+    <h1>羽升幸福養成學苑<br>後台技術文件</h1>
+    <p>多課程架構、訂閱與金流、Token 成本計量、三級權限控制。本文件說明系統怎麼運作、資料怎麼流動、每個判斷在哪裡發生。</p>
+    <dl class="meta">
+      <div><dt>版本</dt><dd>v2.0</dd></div>
+      <div><dt>日期</dt><dd>2026-08-04</dd></div>
+      <div><dt>基準</dt><dd>後台 v1</dd></div>
+      <div><dt>狀態</dt><dd>待開發</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="shell">
+
+<nav class="toc">
+  <h4>目次</h4>
+  <a href="#s1"><span>01</span>系統分層</a>
+  <a href="#s2"><span>02</span>資料模型</a>
+  <a href="#s3"><span>03</span>多課程與上下文隔離</a>
+  <a href="#s4"><span>04</span>課程工作流</a>
+  <a href="#s5"><span>05</span>訂閱狀態機</a>
+  <a href="#s6"><span>06</span>金流與扣款重試</a>
+  <a href="#s7"><span>07</span>對話請求與扣額</a>
+  <a href="#s8"><span>08</span>Token 成本計量</a>
+  <a href="#s9"><span>09</span>餘額帳本與警示</a>
+  <a href="#s10"><span>10</span>權限控制</a>
+  <a href="#s11"><span>11</span>API 端點</a>
+  <a href="#s12"><span>12</span>稽核紀錄</a>
+  <a href="#s13"><span>13</span>開發路線</a>
+  <a href="#s14"><span>14</span>公版私版分工</a>
+  <a href="#s15"><span>15</span>使用者身分分離</a>
+  <a href="#s16"><span>16</span>用量 Handshake</a>
+  <a href="#s17"><span>17</span>試用期定案</a>
+  <a href="#s18"><span>18</span>APP 管理入口</a>
+  <a href="#s19"><span>19</span>開發文件</a>
+  <a href="#s20"><span>20</span>前台註冊登入</a>
+  <a href="#s21"><span>21</span>待確認（公版）</a>
+</nav>
+
+<main>
+
+<!-- ============ 1 ============ -->
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>系統分層</h2></div>
+  <p class="lead">所有後台請求都走同一條路：先過權限中介層，才碰得到服務層。權限判斷只在這一層發生一次，其他地方不再各自判斷。</p>
+
+  <figure>
+    <figcaption><b>圖 1.1</b> 四層架構與外部依賴</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg">
+      <!-- band labels -->
+      <text x="8" y="34" class="hd">CLIENT</text>
+      <rect x="8" y="42" width="884" height="58" class="band"/>
+      <rect x="30" y="52" width="150" height="38" rx="2" class="box"/><text x="105" y="76" text-anchor="middle" class="nt">前台 · 使用者</text>
+      <rect x="200" y="52" width="150" height="38" rx="2" class="box-g"/><text x="275" y="76" text-anchor="middle" class="nt">後台 · 老師</text>
+      <rect x="370" y="52" width="150" height="38" rx="2" class="box-r"/><text x="445" y="76" text-anchor="middle" class="nt">後台 · 管理者</text>
+
+      <path d="M105 100 L105 128" class="ln" marker-end="url(#a)"/>
+      <path d="M275 100 L275 128" class="ln" marker-end="url(#a)"/>
+      <path d="M445 100 L445 128" class="ln" marker-end="url(#a)"/>
+
+      <!-- middleware -->
+      <text x="8" y="148" class="hd">MIDDLEWARE</text>
+      <rect x="8" y="156" width="884" height="62" rx="2" class="box-t"/>
+      <text x="24" y="180" class="nm">權限中介層</text>
+      <rect x="150" y="168" width="128" height="38" rx="2" class="box"/><text x="214" y="192" text-anchor="middle" class="ns">① 登入驗證</text>
+      <rect x="290" y="168" width="128" height="38" rx="2" class="box"/><text x="354" y="192" text-anchor="middle" class="ns">② 取得 role</text>
+      <rect x="430" y="168" width="150" height="38" rx="2" class="box"/><text x="505" y="192" text-anchor="middle" class="ns">③ 比對權限碼</text>
+      <rect x="592" y="168" width="160" height="38" rx="2" class="box"/><text x="672" y="192" text-anchor="middle" class="ns">④ 課程歸屬過濾</text>
+      <path d="M278 187 L286 187" class="ln-t" marker-end="url(#at)"/>
+      <path d="M418 187 L426 187" class="ln-t" marker-end="url(#at)"/>
+      <path d="M580 187 L588 187" class="ln-t" marker-end="url(#at)"/>
+      <text x="770" y="192" class="nl">→ 通過</text>
+
+      <path d="M450 218 L450 246" class="ln" marker-end="url(#a)"/>
+
+      <!-- service -->
+      <text x="8" y="266" class="hd">SERVICE</text>
+      <rect x="8" y="274" width="884" height="58" class="band"/>
+      <rect x="24" y="284" width="160" height="38" rx="2" class="box"/><text x="104" y="308" text-anchor="middle" class="nt">課程服務</text>
+      <rect x="196" y="284" width="160" height="38" rx="2" class="box"/><text x="276" y="308" text-anchor="middle" class="nt">訂閱與計費</text>
+      <rect x="368" y="284" width="160" height="38" rx="2" class="box"/><text x="448" y="308" text-anchor="middle" class="nt">AI 對話服務</text>
+      <rect x="540" y="284" width="160" height="38" rx="2" class="box"/><text x="620" y="308" text-anchor="middle" class="nt">用量記帳</text>
+      <rect x="712" y="284" width="164" height="38" rx="2" class="box"/><text x="794" y="308" text-anchor="middle" class="nt">稽核寫入</text>
+
+      <path d="M448 332 L448 360" class="ln" marker-end="url(#a)"/>
+      <path d="M528 303 L536 303" class="ln" marker-end="url(#a)"/>
+
+      <!-- data -->
+      <text x="8" y="380" class="hd">DATA</text>
+      <rect x="8" y="388" width="884" height="66" rx="2" class="box"/>
+      <text x="24" y="412" class="nm">PostgreSQL</text>
+      <text x="24" y="436" class="nl">courses · course_content · journeys · conversations · users · subscriptions · plan_versions · payment_transactions · ai_usage_logs · api_credit_topups · role_permissions · audit_logs</text>
+
+      <!-- external -->
+      <rect x="712" y="52" width="164" height="38" rx="2" class="box-t"/><text x="794" y="70" text-anchor="middle" class="ns">AI Provider API</text><text x="794" y="84" text-anchor="middle" class="nl">外部</text>
+      <rect x="712" y="112" width="164" height="38" rx="2" class="box-t"/><text x="794" y="130" text-anchor="middle" class="ns">紅陽科技金流</text><text x="794" y="144" text-anchor="middle" class="nl">外部</text>
+      <path d="M700 303 C 830 303 866 250 866 152" class="ln-t dash" marker-end="url(#at)"/>
+      <path d="M356 303 C 660 303 700 240 706 132" class="ln-t dash" marker-end="url(#at)"/>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="note">
+    <span class="h">關鍵原則</span>
+    前端隱藏按鈕<b>不算</b>權限控制。任何人都能直接呼叫 API，因此權限判斷必須在中介層強制執行，前端隱藏只是體驗優化。
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>資料模型</h2></div>
+  <p class="lead">三個核心叢集：課程叢集、訂閱叢集、計量叢集。<code>courses</code> 是這次新增的最上層，原本散落的內容全部掛到它底下。</p>
+
+  <figure>
+    <figcaption><b>圖 2.1</b> 實體關聯總覽（★ 為新增表）</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+      <!-- cluster A: course -->
+      <rect x="10" y="24" width="290" height="300" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="24" y="46" class="hd">課程叢集</text>
+      <rect x="82" y="62" width="146" height="42" rx="2" class="box-t"/>
+      <text x="155" y="80" text-anchor="middle" class="nt">courses ★</text>
+      <text x="155" y="95" text-anchor="middle" class="nl">課程主體</text>
+
+      <rect x="24" y="150" width="122" height="40" rx="2" class="box"/><text x="85" y="167" text-anchor="middle" class="ns">course_content</text><text x="85" y="181" text-anchor="middle" class="nl">Day 0–21</text>
+      <rect x="164" y="150" width="122" height="40" rx="2" class="box"/><text x="225" y="167" text-anchor="middle" class="ns">course_teachers ★</text><text x="225" y="181" text-anchor="middle" class="nl">指派老師</text>
+      <rect x="24" y="222" width="122" height="40" rx="2" class="box"/><text x="85" y="239" text-anchor="middle" class="ns">journeys</text><text x="85" y="253" text-anchor="middle" class="nl">21 天旅程</text>
+      <rect x="164" y="222" width="122" height="40" rx="2" class="box"/><text x="225" y="239" text-anchor="middle" class="ns">topics</text><text x="225" y="253" text-anchor="middle" class="nl">Mode B 主題</text>
+      <rect x="94" y="282" width="122" height="34" rx="2" class="box"/><text x="155" y="304" text-anchor="middle" class="ns">daily_records</text>
+
+      <path d="M130 104 L110 144" class="ln-t" marker-end="url(#at)"/>
+      <path d="M180 104 L206 144" class="ln-t" marker-end="url(#at)"/>
+      <path d="M110 104 C 60 120 62 190 76 216" class="ln-t" marker-end="url(#at)"/>
+      <path d="M200 104 C 250 120 250 190 236 216" class="ln-t" marker-end="url(#at)"/>
+      <path d="M92 262 L142 278" class="ln" marker-end="url(#a)"/>
+
+      <!-- cluster B: subscription -->
+      <rect x="320" y="24" width="270" height="300" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="334" y="46" class="hd">訂閱叢集</text>
+      <rect x="382" y="62" width="146" height="42" rx="2" class="box-r"/>
+      <text x="455" y="80" text-anchor="middle" class="nt">users</text>
+      <text x="455" y="95" text-anchor="middle" class="nl">role: admin/teacher/student</text>
+
+      <rect x="382" y="140" width="146" height="40" rx="2" class="box"/><text x="455" y="157" text-anchor="middle" class="ns">subscriptions ★</text><text x="455" y="171" text-anchor="middle" class="nl">週期・額度</text>
+      <rect x="334" y="212" width="118" height="40" rx="2" class="box"/><text x="393" y="229" text-anchor="middle" class="ns">plan_versions ★</text><text x="393" y="243" text-anchor="middle" class="nl">價格・次數</text>
+      <rect x="466" y="212" width="112" height="40" rx="2" class="box"/><text x="522" y="229" text-anchor="middle" class="ns">payment_</text><text x="522" y="243" text-anchor="middle" class="ns">transactions ★</text>
+      <rect x="334" y="278" width="118" height="34" rx="2" class="box"/><text x="393" y="300" text-anchor="middle" class="ns">plans ★</text>
+      <rect x="466" y="278" width="112" height="34" rx="2" class="box"/><text x="522" y="300" text-anchor="middle" class="ns">payment_methods ★</text>
+
+      <path d="M455 104 L455 134" class="ln-r" marker-end="url(#ar)"/>
+      <path d="M430 180 L404 206" class="ln" marker-end="url(#a)"/>
+      <path d="M482 180 L508 206" class="ln" marker-end="url(#a)"/>
+      <path d="M393 252 L393 272" class="ln" marker-end="url(#a)"/>
+      <path d="M522 252 L522 272" class="ln" marker-end="url(#a)"/>
+      <path d="M300 240 L328 236" class="ln dash" marker-end="url(#a)"/>
+      <text x="304" y="228" class="nl">user_id</text>
+
+      <!-- cluster C: metering -->
+      <rect x="610" y="24" width="280" height="300" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="624" y="46" class="hd">計量叢集</text>
+      <rect x="656" y="62" width="188" height="42" rx="2" class="box-t"/>
+      <text x="750" y="80" text-anchor="middle" class="nt">ai_usage_logs</text>
+      <text x="750" y="95" text-anchor="middle" class="nl">逐次 token 明細</text>
+      <rect x="640" y="150" width="112" height="40" rx="2" class="box"/><text x="696" y="167" text-anchor="middle" class="ns">model_pricing ★</text><text x="696" y="181" text-anchor="middle" class="nl">單價</text>
+      <rect x="768" y="150" width="112" height="40" rx="2" class="box"/><text x="824" y="167" text-anchor="middle" class="ns">conversations</text>
+      <rect x="640" y="222" width="112" height="40" rx="2" class="box"/><text x="696" y="239" text-anchor="middle" class="ns">api_credit_</text><text x="696" y="253" text-anchor="middle" class="ns">topups ★</text>
+      <rect x="768" y="222" width="112" height="40" rx="2" class="box"/><text x="824" y="239" text-anchor="middle" class="ns">alert_settings ★</text><text x="824" y="253" text-anchor="middle" class="nl">門檻</text>
+      <path d="M712 144 L730 108" class="ln-t" marker-end="url(#at)"/>
+      <path d="M808 144 L790 108" class="ln-t" marker-end="url(#at)"/>
+      <path d="M696 190 L696 216" class="ln dash"/>
+      <path d="M824 190 L824 216" class="ln dash"/>
+
+      <!-- bottom -->
+      <rect x="10" y="360" width="430" height="44" rx="2" class="box-r"/>
+      <text x="28" y="380" class="nt">role_permissions ★</text>
+      <text x="28" y="396" class="nl">role × permission_key × allowed — 權限的唯一真實來源</text>
+      <rect x="460" y="360" width="430" height="44" rx="2" class="box"/>
+      <text x="478" y="380" class="nt">audit_logs</text>
+      <text x="478" y="396" class="nl">所有異動與敏感檢視的前後值紀錄</text>
+
+      <!-- migration note -->
+      <rect x="10" y="426" width="880" height="112" rx="2" class="band"/>
+      <text x="28" y="450" class="hd">資料遷移 · 一次性</text>
+      <text x="28" y="474" class="nm">1. 建立一門 course 代表現有「21 天養成」</text>
+      <text x="28" y="496" class="nm">2. course_content / journeys / conversations / topics 全部回填該 course_id</text>
+      <text x="28" y="518" class="nm">3. usage_quotas 的額度資料移轉至 subscriptions 後停用該表</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>courses</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>主鍵</td></tr>
+      <tr><td class="k">title</td><td class="k">text</td><td>課程標題，前台卡片使用</td></tr>
+      <tr><td class="k">subtitle</td><td class="k">text</td><td>副標</td></tr>
+      <tr><td class="k">cover_image_url</td><td class="k">text</td><td>封面圖</td></tr>
+      <tr><td class="k">intro</td><td class="k">text</td><td>開場白／課程介紹</td></tr>
+      <tr><td class="k">owner_teacher_id</td><td class="k">uuid</td><td>負責老師 → <code>users.id</code></td></tr>
+      <tr><td class="k">system_prompt</td><td class="k">text</td><td>本課專屬系統提示詞。<span class="pill p-a">僅 admin 可見</span></td></tr>
+      <tr><td class="k">total_days</td><td class="k">int</td><td>預設 21</td></tr>
+      <tr><td class="k">status</td><td class="k">enum</td><td><code>draft</code> / <code>published</code> / <code>archived</code></td></tr>
+      <tr><td class="k">sort_order</td><td class="k">int</td><td>首頁卡片排序</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>既有表變更</h3>
+  <div class="tw"><table>
+    <thead><tr><th>資料表</th><th>變更</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td class="k">course_content</td><td>新增 <code>course_id</code>，唯一鍵改為 <code>(course_id, day)</code></td><td>每門課各有一套 Day 0–21</td></tr>
+      <tr><td class="k">journeys</td><td>新增 <code>course_id</code></td><td>同一人可在不同課各有一輪進行中的旅程</td></tr>
+      <tr><td class="k">conversations</td><td>新增 <code>course_id</code>（冗餘）</td><td>上下文查詢直接以此過濾，避免多層 join</td></tr>
+      <tr><td class="k">topics</td><td>新增 <code>course_id</code></td><td>Mode B 主題庫分課獨立</td></tr>
+      <tr><td class="k">users</td><td><code>role</code> 擴充為三值</td><td>admin / teacher / student</td></tr>
+      <tr><td class="k">usage_quotas</td><td>停用，移轉至 <code>subscriptions</code></td><td>避免額度有兩個真實來源</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>多課程與上下文隔離</h2></div>
+  <p class="lead">同一位使用者可以同時進行多門課。兩門課的對話絕不互相參考——這靠 <code>course_id</code> 在組裝提示詞前先把歷史訊息切乾淨。</p>
+
+  <figure>
+    <figcaption><b>圖 3.1</b> 兩門課並行時的上下文組裝</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="130" width="120" height="70" rx="2" class="box-r"/>
+      <text x="70" y="158" text-anchor="middle" class="nt">同一使用者</text>
+      <text x="70" y="176" text-anchor="middle" class="nl">user_id = U1</text>
+
+      <path d="M130 152 C 170 152 172 78 196 74" class="ln-t" marker-end="url(#at)"/>
+      <path d="M130 180 C 170 180 172 254 196 258" class="ln-t" marker-end="url(#at)"/>
+
+      <!-- course A track -->
+      <rect x="196" y="42" width="146" height="64" rx="2" class="box-t"/>
+      <text x="269" y="66" text-anchor="middle" class="nt">課程 A · Journey</text>
+      <text x="269" y="84" text-anchor="middle" class="nl">course_id = A · Day 5</text>
+
+      <rect x="376" y="42" width="160" height="64" rx="2" class="box"/>
+      <text x="456" y="62" text-anchor="middle" class="ns">取歷史訊息</text>
+      <text x="456" y="80" text-anchor="middle" class="nm">WHERE course_id = A</text>
+      <text x="456" y="96" text-anchor="middle" class="nl">AND journey_id = JA</text>
+
+      <rect x="570" y="42" width="150" height="64" rx="2" class="box"/>
+      <text x="645" y="62" text-anchor="middle" class="ns">組裝提示詞</text>
+      <text x="645" y="80" text-anchor="middle" class="nl">courses[A].system_prompt</text>
+      <text x="645" y="96" text-anchor="middle" class="nl">+ Day 5 內容</text>
+
+      <!-- course B track -->
+      <rect x="196" y="226" width="146" height="64" rx="2" class="box-g"/>
+      <text x="269" y="250" text-anchor="middle" class="nt">課程 B · Journey</text>
+      <text x="269" y="268" text-anchor="middle" class="nl">course_id = B · Day 2</text>
+
+      <rect x="376" y="226" width="160" height="64" rx="2" class="box"/>
+      <text x="456" y="246" text-anchor="middle" class="ns">取歷史訊息</text>
+      <text x="456" y="264" text-anchor="middle" class="nm">WHERE course_id = B</text>
+      <text x="456" y="280" text-anchor="middle" class="nl">AND journey_id = JB</text>
+
+      <rect x="570" y="226" width="150" height="64" rx="2" class="box"/>
+      <text x="645" y="246" text-anchor="middle" class="ns">組裝提示詞</text>
+      <text x="645" y="264" text-anchor="middle" class="nl">courses[B].system_prompt</text>
+      <text x="645" y="280" text-anchor="middle" class="nl">+ Day 2 內容</text>
+
+      <path d="M342 74 L370 74" class="ln-t" marker-end="url(#at)"/>
+      <path d="M536 74 L564 74" class="ln-t" marker-end="url(#at)"/>
+      <path d="M342 258 L370 258" class="ln-t" marker-end="url(#at)"/>
+      <path d="M536 258 L564 258" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="762" y="130" width="128" height="70" rx="2" class="box-t"/>
+      <text x="826" y="158" text-anchor="middle" class="nt">AI API</text>
+      <text x="826" y="176" text-anchor="middle" class="nl">兩次獨立呼叫</text>
+      <path d="M720 74 C 754 74 754 130 762 148" class="ln-t" marker-end="url(#at)"/>
+      <path d="M720 258 C 754 258 754 202 762 184" class="ln-t" marker-end="url(#at)"/>
+
+      <!-- barrier -->
+      <path d="M196 166 L720 166" stroke="#C8402F" stroke-width="1.4" stroke-dasharray="6 5"/>
+      <rect x="404" y="150" width="104" height="30" rx="2" fill="#F7E2DE" stroke="#C8402F" stroke-width="1.2"/>
+      <text x="456" y="170" text-anchor="middle" class="nm" fill="#C8402F">上下文邊界</text>
+      <text x="196" y="326" class="nl">跨課程的訊息永遠不會出現在同一次 API 呼叫中；提示詞、歷史、Day 內容三者都以 course_id 為界。</text>
+    </svg>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>課程工作流</h2></div>
+  <p class="lead">上架與編輯內容是兩件事，權限也分開。先讓課程存在，再填內容。</p>
+
+  <figure>
+    <figcaption><b>圖 4.1</b> 從建立到學員可見的五個步驟</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <rect x="10" y="60" width="152" height="86" rx="2" class="box-r"/>
+        <text x="26" y="84" class="nl">STEP 01</text>
+        <text x="26" y="106" class="nt">建立課程</text>
+        <text x="26" y="126" class="ns">標題・封面・開場白</text>
+        <text x="26" y="140" class="nl">admin</text>
+      </g>
+      <path d="M162 103 L192 103" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="192" y="60" width="152" height="86" rx="2" class="box-r"/>
+        <text x="208" y="84" class="nl">STEP 02</text>
+        <text x="208" y="106" class="nt">指派負責老師</text>
+        <text x="208" y="126" class="ns">course_teachers</text>
+        <text x="208" y="140" class="nl">admin</text>
+      </g>
+      <path d="M344 103 L374 103" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="374" y="60" width="152" height="86" rx="2" class="box-g"/>
+        <text x="390" y="84" class="nl">STEP 03</text>
+        <text x="390" y="106" class="nt">編輯 Day 0–21</text>
+        <text x="390" y="126" class="ns">theme・knowledge_point</text>
+        <text x="390" y="140" class="nl">admin / teacher</text>
+      </g>
+      <path d="M526 103 L556 103" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="556" y="60" width="152" height="86" rx="2" class="box-g"/>
+        <text x="572" y="84" class="nl">STEP 04</text>
+        <text x="572" y="106" class="nt">上架</text>
+        <text x="572" y="126" class="ns">status → published</text>
+        <text x="572" y="140" class="nl">admin / teacher</text>
+      </g>
+      <path d="M708 103 L738 103" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="738" y="60" width="152" height="86" rx="2" class="box-t"/>
+        <text x="754" y="84" class="nl">STEP 05</text>
+        <text x="754" y="106" class="nt">前台卡片出現</text>
+        <text x="754" y="126" class="ns">學員可開始旅程</text>
+        <text x="754" y="140" class="nl">student</text>
+      </g>
+
+      <path d="M450 146 C 450 190 300 190 300 190 L 90 190 L 86 152" class="ln-t dash" marker-end="url(#at)"/>
+      <text x="330" y="208" class="nl">內容可隨時回頭修改，不影響已上架狀態</text>
+
+      <rect x="10" y="16" width="152" height="26" rx="2" fill="#F7E2DE"/>
+      <text x="86" y="34" text-anchor="middle" class="nm" fill="#C8402F">課程管理頁</text>
+      <rect x="374" y="16" width="152" height="26" rx="2" fill="#F6EBD4"/>
+      <text x="450" y="34" text-anchor="middle" class="nm" fill="#B07A16">課程內容頁</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="note">
+    <span class="h">介面調整</span>
+    課程內容頁最上方新增<b>課程選擇器</b>，選定一門課之後才顯示該課的 Day 0–21 列表。沒有選課程時顯示引導：「先選一門課，或到課程管理新增一門」。
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>訂閱狀態機</h2></div>
+  <p class="lead">三個方案的差別只有價格與每月對話次數。Mode A 與 Mode B 共用同一個額度，用完直接擋住。</p>
+
+  <figure>
+    <figcaption><b>圖 5.1</b> 訂閱狀態轉移</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="52" cy="128" r="12" fill="#0F1720"/>
+      <text x="52" y="160" text-anchor="middle" class="nl">註冊</text>
+      <path d="M66 128 L112 128" class="ln" marker-end="url(#a)"/>
+
+      <rect x="112" y="100" width="130" height="56" rx="2" class="box-g"/>
+      <text x="177" y="124" text-anchor="middle" class="nt">trial</text>
+      <text x="177" y="142" text-anchor="middle" class="nl">試用中</text>
+
+      <path d="M242 128 L300 128" class="ln-t" marker-end="url(#at)"/>
+      <text x="271" y="118" text-anchor="middle" class="nl">首次扣款成功</text>
+
+      <rect x="300" y="100" width="150" height="56" rx="2" class="box-n"/>
+      <text x="375" y="124" text-anchor="middle" class="nt">active</text>
+      <text x="375" y="142" text-anchor="middle" class="nl">可對話・額度計算中</text>
+
+      <!-- self loop renew -->
+      <path d="M330 100 C 320 56 430 56 420 100" class="ln-t" marker-end="url(#at)"/>
+      <text x="375" y="52" text-anchor="middle" class="nl">每 30 天續扣・額度歸零重發</text>
+
+      <path d="M450 128 L520 128" class="ln-r" marker-end="url(#ar)"/>
+      <text x="485" y="118" text-anchor="middle" class="nl" fill="#C8402F">扣款失敗</text>
+
+      <rect x="520" y="100" width="140" height="56" rx="2" class="box-r"/>
+      <text x="590" y="124" text-anchor="middle" class="nt">past_due</text>
+      <text x="590" y="142" text-anchor="middle" class="nl">寬限 3 天・仍可用</text>
+
+      <path d="M660 128 L730 128" class="ln-r" marker-end="url(#ar)"/>
+      <text x="695" y="118" text-anchor="middle" class="nl" fill="#C8402F">重試皆失敗</text>
+
+      <rect x="730" y="100" width="150" height="56" rx="2" class="box"/>
+      <text x="805" y="124" text-anchor="middle" class="nt">expired</text>
+      <text x="805" y="142" text-anchor="middle" class="nl">阻擋對話・保留資料</text>
+
+      <path d="M590 100 C 590 62 470 62 430 96" class="ln-t" marker-end="url(#at)"/>
+      <text x="510" y="74" text-anchor="middle" class="nl">補款成功</text>
+
+      <!-- cancel -->
+      <path d="M375 156 L375 226" class="ln" marker-end="url(#a)"/>
+      <text x="386" y="196" class="nl">使用者取消</text>
+      <rect x="300" y="226" width="150" height="56" rx="2" class="box"/>
+      <text x="375" y="250" text-anchor="middle" class="nt">cancelled</text>
+      <text x="375" y="268" text-anchor="middle" class="nl">期末失效</text>
+      <path d="M450 254 C 640 254 700 200 780 160" class="ln dash" marker-end="url(#a)"/>
+      <text x="600" y="246" text-anchor="middle" class="nl">週期結束</text>
+
+      <!-- upgrade -->
+      <rect x="90" y="226" width="176" height="56" rx="2" class="box-t"/>
+      <text x="178" y="250" text-anchor="middle" class="nt">升級</text>
+      <text x="178" y="268" text-anchor="middle" class="nl">立即發新額度・重算 30 天</text>
+      <path d="M300 140 C 220 180 200 200 190 220" class="ln-t" marker-end="url(#at)"/>
+      <path d="M266 244 C 290 232 300 190 320 158" class="ln-t" marker-end="url(#at)"/>
+
+      <!-- rules band -->
+      <rect x="10" y="312" width="880" height="76" rx="2" class="band"/>
+      <text x="28" y="336" class="hd">額度規則</text>
+      <text x="28" y="360" class="nm">額度用盡 → 直接阻擋，不可超用　·　不提供單次加購包　·　未用完次數不累積</text>
+      <text x="28" y="380" class="nm">週期以訂閱日起算 30 天（非自然月）　·　降級於當期結束後生效，不退差額</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>方案版本化與舊用戶保護</h3>
+  <p>管理者調價或改次數時，<b>不修改原紀錄</b>，而是新增一筆 <code>plan_versions</code>。每筆訂閱鎖定當時的 <code>plan_version_id</code>，因此舊用戶會沿用舊條件到下一次扣款為止，對帳時也能精準還原「當時賣多少錢、給多少次」。</p>
+
+  <figure>
+    <figcaption><b>圖 5.2</b> 調價後的生效時點</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+      <line x1="40" y1="120" x2="860" y2="120" stroke="#41525F" stroke-width="1.3" marker-end="url(#a)"/>
+      <g>
+        <line x1="120" y1="106" x2="120" y2="134" stroke="#0F1720" stroke-width="1.5"/>
+        <text x="120" y="98" text-anchor="middle" class="nm">訂閱日</text>
+        <text x="120" y="152" text-anchor="middle" class="nl">鎖定 v1 · NT$399 / 300 次</text>
+      </g>
+      <g>
+        <line x1="400" y1="106" x2="400" y2="134" stroke="#C8402F" stroke-width="1.5"/>
+        <text x="400" y="98" text-anchor="middle" class="nm" fill="#C8402F">管理者調價</text>
+        <text x="400" y="152" text-anchor="middle" class="nl">建立 v2 · NT$459 / 350 次</text>
+        <text x="400" y="170" text-anchor="middle" class="nl">舊用戶不受影響</text>
+      </g>
+      <g>
+        <line x1="700" y1="106" x2="700" y2="134" stroke="#16697A" stroke-width="1.5"/>
+        <text x="700" y="98" text-anchor="middle" class="nm" fill="#16697A">下次扣款</text>
+        <text x="700" y="152" text-anchor="middle" class="nl">套用 v2 · 扣 NT$459</text>
+      </g>
+      <rect x="120" y="60" width="580" height="22" rx="2" fill="#DCEAEE"/>
+      <text x="410" y="76" text-anchor="middle" class="nm" fill="#16697A">v1 有效期間（30 天週期內）</text>
+      <rect x="700" y="60" width="160" height="22" rx="2" fill="#DEEDE6"/>
+      <text x="780" y="76" text-anchor="middle" class="nm" fill="#2E7D5B">v2 生效</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>plan_versions</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>主鍵</td></tr>
+      <tr><td class="k">plan_id</td><td class="k">uuid</td><td>→ <code>plans.id</code></td></tr>
+      <tr><td class="k">version_no</td><td class="k">int</td><td>遞增版本號</td></tr>
+      <tr><td class="k">price_ntd</td><td class="k">int</td><td>月費（新台幣）</td></tr>
+      <tr><td class="k">monthly_quota</td><td class="k">int</td><td>每月對話次數（Mode A + B 合計）</td></tr>
+      <tr><td class="k">effective_from</td><td class="k">timestamptz</td><td>生效時間</td></tr>
+      <tr><td class="k">created_by</td><td class="k">uuid</td><td>建立者 admin</td></tr>
+      <tr><td class="k">note</td><td class="k">text</td><td>調整原因備註</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>subscriptions</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">user_id</td><td class="k">uuid</td><td>→ <code>users.id</code></td></tr>
+      <tr><td class="k">plan_version_id</td><td class="k">uuid</td><td>鎖定的方案版本</td></tr>
+      <tr><td class="k">status</td><td class="k">enum</td><td><code>trial</code> <code>active</code> <code>past_due</code> <code>cancelled</code> <code>expired</code></td></tr>
+      <tr><td class="k">current_period_start</td><td class="k">timestamptz</td><td>本期起算</td></tr>
+      <tr><td class="k">current_period_end</td><td class="k">timestamptz</td><td>本期結束（起算 + 30 天）</td></tr>
+      <tr><td class="k">quota_total</td><td class="k">int</td><td>本期總額度</td></tr>
+      <tr><td class="k">quota_used</td><td class="k">int</td><td>本期已用</td></tr>
+      <tr><td class="k">next_billing_at</td><td class="k">timestamptz</td><td>下次扣款時間</td></tr>
+      <tr><td class="k">cancel_at_period_end</td><td class="k">bool</td><td>期末取消／降級旗標</td></tr>
+      <tr><td class="k">pending_plan_version_id</td><td class="k">uuid</td><td>降級時預約的下期版本</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>金流與扣款重試</h2></div>
+  <p class="lead">綁定信用卡、自動扣款透過紅陽科技完成。實作由貴方負責，本節定義後台需要的資料結構與畫面，串接時不必回頭改結構。</p>
+
+  <figure>
+    <figcaption><b>圖 6.1</b> 扣款失敗的處理時間軸</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="52" width="700" height="40" rx="2" fill="#F7E2DE"/>
+      <text x="390" y="77" text-anchor="middle" class="nm" fill="#C8402F">寬限期 · 服務不中斷 · 後台名單標示</text>
+
+      <line x1="40" y1="130" x2="860" y2="130" stroke="#41525F" stroke-width="1.3" marker-end="url(#a)"/>
+
+      <g><line x1="40" y1="116" x2="40" y2="144" stroke="#C8402F" stroke-width="1.6"/>
+        <text x="40" y="166" text-anchor="middle" class="nm">D0</text>
+        <text x="40" y="184" text-anchor="middle" class="nl">首次失敗</text>
+        <text x="40" y="200" text-anchor="middle" class="nl">→ past_due</text></g>
+      <g><line x1="270" y1="116" x2="270" y2="144" stroke="#B07A16" stroke-width="1.6"/>
+        <text x="270" y="166" text-anchor="middle" class="nm">D1</text>
+        <text x="270" y="184" text-anchor="middle" class="nl">重試 ①</text></g>
+      <g><line x1="510" y1="116" x2="510" y2="144" stroke="#B07A16" stroke-width="1.6"/>
+        <text x="510" y="166" text-anchor="middle" class="nm">D3</text>
+        <text x="510" y="184" text-anchor="middle" class="nl">重試 ②</text></g>
+      <g><line x1="740" y1="116" x2="740" y2="144" stroke="#0F1720" stroke-width="1.6"/>
+        <text x="740" y="166" text-anchor="middle" class="nm">D3+</text>
+        <text x="740" y="184" text-anchor="middle" class="nl">→ expired</text>
+        <text x="740" y="200" text-anchor="middle" class="nl">阻擋對話</text></g>
+
+      <path d="M270 116 C 270 92 300 92 320 92" class="ln-t" marker-end="url(#at)"/>
+      <text x="392" y="112" class="nl" fill="#16697A">任一次成功 → 回到 active，週期照原時程續行</text>
+
+      <rect x="40" y="222" width="820" height="30" rx="2" class="band"/>
+      <text x="56" y="242" class="nm">使用者更新卡片後，後台可手動觸發「立即重扣」，不必等排程</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>payment_transactions</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">type</td><td class="k">enum</td><td><code>first_charge</code> <code>recurring</code> <code>upgrade_diff</code> <code>refund</code></td></tr>
+      <tr><td class="k">amount_ntd</td><td class="k">int</td><td>金額</td></tr>
+      <tr><td class="k">status</td><td class="k">enum</td><td><code>pending</code> <code>success</code> <code>failed</code> <code>refunded</code></td></tr>
+      <tr><td class="k">provider_order_no</td><td class="k">text</td><td>我方訂單編號</td></tr>
+      <tr><td class="k">provider_trade_no</td><td class="k">text</td><td>紅陽回傳交易編號</td></tr>
+      <tr><td class="k">provider_response</td><td class="k">jsonb</td><td>完整回應留存，供爭議查核</td></tr>
+      <tr><td class="k">failed_reason</td><td class="k">text</td><td>失敗原因</td></tr>
+      <tr><td class="k">paid_at</td><td class="k">timestamptz</td><td>入帳時間</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note warn">
+    <span class="h">安全要求</span>
+    <code>payment_methods</code> 只儲存供應商回傳的 <b>token</b> 與卡號末四碼，<b>絕不儲存完整卡號或安全碼</b>。扣款一律以 token 發動。
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>對話請求與扣額</h2></div>
+  <p class="lead">一次對話從送出到記帳的完整路徑。額度檢查在呼叫 API <b>之前</b>，成本記錄在回應 <b>之後</b>——順序不能顛倒，否則會出現「擋下了卻仍付費」或「用了卻沒記帳」。</p>
+
+  <figure>
+    <figcaption><b>圖 7.1</b> 單次對話流程與判斷點</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+      <rect x="330" y="16" width="180" height="42" rx="2" class="box"/>
+      <text x="420" y="42" text-anchor="middle" class="nt">使用者送出訊息</text>
+      <path d="M420 58 L420 84" class="ln" marker-end="url(#a)"/>
+
+      <!-- decision 1 -->
+      <path d="M420 84 L536 126 L420 168 L304 126 Z" class="box-g"/>
+      <text x="420" y="122" text-anchor="middle" class="ns">訂閱狀態是否可用？</text>
+      <text x="420" y="138" text-anchor="middle" class="nl">active / trial / past_due</text>
+      <path d="M536 126 L680 126" class="ln-r" marker-end="url(#ar)"/>
+      <text x="608" y="118" text-anchor="middle" class="nl" fill="#C8402F">否</text>
+      <rect x="680" y="104" width="200" height="44" rx="2" class="box-r"/>
+      <text x="780" y="122" text-anchor="middle" class="ns">阻擋・提示續訂</text>
+      <text x="780" y="138" text-anchor="middle" class="nl">不呼叫 API・不計費</text>
+
+      <path d="M420 168 L420 194" class="ln" marker-end="url(#a)"/>
+      <!-- decision 2 -->
+      <path d="M420 194 L536 236 L420 278 L304 236 Z" class="box-g"/>
+      <text x="420" y="232" text-anchor="middle" class="ns">quota_used &lt; quota_total？</text>
+      <text x="420" y="248" text-anchor="middle" class="nl">Mode A + B 共用</text>
+      <path d="M536 236 L680 236" class="ln-r" marker-end="url(#ar)"/>
+      <text x="608" y="228" text-anchor="middle" class="nl" fill="#C8402F">否</text>
+      <rect x="680" y="214" width="200" height="44" rx="2" class="box-r"/>
+      <text x="780" y="232" text-anchor="middle" class="ns">阻擋・提示升級</text>
+      <text x="780" y="248" text-anchor="middle" class="nl">升級後立即恢復</text>
+
+      <path d="M420 278 L420 302" class="ln" marker-end="url(#a)"/>
+      <text x="432" y="294" class="nl">是</text>
+
+      <rect x="290" y="302" width="260" height="46" rx="2" class="box-t"/>
+      <text x="420" y="322" text-anchor="middle" class="nt">組裝提示詞</text>
+      <text x="420" y="339" text-anchor="middle" class="nl">course.system_prompt + Day 內容 + 同課歷史</text>
+
+      <path d="M420 348 L420 372" class="ln-t" marker-end="url(#at)"/>
+      <rect x="290" y="372" width="260" height="46" rx="2" class="box-t"/>
+      <text x="420" y="392" text-anchor="middle" class="nt">呼叫 AI API</text>
+      <text x="420" y="409" text-anchor="middle" class="nl">回傳內容 + usage（input / output tokens）</text>
+
+      <path d="M420 418 L420 442" class="ln-t" marker-end="url(#at)"/>
+      <rect x="230" y="442" width="180" height="58" rx="2" class="box-n"/>
+      <text x="320" y="464" text-anchor="middle" class="nt">寫入 ai_usage_logs</text>
+      <text x="320" y="482" text-anchor="middle" class="nl">token・model・單價・匯率</text>
+      <rect x="430" y="442" width="180" height="58" rx="2" class="box-n"/>
+      <text x="520" y="464" text-anchor="middle" class="nt">quota_used + 1</text>
+      <text x="520" y="482" text-anchor="middle" class="nl">同一交易內完成</text>
+      <path d="M400 424 L330 438" class="ln-t" marker-end="url(#at)"/>
+      <path d="M440 424 L510 438" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="640" y="372" width="240" height="128" rx="2" class="band"/>
+      <text x="656" y="396" class="hd">系統呼叫的例外</text>
+      <text x="656" y="420" class="nm">標題生成 / 摘要：</text>
+      <text x="656" y="440" class="nm">· 寫入 ai_usage_logs ✓</text>
+      <text x="656" y="460" class="nm">· quota_used 不加 ✗</text>
+      <text x="656" y="482" class="nl">以 billable_count = 0 標記</text>
+    </svg>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Token 成本計量</h2></div>
+  <p class="lead">每一次 API 呼叫都要分別記錄送出與回來各消耗多少 token。單價與匯率在寫入當下做<b>快照</b>——日後調整匯率或單價時，歷史數字不會跟著跳動。</p>
+
+  <figure>
+    <figcaption><b>圖 8.1</b> 成本計算鏈</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="34" width="180" height="80" rx="2" class="box-t"/>
+      <text x="100" y="58" text-anchor="middle" class="nt">API 回傳 usage</text>
+      <text x="100" y="80" text-anchor="middle" class="nm">input_tokens</text>
+      <text x="100" y="98" text-anchor="middle" class="nm">output_tokens</text>
+
+      <rect x="10" y="140" width="180" height="80" rx="2" class="box-g"/>
+      <text x="100" y="164" text-anchor="middle" class="nt">model_pricing</text>
+      <text x="100" y="186" text-anchor="middle" class="nm">in $/1K · out $/1K</text>
+      <text x="100" y="204" text-anchor="middle" class="nl">管理者可維護</text>
+
+      <path d="M190 74 C 226 74 226 110 244 122" class="ln-t" marker-end="url(#at)"/>
+      <path d="M190 180 C 226 180 226 146 244 134" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="248" y="88" width="270" height="80" rx="2" class="box"/>
+      <text x="383" y="112" text-anchor="middle" class="nt">cost_usd</text>
+      <text x="383" y="136" text-anchor="middle" class="nm">= in/1000 × in_price</text>
+      <text x="383" y="156" text-anchor="middle" class="nm">+ out/1000 × out_price</text>
+
+      <rect x="248" y="196" width="270" height="56" rx="2" class="box-g"/>
+      <text x="383" y="218" text-anchor="middle" class="nt">exchange_rate</text>
+      <text x="383" y="238" text-anchor="middle" class="nl">系統設定手動維護 · 寫入時快照</text>
+
+      <path d="M518 128 C 556 128 560 150 578 158" class="ln-t" marker-end="url(#at)"/>
+      <path d="M518 224 C 556 224 560 190 578 176" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="582" y="128" width="200" height="76" rx="2" class="box-n"/>
+      <text x="682" y="154" text-anchor="middle" class="big">cost_ntd</text>
+      <text x="682" y="178" text-anchor="middle" class="nm">= cost_usd × rate</text>
+      <text x="682" y="196" text-anchor="middle" class="nl">後台主要顯示單位</text>
+
+      <rect x="582" y="34" width="200" height="66" rx="2" class="band"/>
+      <text x="598" y="56" class="hd">介面</text>
+      <text x="598" y="78" class="nm">NT$ ⇄ US$ 切換</text>
+      <text x="598" y="94" class="nl">兩種幣別皆已存表，切換不需重算</text>
+
+      <rect x="10" y="262" width="880" height="30" rx="2" class="band"/>
+      <text x="26" y="282" class="nm">歸屬維度：user_id · course_id · conversation_id · purpose（mode_a / mode_b / title_gen / summary）· model</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>ai_usage_logs</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">user_id</td><td class="k">uuid</td><td>歸屬用戶</td></tr>
+      <tr><td class="k">course_id</td><td class="k">uuid</td><td>歸屬課程，可依課分析成本</td></tr>
+      <tr><td class="k">conversation_id</td><td class="k">uuid</td><td>歸屬對話</td></tr>
+      <tr><td class="k">purpose</td><td class="k">enum</td><td><code>mode_a</code> <code>mode_b</code> <code>title_gen</code> <code>summary</code> <code>other</code></td></tr>
+      <tr><td class="k">model</td><td class="k">text</td><td>使用的模型名稱</td></tr>
+      <tr><td class="k">input_tokens</td><td class="k">int</td><td>送出消耗</td></tr>
+      <tr><td class="k">output_tokens</td><td class="k">int</td><td>回傳消耗</td></tr>
+      <tr><td class="k">cached_tokens</td><td class="k">int</td><td>有快取折扣時記錄，預設 0</td></tr>
+      <tr><td class="k">input_price_per_1k_usd</td><td class="k">numeric</td><td>單價快照</td></tr>
+      <tr><td class="k">output_price_per_1k_usd</td><td class="k">numeric</td><td>單價快照</td></tr>
+      <tr><td class="k">cost_usd</td><td class="k">numeric</td><td>計算結果</td></tr>
+      <tr><td class="k">exchange_rate</td><td class="k">numeric</td><td>匯率快照</td></tr>
+      <tr><td class="k">cost_ntd</td><td class="k">numeric</td><td>台幣成本</td></tr>
+      <tr><td class="k">billable_count</td><td class="k">int</td><td>是否計入對話次數：1 或 0</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>用量／成本頁強化項目</h3>
+  <ul class="pl">
+    <li>期間切換維持 7／30／90 天，另加自訂區間</li>
+    <li>卡片增加「總消耗 token」，並提供 NT$ ⇄ US$ 切換</li>
+    <li>每日成本折線 + 每日 token 柱狀雙軸圖</li>
+    <li>新增三個分組維度：依課程、依 model、依用途</li>
+    <li>Top 10 高成本用戶增列 input / output token 分欄</li>
+    <li>匯出 CSV 供對帳</li>
+  </ul>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>餘額帳本與警示</h2></div>
+  <p class="lead">API 供應商通常無法程式化查餘額，因此採「手動充值帳本 + 自動扣減」推算，並保留一個校正入口讓實際值與系統值對齊。</p>
+
+  <figure>
+    <figcaption><b>圖 9.1</b> 餘額推算與警示判定</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="40" width="190" height="66" rx="2" class="box-n"/>
+      <text x="105" y="64" text-anchor="middle" class="nt">累計充值</text>
+      <text x="105" y="84" text-anchor="middle" class="nl">api_credit_topups</text>
+      <text x="105" y="99" text-anchor="middle" class="nl">管理者儲值後手動登錄</text>
+
+      <rect x="10" y="132" width="190" height="66" rx="2" class="box-r"/>
+      <text x="105" y="156" text-anchor="middle" class="nt">累計消耗</text>
+      <text x="105" y="176" text-anchor="middle" class="nl">SUM(ai_usage_logs.cost)</text>
+      <text x="105" y="191" text-anchor="middle" class="nl">系統自動加總</text>
+
+      <rect x="10" y="224" width="190" height="66" rx="2" class="box-g"/>
+      <text x="105" y="248" text-anchor="middle" class="nt">校正</text>
+      <text x="105" y="268" text-anchor="middle" class="nl">type = adjustment</text>
+      <text x="105" y="283" text-anchor="middle" class="nl">輸入供應商實際餘額</text>
+
+      <path d="M200 73 C 240 73 244 130 262 142" class="ln-t" marker-end="url(#at)"/>
+      <path d="M200 165 L262 165" class="ln-r" marker-end="url(#ar)"/>
+      <path d="M200 257 C 240 257 244 200 262 188" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="266" y="118" width="220" height="94" rx="2" class="box"/>
+      <text x="376" y="146" text-anchor="middle" class="nt">目前剩餘金額</text>
+      <text x="376" y="170" text-anchor="middle" class="nm">充值 − 消耗 ± 校正</text>
+      <text x="376" y="194" text-anchor="middle" class="nl">再依近期平均單價換算為約當剩餘 token</text>
+
+      <path d="M486 165 L544 165" class="ln" marker-end="url(#a)"/>
+
+      <path d="M660 118 L772 165 L660 212 L548 165 Z" class="box-g"/>
+      <text x="660" y="160" text-anchor="middle" class="ns">剩餘 token</text>
+      <text x="660" y="178" text-anchor="middle" class="ns">&lt; 設定門檻？</text>
+
+      <path d="M772 165 L822 165" class="ln-r" marker-end="url(#ar)"/>
+      <text x="797" y="156" text-anchor="middle" class="nl" fill="#C8402F">是</text>
+      <rect x="700" y="240" width="190" height="76" rx="2" class="box-r"/>
+      <text x="795" y="264" text-anchor="middle" class="nt">後台標示</text>
+      <text x="795" y="284" text-anchor="middle" class="nl">Dashboard 橫幅</text>
+      <text x="795" y="300" text-anchor="middle" class="nl">側欄圓點・列表底色</text>
+      <path d="M822 165 C 860 165 860 210 850 236" class="ln-r" marker-end="url(#ar)"/>
+
+      <rect x="266" y="240" width="400" height="76" rx="2" class="band"/>
+      <text x="284" y="264" class="hd">警示設定</text>
+      <text x="284" y="288" class="nm">對象：平台整體餘額 + 單一用戶額度（兩者皆有）</text>
+      <text x="284" y="306" class="nm">單位：剩餘 token 數　·　不分級　·　不發送 Email / LINE / Slack</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>資料表</th><th>欄位</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k" rowspan="4">api_credit_topups</td><td class="k">type</td><td><code>topup</code>（儲值）／<code>adjustment</code>（校正差額）</td></tr>
+      <tr><td class="k">amount_usd / amount_ntd</td><td>金額，兩種幣別皆存</td></tr>
+      <tr><td class="k">exchange_rate</td><td>當下匯率快照</td></tr>
+      <tr><td class="k">operator_id / note</td><td>操作者與備註</td></tr>
+      <tr><td class="k" rowspan="2">alert_settings</td><td class="k">platform_token_threshold</td><td>平台剩餘 token 門檻</td></tr>
+      <tr><td class="k">user_token_threshold</td><td>單一用戶剩餘 token 門檻</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10">
+  <div class="sec-head"><span class="sec-num">10</span><h2>權限控制</h2></div>
+  <p class="lead">權限不寫在程式判斷式裡，而是存在 <code>role_permissions</code> 這張表。要收回老師的某項權限，管理者到後台把那一格關掉即可，<b>立即生效、不必改程式、不必重新部署</b>。</p>
+
+  <figure>
+    <figcaption><b>圖 10.1</b> 每個請求的四道關卡</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="180" width="120" height="48" rx="2" class="box"/>
+      <text x="80" y="210" text-anchor="middle" class="nt">API 請求</text>
+      <path d="M140 204 L180 204" class="ln" marker-end="url(#a)"/>
+
+      <g>
+        <rect x="180" y="164" width="140" height="80" rx="2" class="box-t"/>
+        <text x="250" y="188" text-anchor="middle" class="nl">GATE 01</text>
+        <text x="250" y="210" text-anchor="middle" class="nt">已登入？</text>
+        <text x="250" y="230" text-anchor="middle" class="nl">session 驗證</text>
+      </g>
+      <path d="M320 204 L360 204" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="360" y="164" width="140" height="80" rx="2" class="box-t"/>
+        <text x="430" y="188" text-anchor="middle" class="nl">GATE 02</text>
+        <text x="430" y="210" text-anchor="middle" class="nt">role ≠ student？</text>
+        <text x="430" y="230" text-anchor="middle" class="nl">學員一律導回前台</text>
+      </g>
+      <path d="M500 204 L540 204" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="540" y="164" width="150" height="80" rx="2" class="box-t"/>
+        <text x="615" y="188" text-anchor="middle" class="nl">GATE 03</text>
+        <text x="615" y="210" text-anchor="middle" class="nt">權限碼 allowed？</text>
+        <text x="615" y="230" text-anchor="middle" class="nl">查 role_permissions</text>
+      </g>
+      <path d="M690 204 L730 204" class="ln" marker-end="url(#a)"/>
+      <g>
+        <rect x="730" y="164" width="150" height="80" rx="2" class="box-g"/>
+        <text x="805" y="188" text-anchor="middle" class="nl">GATE 04</text>
+        <text x="805" y="210" text-anchor="middle" class="nt">課程歸屬過濾</text>
+        <text x="805" y="230" text-anchor="middle" class="nl">老師才套用</text>
+      </g>
+
+      <path d="M250 244 L250 300" class="ln-r" marker-end="url(#ar)"/>
+      <path d="M430 244 L430 300" class="ln-r" marker-end="url(#ar)"/>
+      <path d="M615 244 L615 300" class="ln-r" marker-end="url(#ar)"/>
+      <rect x="180" y="300" width="510" height="42" rx="2" class="box-r"/>
+      <text x="435" y="326" text-anchor="middle" class="nt">401 / 403 — 直接回絕，不進入服務層</text>
+
+      <path d="M805 244 L805 300" class="ln-t" marker-end="url(#at)"/>
+      <rect x="710" y="300" width="180" height="42" rx="2" class="box-n"/>
+      <text x="800" y="326" text-anchor="middle" class="nt">執行並回傳</text>
+
+      <rect x="180" y="40" width="700" height="98" rx="2" class="band"/>
+      <text x="198" y="64" class="hd">GATE 04 的實際作用</text>
+      <text x="198" y="90" class="nm">老師即使擁有 conversation.view，查詢仍被強制加上條件：</text>
+      <text x="198" y="114" class="nm" fill="#16697A">WHERE course_id IN (SELECT course_id FROM course_teachers WHERE user_id = 目前登入者)</text>
+      <text x="198" y="132" class="nl">此過濾在 API 層執行，前端無法繞過</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>權限矩陣</h3>
+  <p>下表即 <code>role_permissions</code> 的初始值。每一格都是資料，不是程式碼。</p>
+
+  <div class="pg">
+    <table>
+      <thead><tr>
+        <th>權限碼</th><th>說明</th>
+        <th class="rl">管理者</th><th class="rl">老師</th><th class="rl">學員</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="k">dashboard.view</td><td>後台總覽</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-half"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course.view</td><td>課程列表</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-half"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course.create</td><td>新增課程</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course.publish</td><td>上下架、排序</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course.meta.edit</td><td>改封面、標題、開場白</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course.assign_teacher</td><td>指派負責老師</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course_content.view</td><td>檢視 Day 0–21</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course_content.edit</td><td>編輯 Day 內容</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-flag"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">course.system_prompt.view</td><td>檢視課程系統提示詞</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">user.list</td><td>學員名單</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-half"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">user.edit</td><td>編輯、停權、刪除用戶</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">conversation.view</td><td>檢視對話全文</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-half"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">journey.view</td><td>Journey 進度</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-half"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">subscription.view</td><td>訂閱列表</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">subscription.edit</td><td>改方案、啟動試用</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">plan.edit</td><td>改價格、改次數</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">payment.view</td><td>交易紀錄</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">usage.view</td><td>用量與成本</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">invite.manage</td><td>邀請碼</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">docs.view</td><td>規格文件</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">prompt.view</td><td>AI Prompt 程式碼</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">settings.edit</td><td>系統設定</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">permission.edit</td><td>調整權限矩陣</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+        <tr><td class="k">audit.view</td><td>稽核紀錄</td><td class="c"><span class="dot d-full"></span></td><td class="c"><span class="dot d-none"></span></td><td class="c"><span class="dot d-none"></span></td></tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <span><i class="d-full"></i>完全開放</span>
+      <span><i class="d-half"></i>僅限自己被指派的課程</span>
+      <span><i class="d-flag"></i>目前開放，規劃日後收回</span>
+      <span><i class="d-none" style="border:1.5px solid #C9D4DA"></i>不開放</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="h">關於日後封鎖老師編輯內容</span>
+    紅點那一格（<code>course_content.edit</code> × 老師）就是您說的「之後可能要封鎖」。因為它是資料而不是程式碼，屆時到<b>系統設定 → 權限矩陣</b>把開關關掉即可，前端按鈕會同步消失、API 也會直接回 403。不需要開發介入。
+  </div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11">
+  <div class="sec-head"><span class="sec-num">11</span><h2>API 端點</h2></div>
+  <p class="lead">所有 <code>/api/admin/*</code> 共用同一組中介層。下表的「權限碼」即中介層檢查的對象。</p>
+
+  <h3>新增與調整</h3>
+  <div class="tw"><table>
+    <thead><tr><th>模組</th><th>端點</th><th>權限碼</th></tr></thead>
+    <tbody>
+      <tr><td>課程管理</td><td class="k">GET/POST /api/admin/courses</td><td class="k">course.view / course.create</td></tr>
+      <tr><td></td><td class="k">GET/PATCH/DELETE /api/admin/courses/[id]</td><td class="k">course.meta.edit</td></tr>
+      <tr><td></td><td class="k">PATCH /api/admin/courses/[id]/publish</td><td class="k">course.publish</td></tr>
+      <tr><td></td><td class="k">POST/DELETE /api/admin/courses/[id]/teachers</td><td class="k">course.assign_teacher</td></tr>
+      <tr><td>課程內容</td><td class="k">/api/admin/courses/[id]/content</td><td class="k">course_content.view</td></tr>
+      <tr><td></td><td class="k">/api/admin/courses/[id]/content/[day]</td><td class="k">course_content.edit</td></tr>
+      <tr><td>方案</td><td class="k">GET/POST /api/admin/plans</td><td class="k">plan.edit</td></tr>
+      <tr><td></td><td class="k">GET/POST /api/admin/plans/[id]/versions</td><td class="k">plan.edit</td></tr>
+      <tr><td>訂閱</td><td class="k">GET /api/admin/subscriptions</td><td class="k">subscription.view</td></tr>
+      <tr><td></td><td class="k">GET/PATCH /api/admin/subscriptions/[userId]</td><td class="k">subscription.edit</td></tr>
+      <tr><td></td><td class="k">POST .../upgrade · /trial · /cancel</td><td class="k">subscription.edit</td></tr>
+      <tr><td>金流</td><td class="k">GET /api/admin/payments · /[id]</td><td class="k">payment.view</td></tr>
+      <tr><td></td><td class="k">POST /api/admin/payments/[id]/refund</td><td class="k">payment.view</td></tr>
+      <tr><td></td><td class="k">POST /api/payments/sunpay/callback</td><td class="k">供應商回呼・非後台</td></tr>
+      <tr><td>用量</td><td class="k">GET /api/admin/usage</td><td class="k">usage.view</td></tr>
+      <tr><td></td><td class="k">GET /api/admin/usage/export</td><td class="k">usage.view</td></tr>
+      <tr><td>餘額</td><td class="k">GET/POST /api/admin/api-credits</td><td class="k">settings.edit</td></tr>
+      <tr><td></td><td class="k">POST /api/admin/api-credits/adjust</td><td class="k">settings.edit</td></tr>
+      <tr><td>設定</td><td class="k">GET/PATCH /api/admin/settings</td><td class="k">settings.edit</td></tr>
+      <tr><td></td><td class="k">GET/PATCH /api/admin/model-pricing</td><td class="k">settings.edit</td></tr>
+      <tr><td>權限</td><td class="k">GET/PATCH /api/admin/permissions</td><td class="k">permission.edit</td></tr>
+      <tr><td></td><td class="k">GET/POST /api/admin/teachers</td><td class="k">permission.edit</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>既有端點（維持，加上課程篩選參數）</h3>
+  <p><code>/api/admin/stats</code> · <code>/api/admin/users</code> · <code>/api/admin/users/[id]</code> · <code>/api/admin/journeys</code> · <code>/api/admin/conversations</code> · <code>/api/admin/topics</code> · <code>/api/admin/invites</code> · <code>/api/admin/docs/[file]</code> · <code>/api/admin/audit-logs</code></p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12">
+  <div class="sec-head"><span class="sec-num">12</span><h2>稽核紀錄</h2></div>
+  <p class="lead">採「必要的都存」。除了異動，<b>敏感檢視也要留紀錄</b>——誰看了學員的對話，這件事本身就該有痕跡。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>類別</th><th>記錄的動作</th><th>存前後值</th></tr></thead>
+    <tbody>
+      <tr><td>訂閱與金流</td><td>手動改方案、啟動試用、升級、降級、取消、價格／次數異動、退款登記、手動補款</td><td>是</td></tr>
+      <tr><td>權限</td><td>升降老師、指派或移除課程、權限矩陣開關、停權／復權、刪除用戶</td><td>是</td></tr>
+      <tr><td>課程</td><td>新增課程、上下架、修改基本資料、修改任一 Day 內容、修改系統提示詞</td><td>是（diff）</td></tr>
+      <tr><td>敏感檢視</td><td>查看學員對話全文、查看規格文件、查看 AI Prompt 程式碼、匯出用量 CSV</td><td>否（僅記事件）</td></tr>
+      <tr><td>系統設定</td><td>匯率調整、model 單價調整、警示門檻調整、API 充值與餘額校正</td><td>是</td></tr>
+    </tbody>
+  </table></div>
+
+  <h4>audit_logs 欄位</h4>
+  <p><code>actor_id</code> · <code>actor_role</code> · <code>action</code> · <code>target_type</code> · <code>target_id</code> · <code>before</code> (jsonb) · <code>after</code> (jsonb) · <code>ip</code> · <code>user_agent</code> · <code>created_at</code></p>
+
+  <div class="note">
+    <span class="h">隱私</span>
+    本版<b>不主動通知學員</b>有人看過其對話，但紀錄完整保留備查。建議在服務條款揭露「管理者與授課老師得檢視對話以維持服務品質」。
+  </div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13">
+  <div class="sec-head"><span class="sec-num">13</span><h2>開發路線</h2></div>
+  <p class="lead">排序原則：<b>結構性的先做</b>。越晚動資料結構與權限，回頭改的成本越高；計量資料一旦漏記無法回補。</p>
+
+  <figure>
+    <figcaption><b>圖 13.1</b> 四階段與依賴關係</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+      <text x="10" y="30" class="hd">P0 · 地基</text>
+      <rect x="10" y="40" width="300" height="52" rx="2" class="box-r"/>
+      <text x="26" y="62" class="nt">多課程結構 + 資料遷移</text>
+      <text x="26" y="80" class="nl">所有功能都掛在課程之下，先做才不會回頭改</text>
+      <rect x="322" y="40" width="300" height="52" rx="2" class="box-r"/>
+      <text x="338" y="62" class="nt">權限矩陣 + API 中介層</text>
+      <text x="338" y="80" class="nl">越晚做，散落各處的判斷式越難收斂</text>
+
+      <text x="10" y="126" class="hd">P1 · 營收正確性</text>
+      <rect x="10" y="136" width="300" height="52" rx="2" class="box-g"/>
+      <text x="26" y="158" class="nt">方案版本化 + 週期 + 額度阻擋</text>
+      <text x="26" y="176" class="nl">直接影響收費是否正確</text>
+      <rect x="322" y="136" width="300" height="52" rx="2" class="box-g"/>
+      <text x="338" y="158" class="nt">Token 明細記錄</text>
+      <text x="338" y="176" class="nl">漏記無法回補，越早上線越好</text>
+
+      <text x="10" y="222" class="hd">P2 · 營運</text>
+      <rect x="10" y="232" width="300" height="52" rx="2" class="box-t"/>
+      <text x="26" y="254" class="nt">紅陽金流 + 交易紀錄頁</text>
+      <text x="26" y="272" class="nl">依賴 P1 的訂閱結構</text>
+      <rect x="322" y="232" width="300" height="52" rx="2" class="box-t"/>
+      <text x="338" y="254" class="nt">餘額帳本 + 警示標示</text>
+      <text x="338" y="272" class="nl">依賴 P1 的 token 明細</text>
+
+      <text x="646" y="126" class="hd">P3</text>
+      <rect x="646" y="136" width="244" height="148" rx="2" class="box"/>
+      <text x="662" y="158" class="nt">用量多維度分析</text>
+      <text x="662" y="176" class="nl">依課程 / model / 用途分組</text>
+      <text x="662" y="200" class="nt">CSV 匯出</text>
+      <text x="662" y="218" class="nl">財務對帳</text>
+      <text x="662" y="242" class="nt">Dashboard 老師視角</text>
+      <text x="662" y="260" class="nl">僅顯示自己課程數據</text>
+
+      <path d="M160 92 L160 130" class="ln-r" marker-end="url(#ar)"/>
+      <path d="M472 92 L472 130" class="ln-r" marker-end="url(#ar)"/>
+      <path d="M160 188 L160 226" class="ln-t" marker-end="url(#at)"/>
+      <path d="M472 188 L472 226" class="ln-t" marker-end="url(#at)"/>
+      <path d="M622 162 L640 162" class="ln dash" marker-end="url(#a)"/>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>待確認事項</h3>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>問題</th><th>本文件暫定</th></tr></thead>
+    <tbody>
+      <tr><td class="k">01</td><td>扣款失敗的寬限天數與重試次數</td><td>寬限 3 天、重試 2 次</td></tr>
+      <tr><td class="k">02</td><td>降級是否於期末生效、不退差額</td><td>是</td></tr>
+      <tr><td class="k">03</td><td>老師能否自行新增課程</td><td>否，僅 admin</td></tr>
+      <tr><td class="k">04</td><td>試用期天數與可用次數</td><td>未定，需指定</td></tr>
+      <tr><td class="k">05</td><td>標題生成與摘要不扣次數但計成本</td><td>是</td></tr>
+      <tr><td class="k">06</td><td><code>usage_quotas</code> 停用並移轉</td><td>建議停用</td></tr>
+      <tr><td class="k">07</td><td>是否另建歷史匯率表</td><td>否，逐筆快照已足夠</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14">
+  <div class="sec-head"><span class="sec-num">14</span><h2>公版與私版分工原則</h2></div>
+  <p class="lead">本節起為<b>公版（多 APP 共用層）</b>補充規格，對應 2026-08-09 會議確認事項，與第 1–13 節「羽升幸福養成學苑」私版課程系統為並列文件。公版只管三件事——會員、交易、用量；其餘一切屬於各私版 APP 自行定義與儲存，公版不碰。</p>
+
+  <figure>
+    <figcaption><b>圖 14.1</b> 公版三件事 vs 私版各自發揮</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="40" width="340" height="230" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="34" y="60" class="hd">公版 · 唯一登入層</text>
+
+      <rect x="50" y="76" width="280" height="54" rx="2" class="box-r"/>
+      <text x="190" y="98" text-anchor="middle" class="nt">會員（users）</text>
+      <text x="190" y="116" text-anchor="middle" class="nl">身分・登入・訂閱狀態</text>
+
+      <rect x="50" y="146" width="280" height="54" rx="2" class="box-r"/>
+      <text x="190" y="168" text-anchor="middle" class="nt">交易（subscriptions）</text>
+      <text x="190" y="186" text-anchor="middle" class="nl">方案・扣款・對帳</text>
+
+      <rect x="50" y="216" width="280" height="54" rx="2" class="box-r"/>
+      <text x="190" y="238" text-anchor="middle" class="nt">用量（ai_usage_logs）</text>
+      <text x="190" y="256" text-anchor="middle" class="nl">Token 成本彙總</text>
+
+      <rect x="560" y="20" width="300" height="280" rx="2" fill="none" stroke="#C4D0D8" stroke-dasharray="3 4"/>
+      <text x="574" y="40" class="hd">私版 · 各自發揮</text>
+
+      <rect x="580" y="56" width="260" height="56" rx="2" class="box-t"/>
+      <text x="710" y="80" text-anchor="middle" class="nt">幸福關係 APP</text>
+      <text x="710" y="98" text-anchor="middle" class="nl">暱稱・MBTI・配對對象</text>
+
+      <rect x="580" y="146" width="260" height="56" rx="2" class="box"/>
+      <text x="710" y="170" text-anchor="middle" class="ns">APP 2</text>
+      <text x="710" y="188" text-anchor="middle" class="nl">規劃中</text>
+
+      <rect x="580" y="236" width="260" height="56" rx="2" class="box"/>
+      <text x="710" y="260" text-anchor="middle" class="ns">APP 3</text>
+      <text x="710" y="278" text-anchor="middle" class="nl">規劃中</text>
+
+      <path d="M330 103 C 420 103 460 84 580 84" class="ln-t" marker-end="url(#at)"/>
+      <text x="445" y="90" text-anchor="middle" class="nl" fill="#16697A">SSO 身分</text>
+
+      <path d="M580 174 C 460 174 420 243 330 243" class="ln-r" marker-end="url(#ar)"/>
+      <text x="445" y="222" text-anchor="middle" class="nl" fill="#C8402F">用量回報</text>
+
+      <text x="574" y="308" class="nl">所有私版皆比照此模式串接，圖中以「幸福關係」為例</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>層</th><th>負責範圍</th><th>不負責</th></tr></thead>
+    <tbody>
+      <tr><td class="k">公版</td><td>使用者身分與登入、訂閱與金流、Token 用量彙總與對帳</td><td>課程內容、暱稱、MBTI、配對、對話歷史等一切 App 專屬邏輯</td></tr>
+      <tr><td class="k">私版</td><td>自己的業務邏輯與資料（如第 1–13 節的課程系統）</td><td>自建密碼系統、自算對外總成本（皆以公版為準）</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15">
+  <div class="sec-head"><span class="sec-num">15</span><h2>使用者身分分離</h2></div>
+  <p class="lead">公版 <code>users</code> 是唯一身分來源，只放「跟 App 無關」的欄位；每支私版自己的 profile 表透過 <code>user_id</code> 關聯，兩者資料庫可以實體分離，不做跨庫外鍵。</p>
+
+  <figure>
+    <figcaption><b>圖 15.1</b> 公版 users 與私版 profile 的關聯</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+      <rect x="350" y="30" width="200" height="60" rx="2" class="box-r"/>
+      <text x="450" y="54" text-anchor="middle" class="nt">users（公版）</text>
+      <text x="450" y="72" text-anchor="middle" class="nl">id・phone・email・name</text>
+
+      <path d="M450 90 L450 140" class="ln dash"/>
+      <line x1="190" y1="140" x2="710" y2="140" class="ln dash"/>
+      <text x="450" y="130" text-anchor="middle" class="nl">user_id（API 關聯，非資料庫外鍵）</text>
+
+      <path d="M190 140 L190 170" class="ln-t dash" marker-end="url(#at)"/>
+      <path d="M450 140 L450 170" class="ln-t dash" marker-end="url(#at)"/>
+      <path d="M710 140 L710 170" class="ln-t dash" marker-end="url(#at)"/>
+
+      <rect x="80" y="170" width="220" height="60" rx="2" class="box-t"/>
+      <text x="190" y="194" text-anchor="middle" class="nt">xingfu_profiles</text>
+      <text x="190" y="212" text-anchor="middle" class="nl">幸福關係・nickname/mbti</text>
+
+      <rect x="340" y="170" width="220" height="60" rx="2" class="box"/>
+      <text x="450" y="194" text-anchor="middle" class="ns">app2_profiles</text>
+      <text x="450" y="212" text-anchor="middle" class="nl">依 App 2 自訂欄位</text>
+
+      <rect x="600" y="170" width="220" height="60" rx="2" class="box"/>
+      <text x="710" y="194" text-anchor="middle" class="ns">app3_profiles</text>
+      <text x="710" y="212" text-anchor="middle" class="nl">依 App 3 自訂欄位</text>
+
+      <rect x="10" y="256" width="880" height="46" rx="2" class="band"/>
+      <text x="26" y="280" class="nm">每支私版各自的 profile 表都用同一把 user_id 對回公版，不共用 schema，不做跨庫 FK</text>
+    </svg>
+    </div>
+  </figure>
+
+  <h3>users（公版，唯一身分來源）</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>PK，系統產生，<b>不得用 email 或手機號當 ID</b></td></tr>
+      <tr><td class="k">phone</td><td class="k">text</td><td>可為 null，唯一索引（若有值）</td></tr>
+      <tr><td class="k">email</td><td class="k">text</td><td>可為 null，唯一索引（若有值）</td></tr>
+      <tr><td class="k">password_hash</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">name</td><td class="k">text</td><td>真實姓名</td></tr>
+      <tr><td class="k">status</td><td class="k">enum</td><td><code>active</code> / <code>suspended</code></td></tr>
+      <tr><td class="k">created_at</td><td class="k">timestamptz</td><td>註冊時間</td></tr>
+      <tr><td class="k">last_login_at</td><td class="k">timestamptz</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>phone</code>、<code>email</code> 至少要有一個有值，兩者皆可作登入識別，但都不是主鍵。</p>
+
+  <h3>xingfu_profiles（私版範例：幸福關係）</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>PK</td></tr>
+      <tr><td class="k">user_id</td><td class="k">uuid</td><td>來自公版 <code>users.id</code>，透過 SSO 換取，非資料庫外鍵</td></tr>
+      <tr><td class="k">nickname</td><td class="k">text</td><td>私版暱稱，如 steve</td></tr>
+      <tr><td class="k">mbti</td><td class="k">text</td><td>如 ENTJ</td></tr>
+      <tr><td class="k">partner_profile_id</td><td class="k">uuid</td><td>配對對象，自參考本表</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note warn">
+    <span class="h">待改動</span>
+    目前公版「用戶管理」頁面顯示的暱稱／MBTI 欄位、以及舊資料庫殘留欄位（到期日、方案名稱等），要整批移出公版 <code>users</code>，改為私版自己的表；公版 <code>users</code> 清空重建，資料庫內容只留測試用的 4 個帳號。
+  </div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16">
+  <div class="sec-head"><span class="sec-num">16</span><h2>Token 用量 Handshake</h2></div>
+  <p class="lead">私版各自產生的 token 用量，要即時回報回公版彙總，作為對外（跟金流商對帳）唯一真實來源——不是私版各算各的。</p>
+
+  <figure>
+    <figcaption><b>圖 16.1</b> 私版用量回報到公版彙總</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="60" width="150" height="70" rx="2" class="box-t"/>
+      <text x="85" y="90" text-anchor="middle" class="nt">私版對話</text>
+      <text x="85" y="108" text-anchor="middle" class="nl">AI API 回傳 usage</text>
+
+      <path d="M160 95 L190 95" class="ln" marker-end="url(#a)"/>
+      <rect x="190" y="60" width="180" height="70" rx="2" class="box"/>
+      <text x="280" y="86" text-anchor="middle" class="ns">回報</text>
+      <text x="280" y="106" text-anchor="middle" class="nm">POST /api/public/</text>
+      <text x="280" y="120" text-anchor="middle" class="nm">usage/report</text>
+
+      <path d="M370 95 L400 95" class="ln-t" marker-end="url(#at)"/>
+      <rect x="400" y="60" width="190" height="70" rx="2" class="box-n"/>
+      <text x="495" y="86" text-anchor="middle" class="nt">公版 ai_usage_logs</text>
+      <text x="495" y="106" text-anchor="middle" class="nl">累加 input/output tokens</text>
+
+      <path d="M590 95 L620 95" class="ln-t" marker-end="url(#at)"/>
+      <rect x="620" y="60" width="150" height="70" rx="2" class="box-g"/>
+      <text x="695" y="86" text-anchor="middle" class="nt">成本計算</text>
+      <text x="695" y="106" text-anchor="middle" class="nl">cost_usd → cost_ntd</text>
+
+      <path d="M770 95 L800 95" class="ln-r" marker-end="url(#ar)"/>
+      <rect x="800" y="60" width="90" height="70" rx="2" class="box-r"/>
+      <text x="845" y="90" text-anchor="middle" class="nt">對帳</text>
+      <text x="845" y="108" text-anchor="middle" class="nl">紅陽科技</text>
+
+      <rect x="10" y="150" width="880" height="34" rx="2" class="band"/>
+      <text x="26" y="172" class="nm">私版本地也可留一份用量記錄供自己呈現，但扣款與總成本永遠以公版彙總為準，避免雙重真實來源；回報失敗需重試／佇列，用量原則上不可回補</text>
+    </svg>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17">
+  <div class="sec-head"><span class="sec-num">17</span><h2>試用期與訂閱定案</h2></div>
+  <p class="lead">第 13 節列為待確認事項的試用期天數，已於 2026-08-09 會議定案：<b>7 天免費試用</b>，不再是開放問題。</p>
+
+  <figure>
+    <figcaption><b>圖 17.1</b> 試用期時間軸</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg">
+      <line x1="40" y1="110" x2="860" y2="110" stroke="#41525F" stroke-width="1.3" marker-end="url(#a)"/>
+
+      <line x1="100" y1="96" x2="100" y2="124" stroke="#0F1720" stroke-width="1.5"/>
+      <text x="100" y="88" text-anchor="middle" class="nm">D0</text>
+      <text x="100" y="142" text-anchor="middle" class="nl">註冊完成・trial 開始</text>
+
+      <line x1="500" y1="96" x2="500" y2="124" stroke="#B07A16" stroke-width="1.5"/>
+      <text x="500" y="88" text-anchor="middle" class="nm" fill="#B07A16">D7</text>
+      <text x="500" y="142" text-anchor="middle" class="nl">試用期滿</text>
+
+      <path d="M500 124 C 500 150 420 150 400 156" class="ln-t" marker-end="url(#at)"/>
+      <rect x="300" y="156" width="220" height="44" rx="2" class="box-n"/>
+      <text x="410" y="174" text-anchor="middle" class="ns">已綁卡</text>
+      <text x="410" y="190" text-anchor="middle" class="nl">自動扣款・重算 30 天週期</text>
+
+      <path d="M500 124 C 500 150 620 150 640 156" class="ln-r" marker-end="url(#ar)"/>
+      <rect x="640" y="156" width="220" height="44" rx="2" class="box-r"/>
+      <text x="750" y="174" text-anchor="middle" class="ns">未綁卡／扣款失敗</text>
+      <text x="750" y="190" text-anchor="middle" class="nl">expired・提示訂閱</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">subscriptions.status</td><td>新增起始狀態 <code>trial</code></td></tr>
+      <tr><td class="k">trial_end_at</td><td>註冊時間 + 7 天</td></tr>
+      <tr><td class="k">trial_quota</td><td>試用期間對話／使用次數上限，<b>500 次</b>（已定案）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note">
+    <span class="h">已定案</span>
+    試用期間對話／使用次數設限 <b>500 次</b>，用盡即比照額度用盡的阻擋邏輯（見第 7 節），提示升級或等待正式訂閱。
+  </div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18">
+  <div class="sec-head"><span class="sec-num">18</span><h2>APP 管理與私版後台入口</h2></div>
+  <p class="lead">後台「APP 管理」列表要能一鍵跳到該 APP 的私版後台，不用公版自己猜網址規則。</p>
+
+  <figure>
+    <figcaption><b>圖 18.1</b> 從 APP 管理跳轉私版後台</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="220" height="60" rx="2" class="box"/>
+      <text x="140" y="54" text-anchor="middle" class="nt">APP 管理列表</text>
+      <text x="140" y="72" text-anchor="middle" class="nl">每一列一支 APP</text>
+
+      <path d="M250 60 L320 60" class="ln" marker-end="url(#a)"/>
+      <rect x="320" y="30" width="180" height="60" rx="2" class="box-t"/>
+      <text x="410" y="54" text-anchor="middle" class="nt">前往後台</text>
+      <text x="410" y="72" text-anchor="middle" class="nl">按鈕・開新分頁</text>
+
+      <path d="M500 60 L570 60" class="ln-t" marker-end="url(#at)"/>
+      <rect x="570" y="30" width="300" height="60" rx="2" class="box-r"/>
+      <text x="720" y="54" text-anchor="middle" class="nt">私版後台</text>
+      <text x="720" y="72" text-anchor="middle" class="nl">admin_url，如 https://xxx.app/manage</text>
+    </svg>
+    </div>
+  </figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>資料表</th><th>欄位</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k">apps</td><td class="k">admin_url</td><td>私版後台網址，由私版登記 APP 時自行填入</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>網址慣例建議：私版後台統一以 <code>/manage</code> 結尾；公版不用猜或自己組字串，直接讀 <code>admin_url</code>。</p>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19">
+  <div class="sec-head"><span class="sec-num">19</span><h2>開發文件（白皮書）</h2></div>
+  <p class="lead">未來新私版 APP 加入時，照白皮書自行串接公版三件事（會員、交易、用量），不用每次口頭溝通。</p>
+
+  <ul class="pl">
+    <li>用量回報 API 規格（對應第 16 節）</li>
+    <li>會員身分 API 規格（對應第 15 節）</li>
+    <li>金鑰／環境變數取得方式</li>
+  </ul>
+
+  <h3>dev_docs</h3>
+  <div class="tw"><table>
+    <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="k pk">id</td><td class="k">uuid</td><td>PK</td></tr>
+      <tr><td class="k">title</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">file_url</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">version</td><td class="k">text</td><td></td></tr>
+      <tr><td class="k">updated_at</td><td class="k">timestamptz</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note">
+    <span class="h">後台位置</span>
+    「開發文件」頁籤（admin only），可上傳／管理文件並提供下載連結。
+  </div>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20">
+  <div class="sec-head"><span class="sec-num">20</span><h2>前台註冊登入流程</h2></div>
+  <p class="lead">註冊一步完成，登入提供 Email／手機兩種方式並存。使用者主鍵一律是系統產生的 UUID（對應第 15 節），email／手機只是登入識別欄位。</p>
+
+  <figure>
+    <figcaption><b>圖 20.1</b> 註冊（一步）與登入（雙軌）</figcaption>
+    <div class="fig-body">
+    <svg class="d" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="30" width="380" height="60" rx="2" class="box-t"/>
+      <text x="230" y="54" text-anchor="middle" class="nt">註冊（一步完成）</text>
+      <text x="230" y="72" text-anchor="middle" class="nl">邀請碼 + 姓名 + email + 密碼</text>
+
+      <path d="M230 90 L230 120" class="ln-t" marker-end="url(#at)"/>
+      <rect x="40" y="120" width="380" height="50" rx="2" class="box-n"/>
+      <text x="230" y="150" text-anchor="middle" class="ns">建立 users 記錄・不需簡訊驗證</text>
+
+      <path d="M650 40 L730 80 L650 120 L570 80 Z" class="box-g"/>
+      <text x="650" y="76" text-anchor="middle" class="ns">登入方式？</text>
+      <text x="650" y="94" text-anchor="middle" class="nl">Email / 手機</text>
+
+      <path d="M600 105 L560 150" class="ln" marker-end="url(#a)"/>
+      <path d="M700 105 L740 150" class="ln" marker-end="url(#a)"/>
+
+      <rect x="480" y="150" width="160" height="50" rx="2" class="box"/>
+      <text x="560" y="180" text-anchor="middle" class="ns">Email 登入</text>
+
+      <rect x="700" y="150" width="180" height="50" rx="2" class="box"/>
+      <text x="790" y="180" text-anchor="middle" class="ns">手機登入（OTP）</text>
+
+      <path d="M560 200 L620 230" class="ln-t" marker-end="url(#at)"/>
+      <path d="M790 200 L740 230" class="ln-t" marker-end="url(#at)"/>
+
+      <rect x="560" y="230" width="260" height="44" rx="2" class="box-n"/>
+      <text x="690" y="256" text-anchor="middle" class="nt">取得 session</text>
+    </svg>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 21 ============ -->
+<section id="s21">
+  <div class="sec-head"><span class="sec-num">21</span><h2>待確認事項（公版）</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>問題</th><th>本文件暫定</th></tr></thead>
+    <tbody>
+      <tr><td class="k">01</td><td>公版角色是否只要 admin / staff 兩級</td><td>暫定兩級，其餘角色歸私版</td></tr>
+      <tr><td class="k">02</td><td>用量回報失敗的重試策略</td><td>未定，需指定重試次數與間隔</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+</div>
+
+<footer>羽升幸福養成學苑 · 後台技術文件 v2.1（含公版補充） · 2026-08-09</footer>
+
+</body>
+</html>
