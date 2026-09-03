@@ -1,0 +1,782 @@
+<title>NUWA × nexthappy 整合藍圖</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f2f2f5; --surface:#ffffff; --surface-2:#fafafa;
+    --ink:#201e2b; --muted:#6b6878; --faint:#928da0;
+    --line:rgba(32,30,43,.12); --line-strong:rgba(32,30,43,.22);
+    --nuwa:#8b6483; --nuwa-ink:#5c4056; --nuwa-soft:#f1e9ef; --nuwa-line:rgba(139,100,131,.35);
+    --happy:#c9642f; --happy-ink:#8a4116; --happy-soft:#fbeee5; --happy-line:rgba(201,100,47,.35);
+    --ok:#3f7d5c; --ok-soft:#e7f2ec;
+    --warn:#a5741f; --warn-soft:#fbf1de;
+    --shadow: 0 1px 2px rgba(32,30,43,.04), 0 8px 24px -12px rgba(32,30,43,.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#18161f; --surface:#221f2c; --surface-2:#272432;
+      --ink:#edeaf2; --muted:#a79fb0; --faint:#7c7688;
+      --line:rgba(237,234,242,.13); --line-strong:rgba(237,234,242,.24);
+      --nuwa:#cba6c3; --nuwa-ink:#eddaea; --nuwa-soft:#332a34; --nuwa-line:rgba(203,166,195,.35);
+      --happy:#ee9a64; --happy-ink:#ffdcc0; --happy-soft:#3a2a20; --happy-line:rgba(238,154,100,.4);
+      --ok:#7ecba3; --ok-soft:#1f332a;
+      --warn:#e0b25e; --warn-soft:#332a1a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#18161f; --surface:#221f2c; --surface-2:#272432;
+    --ink:#edeaf2; --muted:#a79fb0; --faint:#7c7688;
+    --line:rgba(237,234,242,.13); --line-strong:rgba(237,234,242,.24);
+    --nuwa:#cba6c3; --nuwa-ink:#eddaea; --nuwa-soft:#332a34; --nuwa-line:rgba(203,166,195,.35);
+    --happy:#ee9a64; --happy-ink:#ffdcc0; --happy-soft:#3a2a20; --happy-line:rgba(238,154,100,.4);
+    --ok:#7ecba3; --ok-soft:#1f332a;
+    --warn:#e0b25e; --warn-soft:#332a1a;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans','Noto Sans TC',system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;
+    font-size:15.5px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces','Noto Serif TC',serif; font-weight:600; text-wrap:balance; color:var(--ink); margin:0;}
+  code, .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--happy-soft);}
+
+  /* ── Top nav ───────────────────────── */
+  .topnav{
+    position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+  }
+  .topnav-inner{
+    max-width:1080px; margin:0 auto; padding:12px 24px;
+    display:flex; align-items:center; gap:22px; overflow-x:auto;
+  }
+  .topnav .brand{font-family:'Fraunces',serif; font-weight:600; font-size:14.5px; white-space:nowrap; flex-shrink:0;}
+  .topnav .brand .x{color:var(--faint); margin:0 3px; font-weight:400;}
+  .topnav nav{display:flex; gap:2px; flex-wrap:nowrap;}
+  .topnav nav a{
+    font-size:12.5px; color:var(--muted); text-decoration:none; padding:7px 11px; border-radius:7px;
+    white-space:nowrap; transition:background .15s, color .15s;
+  }
+  .topnav nav a:hover{background:var(--surface-2); color:var(--ink);}
+
+  /* ── Layout shell ───────────────────────── */
+  .wrap{max-width:880px; margin:0 auto; padding:0 24px;}
+  .wrap-wide{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+  /* ── Hero ───────────────────────── */
+  .hero{padding:54px 0 8px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-size:11.5px; font-weight:600;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-bottom:16px;
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--happy);}
+  .hero h1{font-size:clamp(28px,4.2vw,40px); line-height:1.15; max-width:16ch;}
+  .hero .lede{
+    margin-top:16px; font-size:16.5px; line-height:1.65; color:var(--muted); max-width:62ch;
+  }
+  .hero .lede b{color:var(--ink); font-weight:600;}
+
+  .legend{display:flex; gap:18px; margin-top:26px; flex-wrap:wrap;}
+  .legend-item{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted);}
+  .legend-swatch{width:13px; height:13px; border-radius:4px; flex-shrink:0;}
+  .legend-swatch.nuwa{background:var(--nuwa);}
+  .legend-swatch.happy{background:var(--happy);}
+  .legend-swatch.both{background:linear-gradient(135deg, var(--nuwa) 50%, var(--happy) 50%);}
+
+  /* ── Chips ───────────────────────── */
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600;
+    padding:3px 9px; border-radius:99px; white-space:nowrap; line-height:1.5;
+  }
+  .chip.nuwa{background:var(--nuwa-soft); color:var(--nuwa-ink);}
+  .chip.happy{background:var(--happy-soft); color:var(--happy-ink);}
+  .chip.ok{background:var(--ok-soft); color:var(--ok);}
+  .chip.warn{background:var(--warn-soft); color:var(--warn);}
+
+  /* ── Sections ───────────────────────── */
+  section{padding:56px 0; border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:8px; flex-wrap:wrap;}
+  .sec-num{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--faint); font-weight:500;}
+  section h2{font-size:clamp(21px,2.6vw,26px);}
+  .sec-dek{color:var(--muted); font-size:14.5px; max-width:62ch; margin-top:10px; line-height:1.65;}
+
+  /* ── Flow table (user journey) ───────────────────────── */
+  .flow{margin-top:30px; display:flex; flex-direction:column;}
+  .flow-row{
+    display:grid; grid-template-columns:34px 108px 1fr; gap:16px; align-items:start;
+    padding:14px 0; border-top:1px solid var(--line);
+  }
+  .flow-row:first-child{border-top:none;}
+  .flow-step{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--faint); font-weight:500;
+    padding-top:3px;
+  }
+  .flow-sys{padding-top:1px;}
+  .flow-body b{display:block; font-size:14.5px; font-weight:600; margin-bottom:3px;}
+  .flow-body span{font-size:13px; color:var(--muted); line-height:1.55;}
+
+  /* ── Compare cards (Mode A / Mode B) ───────────────────────── */
+  .compare{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-top:28px;}
+  .compare-col{background:var(--surface); padding:22px 24px;}
+  .compare-col h3{font-size:17px; margin-bottom:2px;}
+  .compare-col .sub{font-size:12px; color:var(--faint); margin-bottom:16px;}
+  .compare-field{padding:10px 0; border-top:1px solid var(--line);}
+  .compare-field:first-of-type{border-top:none;}
+  .compare-field .k{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); margin-bottom:4px;}
+  .compare-field .v{font-size:13.5px; line-height:1.55;}
+  .compare-field .v code{font-size:12px; background:var(--surface-2); padding:1px 5px; border-radius:4px;}
+  @media (max-width:680px){ .compare{grid-template-columns:1fr;} }
+
+  /* ── Admin comparison ───────────────────────── */
+  .admin-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:28px;}
+  @media (max-width:680px){ .admin-grid{grid-template-columns:1fr;} }
+  .admin-card{border:1px solid var(--line); border-radius:14px; padding:22px 24px; background:var(--surface);}
+  .admin-card.nuwa{border-color:var(--nuwa-line);}
+  .admin-card.happy{border-color:var(--happy-line);}
+  .admin-card h3{font-size:16px; margin-bottom:3px;}
+  .admin-card .tag{font-size:12px; color:var(--faint); margin-bottom:14px;}
+  .admin-card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .admin-card li{font-size:13px; line-height:1.5; padding-left:16px; position:relative; color:var(--muted);}
+  .admin-card li::before{content:"—"; position:absolute; left:0; color:var(--faint);}
+  .warning-box{
+    margin-top:20px; border:1px solid var(--warn-soft); background:var(--warn-soft); border-radius:12px;
+    padding:14px 18px; font-size:13.5px; line-height:1.6; color:var(--warn);
+  }
+  .warning-box b{font-weight:700;}
+
+  /* ── Figures ───────────────────────── */
+  figure{margin:34px 0 0;}
+  .figure-wide{max-width:1080px; margin-left:auto; margin-right:auto;}
+  .diagram-frame{
+    border:1px solid var(--line); border-radius:16px; background:var(--surface);
+    padding:28px clamp(12px,4vw,32px); overflow-x:auto; box-shadow:var(--shadow);
+  }
+  .diagram-frame svg{display:block; margin:0 auto; max-width:100%; height:auto; color:var(--ink);}
+  figcaption{margin-top:12px; font-size:12.5px; color:var(--muted); text-align:center; line-height:1.5;}
+  figcaption b{color:var(--ink); font-weight:600;}
+
+  /* ── DB field tables ───────────────────────── */
+  .db-block{margin-top:38px;}
+  .db-head{display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;}
+  .db-name{font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:600;}
+  .db-note{font-size:12.5px; color:var(--muted);}
+  .table-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:12px;}
+  table{width:100%; border-collapse:collapse; font-size:12.8px; min-width:520px;}
+  thead th{
+    text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint);
+    font-weight:600; padding:9px 14px; background:var(--surface-2); border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  tbody td{padding:9px 14px; border-top:1px solid var(--line); vertical-align:top; color:var(--muted);}
+  tbody tr:first-child td{border-top:none;}
+  tbody td.field{font-family:'IBM Plex Mono',monospace; color:var(--ink); font-weight:500; white-space:nowrap;}
+  tbody td.type{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--faint); white-space:nowrap;}
+  tbody tr.pk td.field::after{content:" PK"; font-size:9.5px; color:var(--happy); font-weight:700;}
+  tbody tr.fk td.field::after{content:" FK"; font-size:9.5px; color:var(--nuwa); font-weight:700;}
+
+  footer{padding:40px 0 70px; border-top:1px solid var(--line); margin-top:20px;}
+  footer p{font-size:12.5px; color:var(--faint); line-height:1.7; max-width:60ch;}
+
+  @media (max-width:600px){
+    .flow-row{grid-template-columns:26px 1fr; }
+    .flow-sys{grid-column:2; order:1;}
+    .flow-body{grid-column:2; order:2;}
+    .flow-step{grid-row:1 / 3;}
+  }
+</style>
+
+<div class="topnav">
+  <div class="topnav-inner">
+    <div class="brand">NUWA<span class="x">×</span>nexthappy</div>
+    <nav>
+      <a href="#overview">總覽</a>
+      <a href="#user-flow">使用者流程</a>
+      <a href="#feature-flow">功能流程</a>
+      <a href="#admin-flow">管理者流程</a>
+      <a href="#data-flow">資料流</a>
+      <a href="#schema">資料庫欄位</a>
+      <a href="#erd">ERD</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+  <section id="overview" class="hero" style="border-top:none; padding-bottom:0;">
+    <div class="eyebrow"><span class="dot"></span>整合藍圖 · 2026-09-03</div>
+    <h1>NUWA 跟 nexthappy，是一個系統的兩半，不是兩個專案</h1>
+    <p class="lede">
+      NUWA 是母平台：帳號、金流、跨 App 用量統計都在這裡。<b>nexthappy</b>（幸福關係）只是掛在它底下的其中一個子系統，自己完全沒有登入、沒有訂閱管理、沒有付款——這些能力全部得靠跟 NUWA 的連結才存在。這份文件記錄兩邊怎麼串、資料怎麼流、資料庫長什麼樣。
+    </p>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-swatch nuwa"></span>NUWA（母平台）負責</div>
+      <div class="legend-item"><span class="legend-swatch happy"></span>nexthappy（子系統）負責</div>
+      <div class="legend-item"><span class="legend-swatch both"></span>兩邊都會碰到</div>
+    </div>
+  </section>
+
+  <section style="padding-top:40px;">
+    <figure class="figure-wide">
+      <div class="diagram-frame">
+        <svg viewBox="0 0 980 320" role="img" aria-label="系統邊界圖：NUWA 母平台涵蓋帳號、金流、課程商城與跨 App 用量統計；nexthappy 子系統只有 21 天練習與我卡住幫我拆兩個功能，兩邊靠 SSO 交接與用量回報這兩條線連接，中間以 nuwa_user_id 這個沒有資料庫外鍵、僅靠應用層邏輯對應的鬆散連結串起">
+          <defs>
+            <marker id="arrN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 Z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <!-- NUWA region -->
+          <rect x="24" y="24" width="380" height="272" rx="16" fill="var(--nuwa-soft)" stroke="var(--nuwa-line)" stroke-width="1.5"/>
+          <text x="46" y="56" font-family="Fraunces, serif" font-size="17" font-weight="600" fill="var(--nuwa-ink)">NUWA（母平台）</text>
+          <text x="46" y="76" font-size="11.5" fill="var(--nuwa-ink)" opacity="0.75">Laravel + MySQL・public schema</text>
+
+          <g font-size="12.5" fill="var(--ink)">
+            <rect x="46" y="94" width="150" height="34" rx="8" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+            <text x="121" y="115" text-anchor="middle">課程商城 + 註冊</text>
+            <rect x="210" y="94" width="150" height="34" rx="8" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+            <text x="285" y="115" text-anchor="middle">會員 + 登入</text>
+            <rect x="46" y="140" width="150" height="34" rx="8" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+            <text x="121" y="161" text-anchor="middle">訂閱方案 + 金流</text>
+            <rect x="210" y="140" width="150" height="34" rx="8" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+            <text x="285" y="161" text-anchor="middle">跨 App 用量統計</text>
+            <rect x="46" y="186" width="314" height="34" rx="8" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+            <text x="203" y="207" text-anchor="middle">後台管理（general_mgr，獨立權限）</text>
+          </g>
+          <text x="46" y="272" font-size="11" fill="var(--nuwa-ink)" opacity="0.7">資料表：public.users・apps・subscribe・ai_token_usage…</text>
+
+          <!-- happy region -->
+          <rect x="576" y="24" width="380" height="272" rx="16" fill="var(--happy-soft)" stroke="var(--happy-line)" stroke-width="1.5"/>
+          <text x="598" y="56" font-family="Fraunces, serif" font-size="17" font-weight="600" fill="var(--happy-ink)">nexthappy（子系統）</text>
+          <text x="598" y="76" font-size="11.5" fill="var(--happy-ink)" opacity="0.8">Next.js + Supabase・happy schema</text>
+
+          <g font-size="12.5" fill="var(--ink)">
+            <rect x="598" y="94" width="150" height="34" rx="8" fill="var(--surface)" stroke="var(--happy-line)"/>
+            <text x="673" y="115" text-anchor="middle">🌱 21 天練習</text>
+            <rect x="762" y="94" width="150" height="34" rx="8" fill="var(--surface)" stroke="var(--happy-line)"/>
+            <text x="837" y="115" text-anchor="middle">🤝 我卡住幫我拆</text>
+            <rect x="598" y="140" width="314" height="34" rx="8" fill="var(--surface)" stroke="var(--happy-line)"/>
+            <text x="755" y="161" text-anchor="middle">小羽老師 AI（OpenAI gpt-4o）</text>
+            <rect x="598" y="186" width="314" height="34" rx="8" fill="var(--surface)" stroke="var(--happy-line)"/>
+            <text x="755" y="207" text-anchor="middle">nexthappy 後台（/admin，獨立權限）</text>
+          </g>
+          <text x="598" y="272" font-size="11" fill="var(--happy-ink)" opacity="0.75">資料表：happy.users・journeys・conversations…</text>
+
+          <!-- connecting lines -->
+          <line x1="404" y1="90" x2="576" y2="90" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#arrN)"/>
+          <text x="490" y="80" text-anchor="middle" font-size="11.5" fill="var(--ink)">① SSO 交接（登入）</text>
+
+          <line x1="576" y1="230" x2="404" y2="230" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#arrN)"/>
+          <text x="490" y="220" text-anchor="middle" font-size="11.5" fill="var(--ink)">② 用量回報（成本歸戶）</text>
+
+          <line x1="490" y1="128" x2="490" y2="186" stroke="var(--faint)" stroke-width="1.2" stroke-dasharray="3 4"/>
+          <text x="490" y="163" text-anchor="middle" font-size="10.5" fill="var(--faint)" transform="rotate(-90 490 158)">nuwa_user_id・無 FK</text>
+        </svg>
+      </div>
+      <figcaption>兩邊只靠<b>兩條線</b>連接：① NUWA 簽發登入票、把人交給 nexthappy；② nexthappy 把 AI 用量回報回 NUWA 做成本歸戶。中間沒有第三條「即時同步」的線——這是刻意的鬆耦合設計。</figcaption>
+    </figure>
+  </section>
+
+  <section id="user-flow">
+    <div class="sec-head"><span class="sec-num">01</span><h2>使用者操作流程</h2></div>
+    <p class="sec-dek">從第一次看到課程卡片，到每天回來打卡，一個使用者會在兩個系統之間來回跳轉好幾次——但體感上應該像同一個 App。</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-step">01</div>
+        <div class="flow-sys"><span class="chip nuwa">NUWA</span></div>
+        <div class="flow-body"><b>瀏覽課程</b><span>首頁課程卡片：幸福關係 MBTI／鑽石人生／奇門遁甲曆</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">02</div>
+        <div class="flow-sys"><span class="chip nuwa">NUWA</span></div>
+        <div class="flow-body"><b>註冊帳號</b><span>手機號碼 + 簡訊驗證碼 + 密碼，需填邀請碼（內測階段）</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">03</div>
+        <div class="flow-sys"><span class="chip nuwa">NUWA</span></div>
+        <div class="flow-body"><b>登入 / 付款</b><span>手機 + 密碼登入；點「立即報名」進入課程或 AI 方案付款流程</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">04</div>
+        <div class="flow-sys"><span class="chip nuwa">NUWA</span><span class="chip happy" style="margin-left:4px;">nexthappy</span></div>
+        <div class="flow-body"><b>點「開始使用」→ SSO 交接</b><span>NUWA 簽一張短效 JWT，把使用者送進 nexthappy 的 <code>/sso</code>（詳見「資料流」章節）</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">05</div>
+        <div class="flow-sys"><span class="chip happy">nexthappy</span></div>
+        <div class="flow-body"><b>首次導引</b><span>6 頁 Welcome carousel：介紹兩種模式、訂閱方案、怎麼拿邀請碼</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">06</div>
+        <div class="flow-sys"><span class="chip happy">nexthappy</span></div>
+        <div class="flow-body"><b>快速設定（2 步）</b><span>認識小羽老師 → 選自己的 MBTI + 暱稱，完成後直接進「我卡住幫我拆」</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">07</div>
+        <div class="flow-sys"><span class="chip happy">nexthappy</span></div>
+        <div class="flow-body"><b>（可選）開一輪 21 天練習</b><span>4 步 onboarding：關係類型 + 對方 MBTI + 目標 + 幫這輪取名</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">08</div>
+        <div class="flow-sys"><span class="chip happy">nexthappy</span></div>
+        <div class="flow-body"><b>每日互動</b><span>21 天練習：晨間任務 + 晚間打卡複盤；我卡住：隨時開新主題找小羽老師拆解</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">09</div>
+        <div class="flow-sys"><span class="chip happy">nexthappy</span></div>
+        <div class="flow-body"><b>查看進度</b><span><code>/progress</code>：21 天日曆、心情趨勢、徽章</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">10</div>
+        <div class="flow-sys"><span class="chip happy">nexthappy</span><span class="chip nuwa" style="margin-left:4px;">NUWA</span></div>
+        <div class="flow-body"><b>管理訂閱</b><span>nexthappy 側欄「回到 NUWA」——升降級、取消、付款全部在 NUWA 處理，nexthappy 自己不做這件事</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-flow">
+    <div class="sec-head"><span class="sec-num">02</span><h2>功能操作流程</h2></div>
+    <p class="sec-dek">nexthappy 的核心是兩個彼此獨立、AI 不互通的對話模式。</p>
+
+    <div class="compare">
+      <div class="compare-col">
+        <h3>🌱 21 天練習</h3>
+        <div class="sub">Mode A・固定對象、固定節奏</div>
+
+        <div class="compare-field">
+          <div class="k">觸發</div>
+          <div class="v">完成 <code>/onboarding/practice</code> 4 步設定後自動開始 Day 0</div>
+        </div>
+        <div class="compare-field">
+          <div class="k">資料表</div>
+          <div class="v"><code>journeys</code>（輪次）→ <code>conversations</code>（<code>day_number</code> 分天）→ <code>daily_records</code>（打卡）→ <code>daily_memories</code>（AI 萃取記憶）</div>
+        </div>
+        <div class="compare-field">
+          <div class="k">AI 行為</div>
+          <div class="v">依 <code>day_number</code> 帶入當天課程內容，開場白 + 最多 2-3 輪 soft probe</div>
+        </div>
+        <div class="compare-field">
+          <div class="k">特殊機制</div>
+          <div class="v">晚間「完成今日」彈窗記心情分數 + 日記 → 觸發積分與徽章</div>
+        </div>
+      </div>
+      <div class="compare-col">
+        <h3>🤝 我卡住，幫我拆</h3>
+        <div class="sub">Mode B・任何對象、當下卡點</div>
+
+        <div class="compare-field">
+          <div class="k">觸發</div>
+          <div class="v">隨時可用，<b>不需要</b>先有 21 天 journey（trier-first）</div>
+        </div>
+        <div class="compare-field">
+          <div class="k">資料表</div>
+          <div class="v"><code>conversations</code>（<code>context_type='consultant'</code>，<code>journey_id</code> 可為 <code>NULL</code>），多主題並存</div>
+        </div>
+        <div class="compare-field">
+          <div class="k">AI 行為</div>
+          <div class="v">LEAD → PROBE → HOOK 三段式，累計對話輪數決定要不要軟性帶出 MBTI 術語</div>
+        </div>
+        <div class="compare-field">
+          <div class="k">特殊機制</div>
+          <div class="v">第一句話送出後，用 <code>gpt-4o-mini</code> 自動幫主題取 5-15 字標題；可封存 / 復原</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="admin-flow">
+    <div class="sec-head"><span class="sec-num">03</span><h2>管理者操作流程</h2></div>
+    <p class="sec-dek">兩套後台，各自的「管理員」完全不是同一群人——這點在程式碼註解裡被明確強調過。</p>
+
+    <div class="admin-grid">
+      <div class="admin-card nuwa">
+        <h3>NUWA 後台</h3>
+        <div class="tag"><code class="mono">general_mgr</code>・CodeIgniter・舊系統</div>
+        <ul>
+          <li>店家 / 管理員帳號（<code class="mono">Store_admin</code>）——通用多商家框架，非 nexthappy 專屬</li>
+          <li>系統設定（驗證信模板、App 版本號）</li>
+          <li>課程 / 服務 / 訂閱資料表管理</li>
+          <li>權限判斷：<code class="mono">Store_admin</code> 帳號，跟 nexthappy 的 <code class="mono">is_admin</code> 無關</li>
+        </ul>
+      </div>
+      <div class="admin-card happy">
+        <h3>nexthappy 後台</h3>
+        <div class="tag"><code class="mono">/admin</code>・Next.js・12 個模組</div>
+        <ul>
+          <li>Dashboard・學員管理・Journey 管理・對話歷史</li>
+          <li>諮詢主題・課程內容（唯讀）・邀請碼管理</li>
+          <li>訂閱管理（手動改方案）・用量／成本追蹤</li>
+          <li>規格文件・AI Prompt 檢視・系統設定（Admin 名單 + Audit Log）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <b>⚠️ 兩套權限不互通。</b>NUWA 的管理員登入 NUWA 後台，不會自動拿到 nexthappy 後台的權限；反之亦然。要進 nexthappy <code class="mono">/admin</code>，一定要 <code class="mono">happy.users.is_admin = true</code>，這個欄位跟 NUWA 那邊誰是管理員完全無關。
+    </div>
+  </section>
+
+  <section id="data-flow">
+    <div class="sec-head"><span class="sec-num">04</span><h2>系統內部資料流程</h2></div>
+    <p class="sec-dek">兩條真正跨系統的資料通道：登入時的 SSO 交接，以及每次 AI 對話後的用量回報。</p>
+
+    <figure>
+      <div class="diagram-frame">
+        <svg viewBox="0 0 900 430" role="img" aria-label="SSO 交接序列圖：NUWA 簽發 JWT 並導向瀏覽器，瀏覽器帶著 token 打 nexthappy 的 /sso 端點，nexthappy 驗證簽章與效期後，查詢或建立 happy.users 資料列，檢查是否停權，最後設定 30 天的 session cookie 並導向對應頁面">
+          <defs>
+            <marker id="arrS" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 Z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <!-- lifelines -->
+          <text x="110" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="var(--nuwa-ink)">NUWA</text>
+          <line x1="110" y1="40" x2="110" y2="410" stroke="var(--nuwa-line)" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+          <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">瀏覽器</text>
+          <line x1="450" y1="40" x2="450" y2="410" stroke="var(--line-strong)" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+          <text x="790" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="var(--happy-ink)">nexthappy</text>
+          <line x1="790" y1="40" x2="790" y2="410" stroke="var(--happy-line)" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+          <!-- step 1: NUWA -> browser -->
+          <line x1="110" y1="72" x2="440" y2="72" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrS)"/>
+          <text x="120" y="63" font-size="11.5" fill="var(--ink)">① 302 redirect + JWT（HS256，共用 SSO_SECRET）</text>
+          <text x="120" y="88" font-size="10" fill="var(--muted)" class="mono">sub=nuwa_user_id, app='happy', exp</text>
+
+          <!-- step 2: browser -> nexthappy -->
+          <line x1="450" y1="122" x2="780" y2="122" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrS)"/>
+          <text x="460" y="113" font-size="11.5" fill="var(--ink)">② GET /sso?token=…</text>
+
+          <!-- step 3: self-call verify -->
+          <rect x="790" y="140" width="90" height="30" rx="7" fill="var(--happy-soft)" stroke="var(--happy-line)"/>
+          <text x="835" y="159" text-anchor="middle" font-size="10.5" fill="var(--happy-ink)">驗簽章 + exp</text>
+          <line x1="790" y1="185" x2="880" y2="185" stroke="var(--happy-line)" stroke-width="1.2"/>
+          <path d="M880,185 L880,200 L790,200" fill="none" stroke="var(--happy-line)" stroke-width="1.2" marker-end="url(#arrS)"/>
+
+          <!-- step 4: query/create user -->
+          <rect x="720" y="222" width="160" height="34" rx="8" fill="var(--surface-2)" stroke="var(--happy-line)"/>
+          <text x="800" y="243" text-anchor="middle" font-size="11" fill="var(--ink)">查/建 happy.users</text>
+          <text x="620" y="215" font-size="11" fill="var(--muted)" text-anchor="end">③ 依 nuwa_user_id 查找，找不到就建立新帳號</text>
+
+          <!-- step 5: check suspended -->
+          <text x="620" y="278" font-size="11" fill="var(--muted)" text-anchor="end">④ 檢查 suspended_at——停權者在此被擋下</text>
+
+          <!-- step 6: nexthappy -> browser cookie -->
+          <line x1="790" y1="330" x2="460" y2="330" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrS)"/>
+          <text x="470" y="315" font-size="11.5" fill="var(--ink)">⑤ Set-Cookie: happy_session（30 天）+ 302</text>
+          <text x="470" y="345" font-size="10" fill="var(--muted)">導向 /chat（有 MBTI）或 /onboarding（沒有）或 /admin</text>
+
+          <!-- step 7: browser -> subsequent -->
+          <line x1="450" y1="384" x2="780" y2="384" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrS)"/>
+          <text x="460" y="375" font-size="11.5" fill="var(--ink)">⑥ 後續請求自動帶 cookie，正常使用</text>
+        </svg>
+      </div>
+      <figcaption><b>SSO 交接</b>：登入身分的真值一直留在 NUWA，nexthappy 只負責驗證 NUWA 簽發的票、並在本地建立對應帳號。這也是本機開發時 <code class="mono">dev-login.mjs</code> 要「冒充 NUWA」自己簽一張同格式 token 的原因。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="diagram-frame">
+        <svg viewBox="0 0 860 220" role="img" aria-label="用量回報流程圖：nexthappy 完成一次 AI 呼叫後，計算輸入輸出 token 總數，透過限定 public schema 的 service role 用戶端查詢 App ID，再把這筆用量寫入 NUWA 的 ai_token_usage 資料表，讓 NUWA 能做跨 App 成本歸戶">
+          <defs>
+            <marker id="arrU" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 Z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect x="16" y="70" width="188" height="72" rx="10" fill="var(--happy-soft)" stroke="var(--happy-line)"/>
+          <text x="110" y="101" text-anchor="middle" font-size="12.5" fill="var(--happy-ink)" font-weight="600">AI 回覆完成</text>
+          <text x="110" y="121" text-anchor="middle" font-size="10.5" fill="var(--happy-ink)" opacity="0.85">/api/ai/chat｜/consultant</text>
+
+          <line x1="204" y1="106" x2="278" y2="106" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrU)"/>
+          <text x="241" y="95" text-anchor="middle" font-size="10.5" fill="var(--muted)">算 tokens_used</text>
+
+          <rect x="286" y="70" width="210" height="72" rx="10" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="391" y="98" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">getMarketClient()</text>
+          <text x="391" y="118" text-anchor="middle" font-size="10.5" fill="var(--muted)" class="mono">service_role・schema=public</text>
+          <text x="391" y="134" text-anchor="middle" font-size="9.5" fill="var(--faint)">（只讀 NUWA 資料，nexthappy 不寫回帳號）</text>
+
+          <line x1="391" y1="20" x2="391" y2="68" stroke="var(--nuwa-line)" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#arrU)"/>
+          <text x="391" y="14" text-anchor="middle" font-size="10.5" fill="var(--nuwa-ink)">先查 public.apps（slug='happy'）拿 app_id</text>
+
+          <line x1="496" y1="106" x2="596" y2="106" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrU)"/>
+          <text x="546" y="95" text-anchor="middle" font-size="10.5" fill="var(--muted)">INSERT</text>
+
+          <rect x="604" y="70" width="240" height="72" rx="10" fill="var(--nuwa-soft)" stroke="var(--nuwa-line)"/>
+          <text x="724" y="101" text-anchor="middle" font-size="12.5" fill="var(--nuwa-ink)" font-weight="600" class="mono">public.ai_token_usage</text>
+          <text x="724" y="121" text-anchor="middle" font-size="10" fill="var(--nuwa-ink)" opacity="0.85">user_id・app_id・tokens_used・cost_twd</text>
+
+          <text x="430" y="195" text-anchor="middle" font-size="11" fill="var(--muted)">失敗只 log、不阻塞對話——這是「回報」，不是主流程</text>
+        </svg>
+      </div>
+      <figcaption><b>用量回報</b>：讓 NUWA 能以會員為單位，彙總他在<b>各個</b> App（不只 nexthappy）花費的 AI 成本——這是「多子系統共用一個母平台」架構存在的實際理由之一。</figcaption>
+    </figure>
+  </section>
+</div>
+
+<section id="schema">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>資料庫欄位</h2></div>
+    <p class="sec-dek">只列結構上重要的欄位，不是完整 DDL。<span class="chip happy">happy schema</span> 是 nexthappy 自己的資料；<span class="chip nuwa" style="margin-left:4px;">public schema</span> 是這次為了讓 nexthappy 能跑起來、另外補的最小化 NUWA stub。</p>
+  </div>
+
+  <div class="wrap-wide">
+    <div class="db-block">
+      <div class="db-head"><span class="db-name">happy.users</span><span class="chip happy">happy</span><span class="db-note">帳號主檔・SSO 建立，沒有真正密碼</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr class="pk"><td class="field">id</td><td class="type">uuid</td><td>私版帳號主鍵</td></tr>
+          <tr><td class="field">email</td><td class="type">text</td><td>SSO 帶入或本地 fallback</td></tr>
+          <tr><td class="field">password_hash</td><td class="type">text</td><td>SSO 帳號放隨機佔位值，無法用密碼登入</td></tr>
+          <tr><td class="field">nuwa_user_id</td><td class="type">uuid・唯一索引</td><td>指向 public.users.id，<b>刻意不設 FK</b>（見下方說明）</td></tr>
+          <tr><td class="field">current_plan</td><td class="type">text</td><td>本地 fallback，真值在 NUWA</td></tr>
+          <tr><td class="field">mbti_self / confidence / set_at</td><td class="type">text / text / timestamptz</td><td>onboarding 填寫</td></tr>
+          <tr><td class="field">is_admin</td><td class="type">boolean</td><td>nexthappy 自己的後台權限，跟 NUWA 無關</td></tr>
+          <tr><td class="field">suspended_at</td><td class="type">timestamptz</td><td>停權時間，SSO 檢查這欄擋人</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="db-block">
+      <div class="db-head"><span class="db-name">happy.journeys</span><span class="chip happy">happy</span><span class="db-note">21 天練習的「一輪」，一個用戶可以有多輪</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr class="pk"><td class="field">id</td><td class="type">uuid</td><td></td></tr>
+          <tr class="fk"><td class="field">user_id</td><td class="type">uuid</td><td>→ happy.users.id</td></tr>
+          <tr><td class="field">relationship_type</td><td class="type">text</td><td>couple / parent_child / workplace</td></tr>
+          <tr><td class="field">partner_nickname / mbti_partner</td><td class="type">text / text</td><td></td></tr>
+          <tr><td class="field">goal_statement / initial_problem</td><td class="type">text</td><td>onboarding 時使用者自己寫的目標/困擾</td></tr>
+          <tr><td class="field">current_day</td><td class="type">int</td><td>0-21</td></tr>
+          <tr><td class="field">is_active / total_points</td><td class="type">boolean / int</td><td></td></tr>
+          <tr><td class="field">round_number / round_label</td><td class="type">int / text</td><td>第幾輪、自訂名稱</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="db-block">
+      <div class="db-head"><span class="db-name">happy.conversations</span><span class="chip happy">happy</span><span class="db-note">兩種模式共用同一張表，靠 context_type 區分</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr class="pk"><td class="field">id</td><td class="type">uuid</td><td></td></tr>
+          <tr class="fk"><td class="field">journey_id</td><td class="type">uuid・可為 null</td><td>→ happy.journeys.id；Mode B trier 模式沒有 journey</td></tr>
+          <tr class="fk"><td class="field">user_id</td><td class="type">uuid</td><td>→ happy.users.id</td></tr>
+          <tr><td class="field">day_number</td><td class="type">int</td><td>Mode A 才有意義，Mode B 固定 0</td></tr>
+          <tr><td class="field">context_type</td><td class="type">text</td><td>morning / evening / realtime / onboarding / consultant</td></tr>
+          <tr><td class="field">messages</td><td class="type">jsonb</td><td>[{role, content, timestamp}, …]</td></tr>
+          <tr><td class="field">topic_title / topic_started_at / archived_at</td><td class="type">text / timestamptz / timestamptz</td><td>Mode B 專用（多主題管理）</td></tr>
+          <tr><td class="field">source</td><td class="type">text</td><td>text / voice</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="db-block">
+      <div class="db-head"><span class="db-name">happy.daily_records / daily_memories</span><span class="chip happy">happy</span><span class="db-note">每天一列，Mode A 專用</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr class="fk"><td class="field">journey_id</td><td class="type">uuid</td><td>→ happy.journeys.id</td></tr>
+          <tr><td class="field">day_number</td><td class="type">int</td><td>複合唯一鍵 (journey_id, day_number)</td></tr>
+          <tr><td class="field">task_completed / completion_type</td><td class="type">boolean / text</td><td>success / partial / failed</td></tr>
+          <tr><td class="field">emotion_score / journal_text</td><td class="type">int / text</td><td>晚間複盤填寫</td></tr>
+          <tr><td class="field">emotion_note / task_result / partner_obs / key_insight / follow_up</td><td class="type">text ×5</td><td>daily_memories：AI 萃取的當日摘要</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="db-block">
+      <div class="db-head"><span class="db-name">happy.course_content</span><span class="chip happy">happy</span><span class="db-note">Day 0-21 固定課程內容，唯讀參考表</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>欄位</th><th>型別</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td class="field">day_number</td><td class="type">int・0-21</td><td>不是外鍵，被 journeys.current_day 依值查找</td></tr>
+          <tr><td class="field">theme / subtitle / course_unit</td><td class="type">text</td><td>course_unit 例：W1.觀(他)、W2.想(己)</td></tr>
+          <tr><td class="field">knowledge_point / today_task</td><td class="type">text</td><td>心法內容、今日任務</td></tr>
+          <tr><td class="field">evening_questions</td><td class="type">jsonb</td><td>晚間複盤的引導問題</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="db-block">
+      <div class="db-head"><span class="db-name">public.users / apps / ai_token_usage</span><span class="chip nuwa">public（stub）</span><span class="db-note">這次只建 nexthappy 真的會查的 3 張表，不是完整 NUWA v2</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>表</th><th>欄位</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td class="field">users</td><td class="type">id, phone, email, nickname, current_plan, plan_deadline, role</td><td>nexthappy 讀方案 / 個資</td></tr>
+          <tr><td class="field">apps</td><td class="type">id, slug, app_url, db_schema, sso_secret, status</td><td>SSO 驗證、查 app_id 用</td></tr>
+          <tr><td class="field">ai_token_usage</td><td class="type">user_id, app_id, tokens_used, cost_twd, date</td><td>nexthappy 每次 AI 呼叫後寫入</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section id="erd">
+    <div class="sec-head"><span class="sec-num">06</span><h2>ERD</h2></div>
+    <p class="sec-dek">整體是以 <code class="mono">users</code> 為根的一對多鏈，沒有真正的多對多。唯一特殊的是跨 schema 那條虛線——<b>刻意不設資料庫外鍵</b>，只在應用層用 <code class="mono">nuwa_user_id</code> 對應，理由寫在下方。</p>
+  </section>
+</div>
+
+<section style="border-top:none; padding-top:0;">
+  <figure class="figure-wide">
+    <div class="diagram-frame">
+      <svg viewBox="0 0 1000 660" role="img" aria-label="實體關聯圖：上方紫色區塊是 public schema 的三張表 users、apps、ai_token_usage；下方橘色區塊是 happy schema 的八張表，以 users 為根，向外一對多連到 journeys、conversations、invite_codes 與 admin_audit_logs，journeys 再一對多連到 conversations、daily_records、daily_memories、blindspot_records；course_content 是獨立的唯讀參考表；兩個 schema 之間唯一的橋樑是 users 到 users 的虛線，代表沒有外鍵、只在應用層依 nuwa_user_id 對應的一對零或一關係">
+        <defs>
+          <marker id="arrE" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- public schema region -->
+        <rect x="20" y="16" width="960" height="150" rx="14" fill="var(--nuwa-soft)" stroke="var(--nuwa-line)" stroke-width="1.4"/>
+        <text x="40" y="40" font-size="12" font-weight="700" letter-spacing="0.04em" fill="var(--nuwa-ink)">PUBLIC SCHEMA（NUWA）</text>
+
+        <rect x="60" y="56" width="180" height="86" rx="9" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+        <text x="150" y="76" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">users</text>
+        <line x1="72" y1="84" x2="228" y2="84" stroke="var(--line)"/>
+        <text x="72" y="100" font-size="10" fill="var(--muted)" class="mono">id (PK)</text>
+        <text x="72" y="114" font-size="10" fill="var(--muted)" class="mono">current_plan</text>
+        <text x="72" y="128" font-size="10" fill="var(--muted)" class="mono">phone, email</text>
+
+        <rect x="410" y="56" width="180" height="86" rx="9" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+        <text x="500" y="76" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">apps</text>
+        <line x1="422" y1="84" x2="578" y2="84" stroke="var(--line)"/>
+        <text x="422" y="100" font-size="10" fill="var(--muted)" class="mono">id (PK)</text>
+        <text x="422" y="114" font-size="10" fill="var(--muted)" class="mono">slug (unique)</text>
+        <text x="422" y="128" font-size="10" fill="var(--muted)" class="mono">sso_secret</text>
+
+        <rect x="760" y="56" width="200" height="86" rx="9" fill="var(--surface)" stroke="var(--nuwa-line)"/>
+        <text x="860" y="76" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">ai_token_usage</text>
+        <line x1="772" y1="84" x2="948" y2="84" stroke="var(--line)"/>
+        <text x="772" y="100" font-size="10" fill="var(--muted)" class="mono">user_id (FK)</text>
+        <text x="772" y="114" font-size="10" fill="var(--muted)" class="mono">app_id (FK)</text>
+        <text x="772" y="128" font-size="10" fill="var(--muted)" class="mono">tokens_used, cost_twd</text>
+
+        <line x1="240" y1="99" x2="410" y2="99" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrE)"/>
+        <text x="325" y="92" text-anchor="middle" font-size="9.5" fill="var(--muted)">1:N</text>
+        <line x1="590" y1="99" x2="760" y2="99" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrE)"/>
+        <text x="675" y="92" text-anchor="middle" font-size="9.5" fill="var(--muted)">1:N</text>
+
+        <!-- cross-schema bridge -->
+        <line x1="150" y1="142" x2="150" y2="200" stroke="var(--faint)" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <text x="160" y="176" font-size="10" fill="var(--faint)">nuwa_user_id・1:0..1・無 FK（刻意）</text>
+
+        <!-- happy schema region -->
+        <rect x="20" y="200" width="960" height="440" rx="14" fill="var(--happy-soft)" stroke="var(--happy-line)" stroke-width="1.4"/>
+        <text x="40" y="224" font-size="12" font-weight="700" letter-spacing="0.04em" fill="var(--happy-ink)">HAPPY SCHEMA（nexthappy）</text>
+
+        <!-- users (root) -->
+        <rect x="60" y="240" width="180" height="92" rx="9" fill="var(--surface)" stroke="var(--happy-line)" stroke-width="1.6"/>
+        <text x="150" y="261" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)" class="mono">users</text>
+        <line x1="72" y1="269" x2="228" y2="269" stroke="var(--line)"/>
+        <text x="72" y="285" font-size="10" fill="var(--muted)" class="mono">id (PK)</text>
+        <text x="72" y="299" font-size="10" fill="var(--muted)" class="mono">nuwa_user_id (unique)</text>
+        <text x="72" y="313" font-size="10" fill="var(--muted)" class="mono">is_admin</text>
+        <text x="72" y="327" font-size="10" fill="var(--muted)" class="mono">mbti_self</text>
+
+        <!-- journeys -->
+        <rect x="330" y="240" width="180" height="72" rx="9" fill="var(--surface)" stroke="var(--happy-line)"/>
+        <text x="420" y="261" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">journeys</text>
+        <line x1="342" y1="269" x2="498" y2="269" stroke="var(--line)"/>
+        <text x="342" y="285" font-size="10" fill="var(--muted)" class="mono">id (PK) · user_id (FK)</text>
+        <text x="342" y="299" font-size="10" fill="var(--muted)" class="mono">current_day, is_active</text>
+
+        <!-- invite_codes -->
+        <rect x="60" y="360" width="180" height="66" rx="9" fill="var(--surface)" stroke="var(--happy-line)"/>
+        <text x="150" y="381" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">invite_codes</text>
+        <line x1="72" y1="389" x2="228" y2="389" stroke="var(--line)"/>
+        <text x="72" y="405" font-size="10" fill="var(--muted)" class="mono">code (PK) · used_by</text>
+
+        <!-- admin_audit_logs -->
+        <rect x="60" y="450" width="180" height="66" rx="9" fill="var(--surface)" stroke="var(--happy-line)"/>
+        <text x="150" y="471" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">admin_audit_logs</text>
+        <line x1="72" y1="479" x2="228" y2="479" stroke="var(--line)"/>
+        <text x="72" y="495" font-size="10" fill="var(--muted)" class="mono">admin_user_id (FK) · action</text>
+
+        <!-- conversations (linked from both users and journeys) -->
+        <rect x="330" y="360" width="180" height="86" rx="9" fill="var(--surface)" stroke="var(--happy-line)" stroke-width="1.6"/>
+        <text x="420" y="381" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)" class="mono">conversations</text>
+        <line x1="342" y1="389" x2="498" y2="389" stroke="var(--line)"/>
+        <text x="342" y="405" font-size="10" fill="var(--muted)" class="mono">journey_id (FK,可null)</text>
+        <text x="342" y="419" font-size="10" fill="var(--muted)" class="mono">user_id (FK) · context_type</text>
+
+        <!-- daily_records -->
+        <rect x="600" y="240" width="180" height="66" rx="9" fill="var(--surface)" stroke="var(--happy-line)"/>
+        <text x="690" y="261" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">daily_records</text>
+        <line x1="612" y1="269" x2="768" y2="269" stroke="var(--line)"/>
+        <text x="612" y="285" font-size="10" fill="var(--muted)" class="mono">journey_id (FK) · day_number</text>
+
+        <!-- daily_memories -->
+        <rect x="600" y="330" width="180" height="66" rx="9" fill="var(--surface)" stroke="var(--happy-line)"/>
+        <text x="690" y="351" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">daily_memories</text>
+        <line x1="612" y1="359" x2="768" y2="359" stroke="var(--line)"/>
+        <text x="612" y="375" font-size="10" fill="var(--muted)" class="mono">journey_id (FK) · day_number</text>
+
+        <!-- blindspot_records -->
+        <rect x="600" y="420" width="180" height="66" rx="9" fill="var(--surface)" stroke="var(--happy-line)"/>
+        <text x="690" y="441" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" class="mono">blindspot_records</text>
+        <line x1="612" y1="449" x2="768" y2="449" stroke="var(--line)"/>
+        <text x="612" y="465" font-size="10" fill="var(--muted)" class="mono">journey_id (FK) · blindspot_code</text>
+
+        <!-- course_content standalone -->
+        <rect x="820" y="330" width="150" height="66" rx="9" fill="var(--surface-2)" stroke="var(--faint)" stroke-dasharray="3 3"/>
+        <text x="895" y="351" text-anchor="middle" font-size="12" font-weight="600" fill="var(--muted)" class="mono">course_content</text>
+        <text x="895" y="368" text-anchor="middle" font-size="9.5" fill="var(--faint)">獨立參考表</text>
+        <text x="895" y="382" text-anchor="middle" font-size="9.5" fill="var(--faint)">(day_number 對值查找)</text>
+
+        <!-- edges: users -> journeys -->
+        <line x1="240" y1="266" x2="330" y2="266" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrE)"/>
+        <text x="285" y="258" text-anchor="middle" font-size="9.5" fill="var(--muted)">1:N</text>
+
+        <!-- users -> invite_codes (used_by) -->
+        <line x1="150" y1="332" x2="150" y2="360" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrE)"/>
+        <text x="163" y="349" font-size="9.5" fill="var(--muted)">0..1</text>
+
+        <!-- users -> admin_audit_logs -->
+        <path d="M60,290 C10,290 10,483 60,483" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrE)"/>
+        <text x="8" y="390" font-size="9.5" fill="var(--muted)" transform="rotate(-90 8 390)">1:N</text>
+
+        <!-- users -> conversations (direct, trier) -->
+        <path d="M240,300 C300,330 300,395 330,403" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrE)"/>
+        <text x="255" y="345" font-size="9.5" fill="var(--muted)">1:N（trier，無 journey）</text>
+
+        <!-- journeys -> conversations -->
+        <line x1="420" y1="312" x2="420" y2="360" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrE)"/>
+        <text x="433" y="340" font-size="9.5" fill="var(--muted)">1:N</text>
+
+        <!-- journeys -> daily_records -->
+        <line x1="510" y1="260" x2="600" y2="266" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrE)"/>
+        <text x="555" y="253" text-anchor="middle" font-size="9.5" fill="var(--muted)">1:N</text>
+
+        <!-- journeys -> daily_memories -->
+        <line x1="510" y1="285" x2="600" y2="352" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrE)"/>
+        <text x="558" y="310" text-anchor="middle" font-size="9.5" fill="var(--muted)">1:N</text>
+
+        <!-- journeys -> blindspot_records -->
+        <line x1="480" y1="312" x2="600" y2="440" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrE)"/>
+        <text x="555" y="390" text-anchor="middle" font-size="9.5" fill="var(--muted)">1:N</text>
+
+        <!-- conversations -.-> course_content (value lookup), routed below daily_memories/blindspot_records to avoid crossing their labels -->
+        <path d="M480,446 C480,512 830,512 895,512 L895,398" fill="none" stroke="var(--faint)" stroke-width="1.1" stroke-dasharray="2 3"/>
+        <text x="700" y="524" text-anchor="middle" font-size="9.5" fill="var(--faint)">依 day_number 查值，非外鍵</text>
+      </svg>
+    </div>
+    <figcaption>整張圖只有一種基數：<b>一對多</b>（或鬆散的一對零或一）。系統裡沒有真正的多對多——這其實是件好事，代表資料模型沒有被過度設計。</figcaption>
+  </figure>
+</section>
+
+<div class="wrap">
+  <footer>
+    <p>
+      本文件基於現有原始碼實地閱讀整理（NUWA Laravel/general_mgr、nuwa/v2、nexthappy Next.js + Supabase migrations），
+      非官方規格文件。資料庫欄位以 2026-09-03 已執行的 17 支 happy schema migration 為準；
+      public schema 為本次為求 nexthappy 可獨立運作而建立的最小化 stub，非 NUWA v2 完整的 33 張表。
+    </p>
+  </footer>
+</div>
