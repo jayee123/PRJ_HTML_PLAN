@@ -182,6 +182,22 @@
   footer{padding:40px 0 70px; border-top:1px solid var(--line); margin-top:20px;}
   footer p{font-size:12.5px; color:var(--faint); line-height:1.7; max-width:60ch;}
 
+  /* ── Status / roadmap section ───────────────────────── */
+  .status-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:30px;}
+  @media (max-width:900px){ .status-grid{grid-template-columns:1fr;} }
+  .status-group h3{font-size:12.5px; font-weight:700; letter-spacing:.05em; color:var(--faint); text-transform:uppercase; margin-bottom:14px;}
+  .status-card{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:var(--surface); margin-bottom:10px;}
+  .status-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px;}
+  .status-card .name{font-size:13.5px; font-weight:600; color:var(--ink);}
+  .status-card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px;}
+  .status-card li{font-size:12px; line-height:1.5; padding-left:13px; position:relative; color:var(--muted);}
+  .status-card li::before{content:"·"; position:absolute; left:0; color:var(--faint);}
+  .roadmap-tag{
+    display:inline-flex; align-items:center; gap:4px; margin-top:10px; font-size:11px; font-weight:600;
+    color:var(--happy-ink); background:var(--happy-soft); padding:3px 9px; border-radius:99px; text-decoration:none;
+  }
+  .roadmap-tag:hover{background:var(--happy-line);}
+
   @media (max-width:600px){
     .flow-row{grid-template-columns:26px 1fr; }
     .flow-sys{grid-column:2; order:1;}
@@ -201,6 +217,7 @@
       <a href="#data-flow">資料流</a>
       <a href="#schema">資料庫欄位</a>
       <a href="#erd">ERD</a>
+      <a href="#status">功能清單</a>
     </nav>
   </div>
 </div>
@@ -772,6 +789,160 @@
 </section>
 
 <div class="wrap">
+  <section id="status">
+    <div class="sec-head"><span class="sec-num">07</span><h2>功能清單與未來規劃</h2></div>
+    <p class="sec-dek">目前已完成 20 項功能，依 NUWA（公版）／前台／後台私版分三組列出。<span class="chip happy" style="margin:0 2px;">🔭 標籤</span>代表這項功能已經有正式的未來規劃提案文件；沒有標籤的功能目前沒有排入規劃。</p>
+
+    <div class="status-grid">
+      <div class="status-group">
+        <h3>NUWA（公版平台）</h3>
+
+        <div class="status-card">
+          <div class="head"><span class="name">NUWA 登入</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>SMS OTP 驗證 + 邀請碼（未開放註冊前）</li>
+            <li>Email / 密碼登入</li>
+            <li>登入後簽發 JWT、SSO 導向各 App</li>
+          </ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">App 上架</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>App 卡片列表，狀態 draft / active / internal（封測）</li>
+            <li>邀請碼兌換進 internal App（試用門票、免綁卡）</li>
+            <li>launch gate 判斷進場資格（方案／試用／邀請碼）</li>
+          </ul>
+          <a class="roadmap-tag" href="https://jayee123.github.io/PRJ_HTML_PLAN/vendor-plan.html" target="_blank" rel="noopener">🔭 廠商模組提案 →</a>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">訂閱方案與金流</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>4 方案（免費／基本／進階／旗艦），標籤單一來源</li>
+            <li>紅陽金流串接（綁卡首扣、月扣、callback）</li>
+            <li>原始交易帳、退款標記、實收統計</li>
+          </ul>
+          <a class="roadmap-tag" href="https://jayee123.github.io/PRJ_HTML_PLAN/pricing-plan.html" target="_blank" rel="noopener">🔭 差異化定價提案 →</a>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">邀請碼發放與試用機制</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>發放／兌換統一收回公版（私版改唯讀）</li>
+            <li>App 層級試用（trial_days，每 App 各自設定）</li>
+            <li>註冊邀請碼門檻開關</li>
+          </ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">跨 App 用量／成本統計</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>ai_token_usage 各私版回報寫入</li>
+            <li>後台跨 App 成本歸戶報表</li>
+          </ul>
+          <a class="roadmap-tag" href="https://jayee123.github.io/PRJ_HTML_PLAN/vendor-plan.html" target="_blank" rel="noopener">🔭 廠商模組提案 →</a>
+        </div>
+      </div>
+
+      <div class="status-group">
+        <h3>前台（nexthappy）</h3>
+
+        <div class="status-card">
+          <div class="head"><span class="name">21 天關係覺察練習</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>Day 0–21 每日任務、心情打分、日記</li>
+            <li>一天一關；測試開關可完成即進下一天</li>
+            <li>Day 21 畢業關閉旅程、可開新一輪</li>
+          </ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">AI 陪伴對話</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>小羽，文字 + 語音，OpenAI（GPT-4o）驅動</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">自動對話標題生成</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>GPT-4o-mini 下標</li>
+            <li>繁體字偵測 + 拒絕過濾 + 重試一次（46 測試守著）</li>
+          </ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">每日記憶萃取</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>背景執行、不阻塞回應</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">里程碑／徽章</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>依進度檢查里程碑並發徽章</li></ul>
+        </div>
+      </div>
+
+      <div class="status-group">
+        <h3>後台私版</h3>
+
+        <div class="status-card">
+          <div class="head"><span class="name">學員管理</span><span class="chip ok">✓ 已完成</span></div>
+          <ul>
+            <li>公版／私版資料分兩張卡呈現</li>
+            <li>停權（擋登入）與封存（不擋登入）分開</li>
+          </ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">Journey 管理</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>各輪次進度總覽</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">對話歷史／諮詢主題</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>對話紀錄查詢、Mode B 諮詢主題彙整</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">課程內容管理</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>21 天課程內容編輯</li></ul>
+          <a class="roadmap-tag" href="https://jayee123.github.io/PRJ_HTML_PLAN/i18n-plan.html" target="_blank" rel="noopener">🔭 多語言處理提案 →</a>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">邀請碼管理（唯讀）</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>發放已收回公版，這裡只能查歷史</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">訂閱管理</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>方案異動、篩選（標籤同樣走單一來源）</li></ul>
+          <a class="roadmap-tag" href="https://jayee123.github.io/PRJ_HTML_PLAN/vendor-plan.html" target="_blank" rel="noopener">🔭 廠商模組提案 →</a>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">用量／成本報表</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>AI 呼叫成本試算</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">規格文件／AI Prompt 檢視</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>讀 docs/*.md 渲染</li></ul>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">系統設定</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>公版欄位配色等設定</li></ul>
+          <a class="roadmap-tag" href="https://jayee123.github.io/PRJ_HTML_PLAN/i18n-plan.html" target="_blank" rel="noopener">🔭 多語言處理提案 →</a>
+        </div>
+
+        <div class="status-card">
+          <div class="head"><span class="name">獨立管理者登入</span><span class="chip ok">✓ 已完成</span></div>
+          <ul><li>/admin-login，不經過 NUWA SSO，獨立密碼驗證</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <p>
       本文件基於現有原始碼實地閱讀整理（NUWA Laravel/general_mgr、nuwa/v2、nexthappy Next.js + Supabase migrations），
