@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NUWA 專案文件</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#f2f2f5; --surface:#ffffff; --surface-2:#fafafa;
+    --ink:#201e2b; --muted:#6b6878; --faint:#928da0;
+    --line:rgba(32,30,43,.12); --line-strong:rgba(32,30,43,.22);
+    --nuwa:#8b6483; --nuwa-ink:#5c4056; --nuwa-soft:#f1e9ef; --nuwa-line:rgba(139,100,131,.35);
+    --i18n:#8b6483; --i18n-soft:#f1e9ef; --i18n-line:rgba(139,100,131,.35);
+    --pricing:#a8781f; --pricing-soft:#f6ecd6; --pricing-line:rgba(168,120,31,.38);
+    --vendor:#4257a3; --vendor-soft:#e8ebf7; --vendor-line:rgba(66,87,163,.35);
+    --guard:#2a7d78; --guard-soft:#e3f1ef; --guard-line:rgba(42,125,120,.35);
+    --shadow: 0 1px 2px rgba(32,30,43,.04), 0 8px 24px -12px rgba(32,30,43,.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#18161f; --surface:#221f2c; --surface-2:#272432;
+      --ink:#edeaf2; --muted:#a79fb0; --faint:#7c7688;
+      --line:rgba(237,234,242,.13); --line-strong:rgba(237,234,242,.24);
+      --nuwa:#cba6c3; --nuwa-soft:#332a34; --nuwa-line:rgba(203,166,195,.35);
+      --i18n:#cba6c3; --i18n-soft:#332a34; --i18n-line:rgba(203,166,195,.35);
+      --pricing:#e6b654; --pricing-soft:#382d19; --pricing-line:rgba(230,182,84,.4);
+      --vendor:#9fb0e6; --vendor-soft:#28304a; --vendor-line:rgba(159,176,230,.4);
+      --guard:#6cc7c0; --guard-soft:#1e3634; --guard-line:rgba(108,199,192,.4);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans','Noto Sans TC',system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  h1,h2{font-family:'Fraunces','Noto Serif TC',serif;font-weight:600;text-wrap:balance;color:var(--ink);margin:0;}
+  a{color:inherit;text-decoration:none;}
+  code{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+
+  .wrap{max-width:880px;margin:0 auto;padding:64px 24px 80px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--nuwa);}
+  h1{font-size:clamp(26px,4vw,34px);line-height:1.2;max-width:20ch;}
+  .lede{margin-top:14px;font-size:15px;line-height:1.65;color:var(--muted);max-width:64ch;}
+
+  .sec-label{margin-top:52px;margin-bottom:16px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+
+  .blueprint-card{
+    display:block;border:1px solid var(--line);border-radius:16px;padding:22px 24px;background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+  .blueprint-card:hover{border-color:var(--nuwa-line);}
+  .blueprint-card h2{font-size:19px;}
+  .blueprint-card p{margin:8px 0 0;font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .blueprint-card .go{margin-top:12px;font-size:12.5px;font-weight:600;color:var(--nuwa);}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:600px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;background:var(--surface);position:relative;overflow:hidden;
+  }
+  .card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--accent);}
+  .card .icon{font-size:20px;}
+  .card .title{font-size:14.5px;font-weight:600;color:var(--ink);}
+  .card .status{display:inline-flex;align-self:flex-start;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);}
+  .card .desc{font-size:12.5px;color:var(--muted);line-height:1.55;flex:1;}
+  .card .go{font-size:12px;font-weight:600;color:var(--accent);}
+  .card:hover{border-color:var(--accent-line);}
+
+  .card.i18n{--accent:var(--i18n);--accent-soft:var(--i18n-soft);--accent-line:var(--i18n-line);}
+  .card.pricing{--accent:var(--pricing);--accent-soft:var(--pricing-soft);--accent-line:var(--pricing-line);}
+  .card.vendor{--accent:var(--vendor);--accent-soft:var(--vendor-soft);--accent-line:var(--vendor-line);}
+  .card.guard{--accent:var(--guard);--accent-soft:var(--guard-soft);--accent-line:var(--guard-line);}
+
+  footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);font-size:12px;color:var(--faint);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>NUWA × nexthappy</div>
+  <h1>專案文件與未來規劃</h1>
+  <p class="lede">整合藍圖(架構、流程、資料庫)跟四份還在待決策階段的功能提案，都放這裡，點進去就是完整可讀的頁面，不是原始碼檢視。</p>
+
+  <div class="sec-label">整合藍圖</div>
+  <a class="blueprint-card" href="./nuwa-demo-nexthappy.html">
+    <h2>🗺 NUWA × nexthappy 整合藍圖</h2>
+    <p>系統邊界、使用者/功能/管理者流程、SSO 交接、資料庫欄位、ERD，以及目前 20 項已完成功能的清單與未來規劃連結。</p>
+    <div class="go">開啟文件 →</div>
+  </a>
+
+  <div class="sec-label">未來規劃提案 · 待決策</div>
+  <div class="grid">
+    <a class="card i18n" href="./i18n-plan.html">
+      <div class="icon">🌐</div>
+      <div class="title">多語言處理</div>
+      <span class="status">待決策</span>
+      <p class="desc">公版/私版多語系架構、翻譯資料流程、DeepL 翻譯來源、後台介面草稿。</p>
+      <div class="go">看提案 →</div>
+    </a>
+    <a class="card pricing" href="./pricing-plan.html">
+      <div class="icon">💰</div>
+      <div class="title">差異化定價</div>
+      <span class="status">待決策</span>
+      <p class="desc">基礎/成本權重/加值三維度定價，統一或個別調價，含互動欄位模擬器。</p>
+      <div class="go">看提案 →</div>
+    </a>
+    <a class="card vendor" href="./vendor-plan.html">
+      <div class="icon">🏢</div>
+      <div class="title">廠商模組</div>
+      <span class="status">待決策</span>
+      <p class="desc">類比蝦皮商城，加「擁有者」層：一廠商多門課、自有成員與拆帳比例。</p>
+      <div class="go">看提案 →</div>
+    </a>
+    <a class="card guard" href="./guardrail-plan.html">
+      <div class="icon">🛡</div>
+      <div class="title">對話範疇防護</div>
+      <span class="status">待決策</span>
+      <p class="desc">主題護欄機制，防止離題使用；三態判斷，模稜兩可時反問而非亂猜。</p>
+      <div class="go">看提案 →</div>
+    </a>
+  </div>
+
+  <footer>此頁為 jayee123/PRJ_HTML_PLAN 的首頁，其餘專案文件請見 repo 內其他 .html 檔案。</footer>
+</div>
+</body>
+</html>
