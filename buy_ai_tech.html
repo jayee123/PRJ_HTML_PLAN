@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buy託了AI｜專案技術說明</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f6f6f4; --surface-1:#fcfcfb; --surface-2:#efeeea; --border:#dedcd5;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7a7873;
+  --accent:#c2457a; --accent-2:#2a78d6;
+  --ok:#008300; --warn:#b26f00; --bad:#c43d3c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#121211; --surface-1:#1a1a19; --surface-2:#242422; --border:#3a3936;
+    --text-primary:#f0efec; --text-secondary:#c3c2b7; --text-muted:#9a998f;
+    --accent:#f07aaa; --accent-2:#8fbaf2;
+    --ok:#3fae3f; --warn:#e0a030; --bad:#e66767;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text-primary);
+  font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;line-height:1.75;font-size:16px}
+.wrap{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1240px;margin:0 auto;gap:32px;padding:32px 24px}
+nav{position:sticky;top:24px;align-self:start;font-size:14px;max-height:calc(100vh - 48px);overflow:auto}
+nav b{display:block;margin-bottom:8px;color:var(--text-secondary)}
+nav a{display:block;color:var(--text-secondary);text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid var(--border)}
+nav a:hover{color:var(--accent);border-left-color:var(--accent)}
+nav a.s{padding-left:20px}
+nav a.star{color:var(--accent);font-weight:700}
+main{min-width:0}
+header{margin-bottom:28px}
+h1{font-size:30px;margin:0 0 6px;line-height:1.3}
+.sub{color:var(--text-secondary);margin:0}
+section{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:24px}
+h2{font-size:22px;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+h3{font-size:17px;margin:22px 0 8px}
+p{margin:8px 0}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.88em;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+pre{background:var(--surface-2);padding:14px 16px;border-radius:8px;overflow:auto;font-size:13.5px;line-height:1.55}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:10px 0}
+th,td{border-bottom:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{color:var(--text-secondary);font-weight:600;background:var(--surface-2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0}
+.kpi{background:var(--surface-2);border-radius:10px;padding:12px 14px}
+.kpi .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.kpi .l{font-size:13px;color:var(--text-secondary)}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:12px 0}
+.flow .step{flex:1 1 110px;background:var(--surface-2);border-radius:8px;padding:10px 12px;font-size:14px}
+.flow .step b{display:block;font-size:14.5px}
+.flow .arrow{align-self:center;color:var(--text-muted)}
+.note{border-left:3px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,transparent);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.info{border-left:3px solid var(--accent-2);background:color-mix(in srgb,var(--accent-2) 8%,transparent);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+ul,ol{padding-left:22px;margin:6px 0}
+li{margin:3px 0}
+.arch{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;font-size:14px}
+.arch .box{background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.arch .box b{display:block;color:var(--accent)}
+.arch .span3{grid-column:span 3;text-align:center}
+.rank{counter-reset:r;list-style:none;padding:0}
+.rank li{counter-increment:r;background:var(--surface-2);border-radius:8px;padding:8px 12px 8px 44px;margin:6px 0;position:relative}
+.rank li::before{content:counter(r);position:absolute;left:12px;top:8px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;text-align:center;line-height:22px;font-weight:700;font-size:13px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}nav{display:none}.arch{grid-template-columns:1fr}.arch .span3{grid-column:auto}}
+@media print{nav{display:none}.wrap{grid-template-columns:1fr}section{break-inside:avoid}.qa .a{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <b>目錄</b>
+  <a href="#overview">0. 一頁總覽</a>
+  <a href="#arch">1. 系統架構</a>
+  <a href="#data">2. 資料蒐集</a>
+  <a href="#clean">3. 資料清洗與翻譯</a>
+  <a href="#sentiment">4. 情緒分析（RoBERTa）</a>
+  <a href="#rag">5. 語意搜尋（RAG）</a>
+  <a href="#ranking">6. 綜合推薦排序</a>
+  <a href="#summary">7. AI 評論摘要與常見缺點</a>
+  <a href="#auth">8. 會員系統</a>
+</nav>
+<main>
+<header>
+  <h1>Buy託了AI：日韓藥妝智慧推薦系統 — 專案技術說明</h1>
+  <p class="sub">整合 4 個平台的商品資料與 4.7 萬則評論，用 RoBERTa 情緒分析算好評率、RAG 語意搜尋找商品，依膚質、預算、需求推薦日韓藥妝。內容依專案原始碼與 README 進度紀錄整理。</p>
+</header>
+
+<!-- ================= 0 ================= -->
+<section id="overview">
+<h2>0. 一頁總覽</h2>
+<p>使用者用中文描述需求，系統用<b>多語言向量搜尋</b>從 4 個日韓平台的商品中找出最相關的，再依<b>RoBERTa 讀評論文字算出的好評率</b>和平台星等排序，並附上 AI 整理的評論摘要與常見缺點、台幣價格。</p>
+<div class="kpis">
+  <div class="kpi"><div class="v">1,973</div><div class="l">商品（樂天、Olive Young、@cosme、화해）</div></div>
+  <div class="kpi"><div class="v">47,290</div><div class="l">評論（樂天、Olive Young、PTT、Dcard）</div></div>
+  <div class="kpi"><div class="v">2</div><div class="l">個 RoBERTa 情緒模型（中文／多語言）</div></div>
+  <div class="kpi"><div class="v">&lt; 1 s</div><div class="l">每次搜尋回應時間</div></div>
+</div>
+<div class="flow">
+  <div class="step"><b>① 蒐集</b>官方 API、Playwright 爬蟲、JSON API</div><div class="arrow">→</div>
+  <div class="step"><b>② 清洗</b>統一 schema、分類、翻譯、去重</div><div class="arrow">→</div>
+  <div class="step"><b>③ 情緒分析</b>RoBERTa 判斷每則評論正負面</div><div class="arrow">→</div>
+  <div class="step"><b>④ 向量化</b>多語言 embedding 存進 ChromaDB</div><div class="arrow">→</div>
+  <div class="step"><b>⑤ 推薦</b>語意搜尋＋篩選＋綜合排序</div><div class="arrow">→</div>
+  <div class="step"><b>⑥ 呈現</b>FastAPI＋網頁，AI 摘要與缺點</div>
+</div>
+</section>
+
+<!-- ================= 1 ================= -->
+<section id="arch">
+<h2>1. 系統架構</h2>
+<div class="arch">
+  <div class="box span3"><b>前端</b><code>frontend/index.html</code>（純 HTML/CSS/JS）：搜尋框、國家／預算／產品類型篩選、排序、登入、搜尋紀錄</div>
+  <div class="box span3"><b>後端 API（FastAPI）</b><code>POST /recommend</code>、<code>GET /product-types</code>、<code>/auth/register・login・logout・history</code>、<code>GET /health</code></div>
+  <div class="box"><b>ChromaDB</b>商品向量索引（餘弦相似度），語意搜尋用</div>
+  <div class="box"><b>MongoDB Atlas</b>products、reviews（含情緒標籤）、AI 摘要、常見缺點</div>
+  <div class="box"><b>MySQL</b>users（bcrypt）、revoked_tokens、search_history</div>
+  <div class="box span3"><b>離線批次腳本（不在搜尋時執行）</b>爬蟲、RoBERTa 情緒分析、Gemini 翻譯與摘要、建索引</div>
+</div>
+<p>設計原則：<b>花時間或花錢的工作都在離線批次做完</b>（情緒分析、翻譯、摘要），搜尋時只做向量查詢和讀資料庫，所以回應快、也不會每次搜尋都呼叫付費 API。匯率用 <code>open.er-api.com</code>，本機快取 12 小時，查不到時回傳 <code>null</code>，不會讓整個搜尋失敗。</p>
+</section>
+
+<!-- ================= 2 ================= -->
+<section id="data">
+<h2>2. 資料蒐集</h2>
+<h3>2-1 商品資料（1,973 件）</h3>
+<div class="tw"><table>
+<tr><th>平台</th><th>國家</th><th class="num">商品數</th><th>取得方式</th><th>內容</th></tr>
+<tr><td>樂天 Rakuten</td><td>日本</td><td class="num">1,116</td><td>Rakuten Ichiba 商品搜尋 API</td><td>價格、評分、評論數、部分成分</td></tr>
+<tr><td>Olive Young</td><td>韓國</td><td class="num">424</td><td>Playwright 爬詳細頁</td><td>評分、評論數、成分表</td></tr>
+<tr><td>@cosme</td><td>日本</td><td class="num">346</td><td>口碑排行榜</td><td>排名、評分</td></tr>
+<tr><td>화해 Hwahae</td><td>韓國</td><td class="num">87</td><td>口碑排行榜</td><td>排名、評分</td></tr>
+</table></div>
+<p>四個平台欄位不同，用 <code>scrapers/product_schema.py</code> 統一成同一套 schema（名稱原文／中文、品牌、分類、價格、幣別、圖片、成分、平台評分…）。</p>
+
+<h3>2-2 評論資料（47,290 則）</h3>
+<div class="tw"><table>
+<tr><th>來源</th><th class="num">則數</th><th>怎麼抓</th></tr>
+<tr><td>樂天</td><td class="num">30,805</td><td>網站有 Akamai 防護，會擋 headless 瀏覽器，所以用 Playwright <b>連上真的 Chrome</b>（CDP）爬評論頁</td></tr>
+<tr><td>Olive Young</td><td class="num">16,335</td><td>找到網頁背後的 <b>JSON API</b>（游標式分頁 <code>cursorId</code>），在頁面內用 <code>fetch</code> 呼叫；每個請求間隔 2.5 秒、失敗退避重試</td></tr>
+<tr><td>PTT／Dcard</td><td class="num">150</td><td>爬文後用向量相似度配對到商品</td></tr>
+</table></div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section id="clean">
+<h2>3. 資料清洗與翻譯</h2>
+<ul>
+<li><b>產品類型分類</b>（<code>scripts/classify_product_types.py</code>）：平台原始分類已經夠精確的直接對照（如「精華液」→精華）；分類太籠統的（如「乳液・精華」「護膚」）再用商品名稱關鍵字細分。前端改成下拉選單，使用者只能選存在的類型。</li>
+<li><b>翻譯</b>：商品名稱、品牌、摘要都翻成台灣繁體中文。使用 Gemini，前兩輪先翻譯、修正，第三輪再對照原文全面重譯（1,300 件商品、1,717 處修改）。規則：片假名品牌用台灣通用名（キュレル → 珂潤）、英文系列名保留但補上意思（Pure C Mask → 純維他命C面膜）、去掉「洗面奶」等中國用語。</li>
+<li><b>重複商品合併</b>：用日韓原文去廣告詞後比對；色號、片數不同不算重複</li>
+<li><b>比價</b>：同款多家賣家合併成一張卡片，可看最低價並連到各賣場</li>
+<li><b>商品短名稱</b>：AI 改寫成「品牌＋品項＋重點＋容量」，滑鼠移上去看原名</li>
+</ul>
+</section>
+
+<!-- ================= 4 ================= -->
+<section id="sentiment">
+<h2>4. 情緒分析：用 RoBERTa 讀評論文字算好評率</h2>
+<h3>4-1 為什麼不用星等</h3>
+<p>用 Gemini 讀評論原文（不看星等）分類，發現：</p>
+<div class="tw"><table>
+<tr><th></th><th class="num">文字正面</th><th class="num">褒貶並陳</th><th class="num">文字負面</th><th class="num">星等判斷的負面（1～3 星）</th></tr>
+<tr><td>樂天</td><td class="num">79.2%</td><td class="num">20.0%</td><td class="num">0.8%</td><td class="num">2.2%</td></tr>
+<tr><td>Olive Young</td><td class="num">60.8%</td><td class="num">22.2%</td><td class="num">17.0%</td><td class="num">23.5%</td></tr>
+</table></div>
+<p>兩個平台都有約 <b>20% 的評論給 4～5 星、文字卻有抱怨</b>。只看星等的話，樂天好評率幾乎都在 98～99%，商品分不出好壞。所以團隊決定：<b>好評率用模型讀文字判斷，模型判「中立」算非好評</b>。</p>
+
+<h3>4-2 兩個模型分工</h3>
+<div class="tw"><table>
+<tr><th>評論語言</th><th>模型</th><th>原因</th></tr>
+<tr><td>日文、韓文（樂天、Olive Young）</td><td><code>cardiffnlp/twitter-xlm-roberta-base-sentiment</code>（多語言，正／中立／負三分類）</td><td>評論沒有翻譯，中文模型看不懂日文（把「推薦！」判成負評）</td></tr>
+<tr><td>中文（PTT、Dcard）</td><td><code>uer/roberta-base-finetuned-jd-binary-chinese</code>（中文，正／中立／負三分類）</td><td>多語言模型遇到 PTT 長文，99 則有 95 則判中立</td></tr>
+</table></div>
+
+<h3>4-3 怎麼判斷正面／中立／負面：取機率最高的一類</h3>
+<p>模型讀完一則評論，會同時給出三個機率（正面、中立、負面），三個加起來是 100%。三個機率比大小，<b>最高的那一類就是結果</b>：</p>
+<div class="tw"><table>
+<tr><th>評論</th><th class="num">正面</th><th class="num">中立</th><th class="num">負面</th><th>判成</th></tr>
+<tr><td>A</td><td class="num"><b>0.72</b></td><td class="num">0.20</td><td class="num">0.08</td><td>好評</td></tr>
+<tr><td>B</td><td class="num">0.30</td><td class="num"><b>0.45</b></td><td class="num">0.25</td><td>中立（算非好評）</td></tr>
+<tr><td>C</td><td class="num">0.10</td><td class="num">0.25</td><td class="num"><b>0.65</b></td><td>負評（算非好評）</td></tr>
+</table></div>
+<p>程式裡<b>沒有設分數區間或門檻</b>（例如「正面 ≥ 0.6 才算好評」），這是 Hugging Face <code>pipeline</code> 預設的做法。因為是三選一取最大，被選中的那一類機率一定超過 33.3%，但這是比大小自然產生的結果，不是我們設的區間。</p>
+
+<h3>4-4 結果（47,290 則全部跑完，CPU 約每秒 5～8 則）</h3>
+<div class="tw"><table>
+<tr><th>來源</th><th class="num">正面</th><th class="num">中立</th><th class="num">負面</th></tr>
+<tr><td>樂天</td><td class="num">27,526</td><td class="num">1,398</td><td class="num">1,881</td></tr>
+<tr><td>Olive Young</td><td class="num">11,320</td><td class="num">1,311</td><td class="num">3,704</td></tr>
+<tr><td>PTT／Dcard（150 則）</td><td class="num">132</td><td class="num">3</td><td class="num">15</td></tr>
+</table></div>
+<div class="info" style="text-align:center;font-size:17px"><b>好評率 ＝ 好評數 ÷（好評數 ＋ 非好評數）</b>　，非好評包含模型判「中立」和「負面」的評論（網頁卡片顯示「好評 27　非好評 6」）</div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section id="rag">
+<h2>5. 語意搜尋（RAG）</h2>
+<ol>
+<li><b>建索引</b>：用 <code>sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</code>（多語言，中日韓英共用向量空間）把每件商品的名稱、品牌、分類、說明轉成向量，存進 ChromaDB，距離設成<b>餘弦</b>（預設 L2 會讓 1 − distance 變負數）。</li>
+<li><b>商品名精確比對</b>：先用子字串比對 <code>name_zh</code>／<code>name_local</code>，打商品名一定找得到，排在語意結果前面。</li>
+<li><b>語意搜尋</b>：查詢轉成向量，取最相似的候選；因為篩選會刷掉一些，先多撈 <code>top_k × 3 × 6</code> 筆。</li>
+<li><b>篩選</b>：國家（JP／KR）、產品類型、預算（JPY／KRW 用即時匯率換成台幣比較）。</li>
+<li><b>合併重複商品 → 綜合推薦排序 → 取前 top_k 筆</b>。</li>
+</ol>
+<p><b>亂打字警示</b>：英文詞與中日韓詞都不在商品資料裡、只有數字或注音。</p>
+</section>
+
+<!-- ================= 6 ================= -->
+<section id="ranking">
+<h2>6. 綜合推薦排序（硬排序）</h2>
+<p>依序比較，<b>前一個條件相同才比下一個</b>（<code>api/recommend.py</code> 的 <code>_recommended_sort_key</code>）：</p>
+<ol class="rank">
+<li><b>好評率</b>：高 → 低；沒有社群評論的沒有好評率，一律排最後。</li>
+<li><b>平台星等</b>：高 → 低。</li>
+<li><b>語意相關度</b>：高 → 低。</li>
+</ol>
+</section>
+
+<!-- ================= 7 ================= -->
+<section id="summary">
+<h2>7. AI 評論摘要與常見缺點</h2>
+<ul>
+<li><b>評論摘要</b>：Gemini（<code>gemini-3.1-flash-lite</code>）把每件商品的評論整理成摘要與「建議適合族群」，<b>批次預先生成</b>存在 <code>products.ai_summary</code>，搜尋時直接讀取。</li>
+<li><b>常見缺點</b>（<code>scripts/build_cons_summaries.py</code>）：Gemini 從每則評論抽出抱怨的面向（如質地、香味、包裝），程式統計次數，寫進缺點摘要。</li>
+<li><b>前端措辭</b>：只有 1 人提到時寫「少數使用者提到」，避免誤導。</li>
+</ul>
+</section>
+
+<!-- ================= 8 ================= -->
+<section id="auth">
+<h2>8. 會員系統（MySQL + JWT）</h2>
+<ul>
+<li>密碼用 <b>bcrypt</b> 雜湊儲存，不存明文。</li>
+<li>登入發 <b>JWT</b>；登出時把 token 的 <code>jti</code> 寫進 <code>revoked_tokens</code>，讓登出真的生效，不是只有前端刪掉 token。</li>
+<li>搜尋不需要登入；登入後多一個「我的搜尋紀錄」（<code>search_history</code>），可以點一筆重新搜尋。MySQL 沒開時搜尋照樣能用。</li>
+<li>金鑰、密碼放在 <code>.env</code>，不進版控。</li>
+</ul>
+</section>
+
+</main>
+</div>
+</body>
+</html>
